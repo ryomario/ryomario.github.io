@@ -333,7 +333,7 @@ input {
 /* Scrool To top */
 /* Image style */
 #scrollUp {
-    background-image: url("../img/top.png");
+    background-image: url("/assets/images/top.png");
     bottom: 20px;
     right: 20px;
     width: 38px;    /* Width of image */
@@ -391,7 +391,7 @@ input {
 }
 
 /*************navigation******************/
-
+/* 
  .navbar-inverse {
     background-color: #383E4C;
     border-color: #383E4C;
@@ -423,7 +423,7 @@ input {
 
 .navbar .navbar-collapse {
     text-align: center;
-}
+} */
 
 /* Media Queries
 ----------------------*/
