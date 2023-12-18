@@ -32,21 +32,27 @@
 </head>
 <body>
     <!-- NAVIGATION -->
-    <nav class="navbar bg-dark fixed-top navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
+    <nav id="nav" class="navbar bg-dark fixed-top navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
         <div class="container">
             <a class="navbar-brand" href="#">Ryomario</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarToggler">
+            <div class="collapse navbar-collapse single-page-nav" id="navbarToggler">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a href="#" class="nav-link">Homepage</a></li>
+                    <li class="nav-item"><a href="#homepage" class="nav-link">Homepage</a></li>
+                    <li class="nav-item"><a href="#about" class="nav-link">About Us</a></li>
                 </ul>
             </div>
         </div>
     </nav>
     <!-- END - NAVIGATION -->
+
+    <div style="min-height: 50vh;"></div>
+    <div id="homepage">Homepage</div>
     
+    <div style="min-height: 200vh;"></div>
+    <div id="about">About Us</div>
     <div style="min-height: 200vh;"></div>
     
     <!-- Start Footer Area -->
@@ -126,13 +132,14 @@
             });
     
             $('.single-page-nav').singlePageNav({
-                offset: $('.single-page-nav').outerHeight(),
-                speed: 1500,
+                offset: $('#nav').outerHeight(),
+                speed: 0,
                 filter: ':not(.external)',
-                updateHash: true
+                updateHash: true,
+                currentClass: "active"
             });
     
-            $('.navbar-toggle').click(function(){
+            $('.navbar-toggler').click(function(){
                 $('.single-page-nav').toggleClass('show');
             });
     
