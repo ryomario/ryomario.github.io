@@ -217,6 +217,16 @@ div#service-area-main {
 }
 /* End Services CSS */
 
+/* Start PARALAX */
+.parallax-mirror {
+  filter: brightness(0.7);
+}
+.intro-section {
+  min-height: 100vh;
+  background-color: transparent;
+}
+/* END PARALAX */
+
 /* Start Testimornial CSS */
 #testimornial-area{
   margin: 60px 0;
@@ -391,39 +401,29 @@ input {
 }
 
 /*************navigation******************/
-/* 
- .navbar-inverse {
-    background-color: #383E4C;
-    border-color: #383E4C;
-}
-.navbar-nav>li {
+
+#nav .navbar-nav .nav-item {
     display: inline-block;
-    padding: 10px;
+    padding: 0 8px;
 }
-.navbar-inverse .navbar-nav>li>a {
-    background: #383E4C none repeat scroll 0 0;
+#nav .navbar-nav .nav-item > a {
+    background: inherit none repeat scroll 0 0;
     border: 1px solid #646d7c;
     color: #fff ;
     font-size: 20px;
-    padding: 15px 25px;
+    padding: 8px 16px;
+    text-align: center;
     text-decoration: none;
     text-transform: capitalize;
     -webkit-transition: all 0.3s ease;
             transition: all 0.3s ease;
 }
 
-.navbar-inverse .navbar-nav > li > a.current,
-.navbar-inverse .navbar-nav > li > a:hover {
-        background: #49505F;
-}
-.navbar .navbar-nav {
-    display: inline-block;
-    float: none;
+#nav .navbar-nav .nav-item > a.active,
+#nav .navbar-nav .nav-item > a:hover {
+        background-color: #fff2;
 }
 
-.navbar .navbar-collapse {
-    text-align: center;
-} */
 
 /* Media Queries
 ----------------------*/
@@ -450,11 +450,8 @@ input {
     font-size: 18px;
     padding: 15px 0;
   }
-  .navbar-nav > li {
+  #nav .navbar-nav > .nav-item {
     padding: 6px;
-  }
-  .navbar-inverse .navbar-nav > li > a {
-    font-size: 16px;
   }
 }
 
@@ -510,61 +507,8 @@ input {
   .blog-content span { margin-left: 0; }
   .testimornial-content p { text-align: center; }
   .footer-content h4 { font-size: 16px; }
-  .navbar-nav>li { display: block; }
-  .navbar-inverse {
-    background: none;
-    border: none; 
-  }
-  .navbar-inverse .navbar-toggle { background-color: #333; }
-  .navbar-inverse .navbar-collapse, 
-  .navbar-inverse .navbar-form {
-    background-color: #49505F;
-  }
-  .navbar .navbar-nav {
-    width: 100%;
-    margin:0;
-  }
-  .navbar-collapse {
-    padding-right: 0px;
-    padding-left: 0px;
-  }
-  .navbar-nav>li {
-    width: 100%;
-    border-bottom: 1px solid #999;
-    padding:0px;
-  }
-  .navbar-nav>li:last-child { border-bottom: none;  }
-  .navbar-inverse .navbar-nav>li>a {
-    background:none;
-    border: none;
-    width: 100%;
-    padding: 10px 0px;
-  }
-  .navbar-inverse .navbar-nav>li>a:focus, 
-  .navbar-inverse .navbar-nav>li>a:hover {
-    background-color: #383E4C;
-  }
-  .navbar-inverse .navbar-nav>.active>a, 
-  .navbar-inverse .navbar-nav>.active>a:focus, 
-  .navbar-inverse .navbar-nav>.active>a:hover {
-    background: #383E4C;
-  }
-  .navbar-inverse .navbar-nav > li > a { font-size: 16px; }
-  .container {
-    margin-left: 0;
-    margin-right: 0;
-  }
-  .single-page-nav {
-    background-color: #383E4C;
-    max-height: 0;
-    -webkit-transition: max-height 0.8s;
-            transition: max-height 0.8s;
-    overflow: hidden;
-  }
-  /*http://css3.bradshawenterprises.com/animating_height/*/
-  .single-page-nav.show {
-    max-height: 250px;
-    overflow: auto;
+  #nav .navbar-collapse {
+    margin-top: 6px;
   }
   .contact-form-left {
     padding-right: 0;
