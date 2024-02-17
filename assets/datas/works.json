@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Webstatic BookShelf",
+        "desc": "BookShelf web application ",
+        "imageSrc": "https://github.com/ryomario/webstatic-bookshelf/blob/main/images/preview [theme dark].png?raw=true",
+        "links": [
+            {
+                "title": "Demo",
+                "href": "https://ryomario.github.io/webstatic-bookshelf/"
+            },
+            {
+                "title": "Go to Repos",
+                "href": "https://github.com/ryomario/webstatic-bookshelf"
+            }
+        ]
+    }
+]

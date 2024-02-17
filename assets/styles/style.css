@@ -122,6 +122,9 @@ z-index: 999;
     background: #F2F2F2;
     padding-bottom: 40px;
 }
+.feature-content h2 {
+  margin-top: 20px;
+}
 .feature-content-title {
     padding: 0 20px;
     text-align: left;    
@@ -132,12 +135,22 @@ z-index: 999;
     color: #333333;
     margin-top: 15px;
 }
+.feature-content-link-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+.feature-content-link-container > * {
+  margin: 3px;
+}
 .feature-content-link {
     border-radius: 5px;
     color: #fff;
     font-size: 18px;
     padding: 10px 30px;
     text-decoration: none;
+    text-wrap: nowrap;
     text-transform: capitalize;
     -webkit-transition: all 0.3s ease;
             transition: all 0.3s ease;
