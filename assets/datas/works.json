@@ -14,4 +14,20 @@
             }
         ]
     }
+    ,
+    {
+        "name": "Homepage",
+        "desc": "Web application build with ReactJS. Includes a simple clock app and the main function is to store some URL in web storage.",
+        "imageSrc": "https://github.com/ryomario/homepage/blob/main/images/preview.png?raw=true",
+        "links": [
+            {
+                "title": "Demo",
+                "href": "https://ryomario.github.io/homepage/"
+            },
+            {
+                "title": "Go to Repos",
+                "href": "https://github.com/ryomario/homepage"
+            }
+        ]
+    }
 ]
