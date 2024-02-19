@@ -46,4 +46,16 @@
             }
         ]
     }
+    ,
+    {
+        "name": "Clock Javascript",
+        "desc": "Clock web based application. Running on web client JavaScript engine.",
+        "imageSrc": "https://shots.codepen.io/username/pen/zYezvgR-512.jpg?version=1700049164",
+        "links": [
+            {
+                "title": "Go to Pen",
+                "href": "https://codepen.io/ryomario/full/zYezvgR"
+            }
+        ]
+    }
 ]
