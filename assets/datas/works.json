@@ -30,4 +30,20 @@
             }
         ]
     }
+    ,
+    {
+        "name": "CalcKu",
+        "desc": "Calculator web based application. Do some actions like real calculator.",
+        "imageSrc": "https://github.com/ryomario/calcku/blob/main/images/preview.png?raw=true",
+        "links": [
+            {
+                "title": "Demo",
+                "href": "http://ryomario.github.io/calcku/"
+            },
+            {
+                "title": "Go to Repos",
+                "href": "https://github.com/ryomario/calcku"
+            }
+        ]
+    }
 ]
