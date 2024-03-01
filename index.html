@@ -43,6 +43,7 @@
                     <li class="nav-item"><a href="#homepage" class="nav-link">Homepage</a></li>
                     <li class="nav-item"><a href="#works" class="nav-link">My Works</a></li>
                     <li class="nav-item"><a href="#about" class="nav-link">About me</a></li>
+                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
                 </ul>
             </div>
         </div>
@@ -109,6 +110,42 @@
             </div>
         </div>
     </section>
+
+    <!-- Start Contact Area -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center inner">
+                    <div class="contact-content">
+                        <h1>contact form</h1>
+                        <div class="row">                            
+                            <div class="col-sm-12">
+                                <p>Send me some messages on <a href="mailto:" data-profile="email"></a> or type what you want to send to me via the form below.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <form action="mailto:" data-profile="email" method="get" enctype="text/plain" class="contact-form">
+                    <div class="row">
+                        <div class="col-sm-6 contact-form-left">
+                            <div class="form-group">
+                                <input name="name" type="text" class="form-control" id="name" placeholder="Name">
+                                <input type="email" name="mail" class="form-control" id="mail" placeholder="Email">
+                                <input name="subject" type="text" class="form-control" id="subject" placeholder="Subject">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 contact-form-right">
+                            <div class="form-group">
+                                <textarea name="body" rows="6" class="form-control" id="comment" placeholder="Your message here..."></textarea>
+                                <button type="submit" class="btn btn-default">Send</button>
+                            </div>
+                        </div>                        
+                    </div>
+                </form>    
+            </div>
+        </section>
+        <!-- End Contact Area -->
     
     <!-- Start Footer Area -->
     <footer id="footer-area">
@@ -127,7 +164,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12 text-center">             
-                        <p class="copy">Copyright © 2023 Ryomario. <a href="mailto:ryomario1802@gmail.com">ryomario1802@gmail.com</a></p>
+                        <p class="copy">Copyright © 2023 Ryomario. <a href="mailto:" data-profile="email"></a></p>
                     </div>
                 </div>
             </div>
@@ -151,12 +188,12 @@
                 imageSrc: '/assets/images/bg-header.jpg',
                 speed: 0.2
             });
-            $('.services-section').parallax({
-                imageSrc: 'img/bg-2.jpg',
-                speed: 0.2
-            });
-            $('.contact-section').parallax({
-                imageSrc: 'img/bg-3.jpg',
+            // $('.services-section').parallax({
+            //     imageSrc: 'img/bg-2.jpg',
+            //     speed: 0.2
+            // });
+            $('#contact').parallax({
+                imageSrc: '/assets/images/luke-miller-BRoHnCV_6tc-unsplash.jpg',
                 speed: 0.2
             });    
     

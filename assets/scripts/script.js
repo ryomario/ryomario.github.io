@@ -2,11 +2,31 @@ import profile from '../datas/profile.json' assert { type: 'json' };
 import works from '../datas/works.json' assert { type: 'json' };
 
 const nameElements = document.querySelectorAll('[data-profile=name]');
+const emailElements = document.querySelectorAll('[data-profile=email]');
 const jobsInlineElements = document.querySelectorAll('[data-profile=jobs-inline]');
 const jobsDescElements = document.querySelectorAll('[data-profile=jobs-desc]');
 const downloadCVAnchorElements = document.querySelectorAll('a[data-profile=download-cv]');
 
 nameElements.forEach(el => el.textContent = profile.name);
+emailElements.forEach(el => {
+    if (el instanceof HTMLAnchorElement) {
+        el.textContent = profile.email;
+        el.href = 'mailto:'+profile.email;
+    } else if (el instanceof HTMLFormElement) {
+        el.action = 'mailto:'+profile.email;
+    } else {
+        const target = el.getAttribute('data-target');
+        if (target && target != ''){
+            const targetEls = document.querySelectorAll(target);
+            if (targetEls){
+                for(let targetEl of targetEls) {
+                    targetEl.textContent = profile.email;
+                }
+            }
+        }
+    }
+
+});
 jobsInlineElements.forEach(el => el.textContent = profile.jobs.join(', '))
 jobsDescElements.forEach(el => el.innerHTML = profile.jobsDesc.map(v => `<p>${v}</p>`).join(''));
 downloadCVAnchorElements.forEach(el => el.href = profile.downloadCV);
@@ -18,7 +38,7 @@ const createWorkElement = (work,active) => {
     const txt = `
     <div class="carousel-item ${active?'active':''}">
         <div class="feature-content">
-            <img src="${work.imageSrc}" alt="Image">
+            <img src="${work.imageSrc}" alt="Image" class="feature-content-image">
             <h2 class="feature-content-title green-text">${work.name}</h2>
             <p class="feature-content-description">${work.desc}</p>
             ${(work.links && work.links.length > 0)? '<div class="feature-content-link-container">'+work.links.map(link => `<a href="${link.href}" target="_blank" class="feature-content-link green-btn">${link.title}</a>`).join(' ')+'</div>':''}
