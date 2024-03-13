@@ -55,40 +55,84 @@ works.forEach(work => {
 
     worksContainer.appendChild(tmpl);
 });
-const myWorkCarouselEl = document.querySelector('#workCarousel');
 
-if (window.matchMedia("(min-width:640px)").matches){
-    (()=>{
-        const carousel = new bootstrap.Carousel(myWorkCarouselEl, {
-            interval: false
-        })
 
-        const carouselWidth = worksContainer.scrollWidth;
-        const workItemWidth = $('.carousel-item').width();
-        const visibleCarouselWidth = $('.carousel').width();
+// controller
+
+let initWorkCarousel;
+(initWorkCarousel = () => {
+    const myWorkCarouselEl = document.querySelector('#workCarousel');
     
-        let scrollPosition = 0;
-        $('.carousel-control-next').on('click', function(){
-            if(scrollPosition < (carouselWidth - visibleCarouselWidth)) {
-                scrollPosition = scrollPosition + workItemWidth;
-            } else {
-                scrollPosition = 0;
-            }
-            $('.carousel-inner').animate({scrollLeft: scrollPosition},600);
-        });
+    if (window.matchMedia("(min-width:640px)").matches){
+        (()=>{
+            const carousel = new bootstrap.Carousel(myWorkCarouselEl, {
+                interval: false
+            })
     
-        $('.carousel-control-prev').on('click', function(){
-            if(scrollPosition > 0) {
-                scrollPosition = scrollPosition - workItemWidth;
-            } else {
-                scrollPosition = carouselWidth - visibleCarouselWidth;
-            }
-            $('.carousel-inner').animate({scrollLeft: scrollPosition},600);
-        })
-    })()
-} else {
-    myWorkCarouselEl.classList.add('slide');
-}
+            const carouselWidth = worksContainer.scrollWidth;
+            const workItemWidth = $('.carousel-item').width();
+            const visibleCarouselWidth = $('.carousel').width();
+        
+            let scrollPosition = 0;
+            let moved = false;
+            $('.carousel-control-next').off('click');
+            $('.carousel-control-next').on('click', function(){
+                if (moved) return;
+                if(scrollPosition < (carouselWidth - visibleCarouselWidth)) {
+                    scrollPosition = scrollPosition + workItemWidth;
+                } else {
+                    $('.carousel-item:first').appendTo($('.carousel-inner'));
+                    $('.carousel-inner').animate({scrollLeft: scrollPosition - workItemWidth},0);
+                }
+                moved = true;
+                $('.carousel-inner').animate({scrollLeft: scrollPosition},600,()=>{
+                    moved = false;
+                });
+            });
 
+            $('.carousel-control-prev').off('click');
+            $('.carousel-control-prev').on('click', function(){
+                if (moved) return;
+                if(scrollPosition > 0) {
+                    scrollPosition = scrollPosition - workItemWidth;
+                } else {
+                    // scrollPosition = carouselWidth - visibleCarouselWidth;
+                    $('.carousel-item:last').prependTo($('.carousel-inner'));
+                    $('.carousel-inner').animate({scrollLeft: scrollPosition + workItemWidth},0);
+                }
+                moved = true;
+                $('.carousel-inner').animate({scrollLeft: scrollPosition},600,()=>{
+                    moved = false;
+                });
+            })
+        })()
+    } else {
+        myWorkCarouselEl.classList.add('slide');
+    }
+})();
+
+
+var resizeTimer = false;
+
+$(window).on('resize', () => {
+
+  if( !resizeTimer ) {
+	$(window).trigger('resizestart');  	
+  }
+
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function() {
+
+	resizeTimer = false;
+	$(window).trigger('resizeend');
+            
+  }, 250);
+
+}).on('resizestart', function(){
+	// console.log('Started resizing the window');
+}).on('resizeend', function(){
+	// console.log('Done resizing the window');
+    initWorkCarousel();
+});
 
 // End my Works
