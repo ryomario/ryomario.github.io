@@ -1,0 +1,8 @@
+User-agent: Googlebot
+Disallow: /nogooglebot/
+
+User-agent: AdsBot
+User-agent: *
+Allow: /
+
+Sitemap: https://ryomario.github.io/sitemap.xml
