@@ -47,6 +47,21 @@ const createWorkElement = (work,active) => {
     return $.parseHTML(txt.trim())[0];
 }
 
+// Background load
+$('.section').each((idx,sectionEl) => {
+    const imageURL = sectionEl.getAttribute('data-bg');
+    if(imageURL) {
+        const img = new Image();
+        img.onload = () => {
+            sectionEl.style.backgroundImage = 'url('+img.src+')';
+            sectionEl.classList.add('bg-loaded');
+        }
+        img.src = imageURL;
+    }
+})
+// end bg load
+
+
 worksContainer.childNodes.forEach(node => node.remove());
 let active = true;
 works.forEach(work => {

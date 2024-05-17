@@ -32,32 +32,42 @@
 </head>
 <body>
     <!-- NAVIGATION -->
-    <nav id="nav" class="navbar bg-dark fixed-top navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
-        <div class="container">
-            <!-- <a class="navbar-brand" href="#">Ryomario</a> -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse single-page-nav" id="navbarToggler">
-                <ul class="navbar-nav navbar-nav-scroll m-auto mb-2 mb-lg-0" style="--bs-scroll-height: 250px;">
-                    <li class="nav-item"><a href="#homepage" class="nav-link">Homepage</a></li>
-                    <li class="nav-item"><a href="#works" class="nav-link">My Works</a></li>
-                    <li class="nav-item"><a href="#about" class="nav-link">About me</a></li>
-                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
-                </ul>
+    <nav id="nav" class="navbar navbar-expand-sm fixed-top-fit-center" data-bs-theme="dark">
+        <div class="container-fluid">
+            <div class="nav-pills bg-primary rounded-5 shadow-sm">
+                <!-- <a class="navbar-brand" href="#">Ryomario</a> -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div id="navbar" class="collapse navbar-collapse" style="--bs-scroll-height: 250px;">
+                    <ul class="nav flex-nowrap nav-fill gap-2 p-1 small mx-auto" id="single-page-nav" role="tablist" style="--bs-nav-link-color: var(--bs-white); --bs-nav-pills-link-active-color: var(--bs-primary); --bs-nav-pills-link-active-bg: var(--bs-white);">
+                        <li class="nav-item" role="presentation">
+                           <a href="#homepage" class="nav-link active rounded-5" id="homepage-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">Homepage</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                           <a href="#works" class="nav-link rounded-5" id="works-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">Works</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                           <a href="#about" class="nav-link rounded-5" id="about-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">About</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                           <a href="#contact" class="nav-link rounded-5" id="contact-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">Contact</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
     <!-- END - NAVIGATION -->
 
-    <div id="homepage">
-        <header id="header-area" class="intro-section">
+    <div id="homepage" class="section" data-bg="/assets/images/bg-header.jpg">
+        <header id="header-area" class="intro-section pt-10">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-12 text-center">
+                    <div class="col-sm-12 px-4 py-5 my-5 text-center">
                         <div class="header-content">
-                            <h4>Hello, my name is </h4>
-                            <h1 data-profile="name">Mario</h1>
+                            <h3>Hello, my name is </h3>
+                            <h1 data-profile="name" class="display-5 fw-bold text-body-emphasis">Mario</h1>
                             <h4 data-profile="jobs-inline">Web Developer, Front-End & Back-End Engineer</h4>
                         </div>
                     </div>
@@ -112,7 +122,7 @@
     </section>
 
     <!-- Start Contact Area -->
-    <section id="contact" class="contact-section">
+    <section id="contact" class="section contact-section">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12 text-center inner">
@@ -173,40 +183,25 @@
 
     <script src="/assets/scripts/jquery-1.11.2.min.js"></script>
     <script src="/assets/scripts/jquery.scrollUp.min.js"></script> <!-- https://github.com/markgoodyear/scrollup -->
-    <script src="/assets/scripts/jquery.singlePageNav.min.js"></script> <!-- https://github.com/ChrisWojcik/single-page-nav -->
+    <script src="/assets/scripts/jquery.singlePageNav.js"></script> <!-- http://github.com/davist11/jQuery-One-Page-Nav -->
     <script src="/assets/scripts/bootstrap.min.js"></script> <!-- https://github.com/ChrisWojcik/single-page-nav -->
-    <script src="/assets/scripts/parallax.js-1.3.1/parallax.js"></script> <!-- http://pixelcog.github.io/parallax.js/ -->
     
     <script type="module" src="/assets/scripts/script.js"></script>
     <script>
 
         // HTML document is loaded. DOM is ready.
-        $(function() {  
-    
-        // Parallax
-            $('#header-area').parallax({
-                imageSrc: '/assets/images/bg-header.jpg',
-                speed: 0.2
-            });
-            // $('.services-section').parallax({
-            //     imageSrc: 'img/bg-2.jpg',
-            //     speed: 0.2
-            // });
-            $('#contact').parallax({
-                imageSrc: '/assets/images/luke-miller-BRoHnCV_6tc-unsplash.jpg',
-                speed: 0.2
-            });    
+        $(function() {
     
             // jQuery Scroll Up / Back To Top Image
             $.scrollUp({
                     scrollName: 'scrollUp',      // Element ID
                     scrollDistance: 300,         // Distance from top/bottom before showing element (px)
                     scrollFrom: 'top',           // 'top' or 'bottom'
-                    scrollSpeed: 0,            // Speed back to top (ms)
+                    scrollSpeed: 300,            // Speed back to top (ms)
                     easingType: 'linear',        // Scroll to top easing (see http://easings.net/)
-                    animation: 'fade',           // Fade, slide, none
-                    animationSpeed: 0,         // Animation speed (ms)		        
-                    scrollText: '', // Text for element, can contain HTML		        
+                    animation: 'slide',           // Fade, slide, none
+                    animationSpeed: 200,         // Animation speed (ms)		        
+                    scrollText: 'Scroll to top', // Text for element, can contain HTML		        
                     scrollImg: true            // Set true to use image		        
                 });
     
@@ -223,22 +218,30 @@
             //     }
             // });
     
-            $('.single-page-nav').singlePageNav({
-                offset: $('#nav').outerHeight(),
-                speed: 0,
+            $('#single-page-nav').onePageNav({
+                // offset: $('#nav').outerHeight(),
+                scrollSpeed: 750,
                 filter: ':not(.external)',
-                updateHash: true,
-                currentClass: "active"
+                changeHash: false,
+                currentClass: "active",
+                begin: () => {
+                    $('#navbar').removeClass('show');
+                },
+                // end: () => {
+                //     $('#single-page-nav').removeClass('scrolling');
+                //     console.log('stop');
+                // },
             });
+            $('.section').css('padding-top',$('#nav').outerHeight());
     
             // $('.navbar-toggler').click(function(){
             //     $('.single-page-nav').toggleClass('show');
             // });
     
-            $('.single-page-nav a').click(function(){
+            // $('.single-page-nav a').click(function(){
                 // $('.navbar-toggler').click();
-                $('.single-page-nav').removeClass('show');
-            });
+            //     $('.single-page-nav').removeClass('show');
+            // });
             
         });
     </script>
