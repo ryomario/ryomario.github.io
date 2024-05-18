@@ -41,7 +41,7 @@ const createWorkElement = (work,active) => {
         <div class="carousel-caption">
             <h2 class="highlight-works-content-title green-text">${work.name}</h2>
             <p class="highlight-works-content-description">${work.desc}</p>
-            ${(work.links && work.links.length > 0)? '<div class="highlight-works-content-link-container">'+work.links.map(link => `<a href="${link.href}" target="_blank" class="btn btn-light">${link.title}</a>`).join(' ')+'</div>':''}
+            ${(work.links && work.links.length > 0)? '<div class="highlight-works-content-link-container">'+work.links.map(link => `<a href="${link.href}" target="_blank" class="btn btn-dark">${link.title}</a>`).join(' ')+'</div>':''}
         </div>
     </div>`;
     return $.parseHTML(txt.trim())[0];
@@ -129,13 +129,15 @@ works.forEach(work => {
 // Work repos
 function getElapsedTime(difference) {
     //Arrange the difference of date in days, hours, minutes, and seconds format
-    let months = Math.floor(difference / (1000 * 60 * 60 * 24 * 30));
+    let years = Math.floor(difference / (1000 * 60 * 60 * 24 * 30 * 12));
+    let months = Math.floor((difference % (1000 * 60 * 60 * 24 * 30 * 12)) / (1000 * 60 * 60 * 24 * 30));
     let days = Math.floor((difference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
     let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
     let seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
     let result = '';
+    if(years > 0)result += years + " years ";
     if(months > 0)result += months + " months ";
     if(days > 0)result += days + " days ";
     if(hours > 0)result += hours + " hours ";
@@ -162,7 +164,7 @@ const initRepos = (repos) => {
                     <a href="${repo['html_url']}" class="btn btn-light">Go to repo</a>
                 </div>
                 <div class="card-footer">
-                    <small class="text-body-secondary">Last updated ${getElapsedTime(repoDate - currTime)}</small>
+                    <small class="text-body-secondary">Last updated ${getElapsedTime(currTime - repoDate)}</small>
                 </div>
             </div>
         </div>
