@@ -36,12 +36,12 @@ downloadCVAnchorElements.forEach(el => el.href = profile.downloadCV);
 const worksContainer = document.querySelector('[data-container=works]');
 const createWorkElement = (work,active) => {
     const txt = `
-    <div class="carousel-item ${active?'active':''}">
-        <div class="feature-content">
-            <img src="${work.imageSrc}" alt="Image" class="feature-content-image">
-            <h2 class="feature-content-title green-text">${work.name}</h2>
-            <p class="feature-content-description">${work.desc}</p>
-            ${(work.links && work.links.length > 0)? '<div class="feature-content-link-container">'+work.links.map(link => `<a href="${link.href}" target="_blank" class="feature-content-link green-btn">${link.title}</a>`).join(' ')+'</div>':''}
+    <div class="carousel-item ${active?'active':''} highlight-works-content">
+        <img src="${work.imageSrc}" alt="Image" class="highlight-works-content-image">
+        <div class="carousel-caption">
+            <h2 class="highlight-works-content-title green-text">${work.name}</h2>
+            <p class="highlight-works-content-description">${work.desc}</p>
+            ${(work.links && work.links.length > 0)? '<div class="highlight-works-content-link-container">'+work.links.map(link => `<a href="${link.href}" target="_blank" class="btn btn-light">${link.title}</a>`).join(' ')+'</div>':''}
         </div>
     </div>`;
     return $.parseHTML(txt.trim())[0];
@@ -74,57 +74,57 @@ works.forEach(work => {
 
 // controller
 
-let initWorkCarousel;
-(initWorkCarousel = () => {
-    const myWorkCarouselEl = document.querySelector('#workCarousel');
+// let initWorkCarousel;
+// (initWorkCarousel = () => {
+//     const myWorkCarouselEl = document.querySelector('#workCarousel');
     
-    if (window.matchMedia("(min-width:640px)").matches){
-        (()=>{
-            const carousel = new bootstrap.Carousel(myWorkCarouselEl, {
-                interval: false
-            })
+//     if (window.matchMedia("(min-width:640px)").matches){
+//         (()=>{
+//             const carousel = new bootstrap.Carousel(myWorkCarouselEl, {
+//                 interval: false
+//             })
     
-            const carouselWidth = worksContainer.scrollWidth;
-            const workItemWidth = $('.carousel-item').width();
-            const visibleCarouselWidth = $('.carousel').width();
+//             const carouselWidth = worksContainer.scrollWidth;
+//             const workItemWidth = $('.carousel-item').width();
+//             const visibleCarouselWidth = $('.carousel').width();
         
-            let scrollPosition = 0;
-            let moved = false;
-            $('.carousel-control-next').off('click');
-            $('.carousel-control-next').on('click', function(){
-                if (moved) return;
-                if(scrollPosition < (carouselWidth - visibleCarouselWidth)) {
-                    scrollPosition = scrollPosition + workItemWidth;
-                } else {
-                    $('.carousel-item:first').appendTo($('.carousel-inner'));
-                    $('.carousel-inner').animate({scrollLeft: scrollPosition - workItemWidth},0);
-                }
-                moved = true;
-                $('.carousel-inner').animate({scrollLeft: scrollPosition},600,()=>{
-                    moved = false;
-                });
-            });
+//             let scrollPosition = 0;
+//             let moved = false;
+//             $('.carousel-control-next').off('click');
+//             $('.carousel-control-next').on('click', function(){
+//                 if (moved) return;
+//                 if(scrollPosition < (carouselWidth - visibleCarouselWidth)) {
+//                     scrollPosition = scrollPosition + workItemWidth;
+//                 } else {
+//                     $('.carousel-item:first').appendTo($('.carousel-inner'));
+//                     $('.carousel-inner').animate({scrollLeft: scrollPosition - workItemWidth},0);
+//                 }
+//                 moved = true;
+//                 $('.carousel-inner').animate({scrollLeft: scrollPosition},600,()=>{
+//                     moved = false;
+//                 });
+//             });
 
-            $('.carousel-control-prev').off('click');
-            $('.carousel-control-prev').on('click', function(){
-                if (moved) return;
-                if(scrollPosition > 0) {
-                    scrollPosition = scrollPosition - workItemWidth;
-                } else {
-                    // scrollPosition = carouselWidth - visibleCarouselWidth;
-                    $('.carousel-item:last').prependTo($('.carousel-inner'));
-                    $('.carousel-inner').animate({scrollLeft: scrollPosition + workItemWidth},0);
-                }
-                moved = true;
-                $('.carousel-inner').animate({scrollLeft: scrollPosition},600,()=>{
-                    moved = false;
-                });
-            })
-        })()
-    } else {
-        myWorkCarouselEl.classList.add('slide');
-    }
-})();
+//             $('.carousel-control-prev').off('click');
+//             $('.carousel-control-prev').on('click', function(){
+//                 if (moved) return;
+//                 if(scrollPosition > 0) {
+//                     scrollPosition = scrollPosition - workItemWidth;
+//                 } else {
+//                     // scrollPosition = carouselWidth - visibleCarouselWidth;
+//                     $('.carousel-item:last').prependTo($('.carousel-inner'));
+//                     $('.carousel-inner').animate({scrollLeft: scrollPosition + workItemWidth},0);
+//                 }
+//                 moved = true;
+//                 $('.carousel-inner').animate({scrollLeft: scrollPosition},600,()=>{
+//                     moved = false;
+//                 });
+//             })
+//         })()
+//     } else {
+//         myWorkCarouselEl.classList.add('slide');
+//     }
+// })();
 
 
 var resizeTimer = false;
@@ -147,7 +147,7 @@ $(window).on('resize', () => {
 	// console.log('Started resizing the window');
 }).on('resizeend', function(){
 	// console.log('Done resizing the window');
-    initWorkCarousel();
+    // initWorkCarousel();
 });
 
 // End my Works

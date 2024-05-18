@@ -151,8 +151,6 @@
 					self.config.begin();
 				}
 
-				self.didScrollOnClick = true;
-
 				//Change the highlighted nav item
 				self.adjustNav(self, $link);
 
