@@ -126,6 +126,64 @@ works.forEach(work => {
 //     }
 // })();
 
+// Work repos
+function getElapsedTime(difference) {
+    //Arrange the difference of date in days, hours, minutes, and seconds format
+    let months = Math.floor(difference / (1000 * 60 * 60 * 24 * 30));
+    let days = Math.floor((difference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+    let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    let result = '';
+    if(months > 0)result += months + " months ";
+    if(days > 0)result += days + " days ";
+    if(hours > 0)result += hours + " hours ";
+    if(minutes > 0)result += minutes + " minutes ";
+    if(seconds > 0)result += seconds + " seconds";
+
+    return result + ' ago.';
+ }
+
+const initRepos = (repos) => {
+    const $container = $('#works_gh-repo');
+    $container.empty();
+
+    const currTime = Date.now();
+
+    repos.forEach(repo => {
+        const repoDate = new Date(repo['updated_at']);
+        const txt = `
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 text-bg-secondary border-5 border-info border-white border-top-0 border-start-0 border-end-0">
+                <div class="card-body">
+                    <h3>${repo['full_name']}</h3>
+                    <p class="text-muted">${repo['description'] || repo['name']}</p>
+                    <a href="${repo['html_url']}" class="btn btn-light">Go to repo</a>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary">Last updated ${getElapsedTime(repoDate - currTime)}</small>
+                </div>
+            </div>
+        </div>
+        `;
+        $container.append($.parseHTML(txt.trim()));
+    })
+}
+
+var settings = {
+    "url": "https://api.github.com/users/ryomario/repos",
+    "method": "GET",
+    "timeout": 0,
+    "headers": {
+        "accept": "application/vnd.github+json",
+    },
+};
+
+$.ajax(settings).done(function (response) {
+    initRepos(response);
+});
+
 
 var resizeTimer = false;
 
