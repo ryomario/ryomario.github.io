@@ -127,31 +127,71 @@ works.forEach(work => {
 // })();
 
 // Work repos
-function getElapsedTime(difference) {
+function getElapsedTime(startDate, endDate) {
+    let difference = endDate - startDate;
     //Arrange the difference of date in days, hours, minutes, and seconds format
-    let years = Math.floor(difference / (1000 * 60 * 60 * 24 * 30 * 12));
-    let months = Math.floor((difference % (1000 * 60 * 60 * 24 * 30 * 12)) / (1000 * 60 * 60 * 24 * 30));
-    let days = Math.floor((difference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
-    let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    // let years = Math.floor(difference / (1000 * 60 * 60 * 24 * 30 * 12));
+    // let months = Math.floor((difference % (1000 * 60 * 60 * 24 * 30 * 12)) / (1000 * 60 * 60 * 24 * 30));
+    // let days = Math.floor((difference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+    // let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    // let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
     let seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-    let result = '';
-    if(years > 0)result += years + " years ";
-    if(months > 0)result += months + " months ";
-    if(days > 0)result += days + " days ";
-    if(hours > 0)result += hours + " hours ";
-    if(minutes > 0)result += minutes + " minutes ";
-    if(seconds > 0)result += seconds + " seconds";
+    let oneMonth = (1000 * 60 * 60 * 24 * 30);
+    let threeMonth = 3 * oneMonth;
+    if(difference >= threeMonth) {
+        const options = {
+            month: 'short',
+            day: 'numeric',
+        }
+        if(startDate.getFullYear() != endDate.getFullYear()){
+            options.year = 'numeric';
+        }
+        return ' on '+startDate.toLocaleDateString('en-US',options);
+    }
+    let months = Math.round((difference % (1000 * 60 * 60 * 24 * 30 * 12)) / (1000 * 60 * 60 * 24 * 30));
+    if(months > 0) {
+        if(months == 1)return 'last month';
+        return months + ' months ago';
+    }
+    let days = Math.round((difference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+    if(days > 0) {
+        let weeks = Math.round(days / 7);
+        if(weeks > 0){
+            if(weeks == 1)return 'last week';
+            return weeks + ' weeks ago';
+        }
+        if(days == 1)return 'yesterday';
+        return days + ' days ago';
+    }
+    let hours = Math.round((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    if(hours > 0){
+        if(hours == 1)return 'an hour ago';
+        return hours + ' hours ago';
+    }
+    let minutes = Math.round((difference % (1000 * 60 * 60)) / (1000 * 60));
+    if(minutes > 0){
+        if(minutes == 1)return 'one minute ago';
+        return minutes + ' minutes ago';
+    }
+    return 'a moment ago';
 
-    return result + ' ago.';
+    // let result = '';
+    // if(years > 0)result += years + " years ";
+    // if(months > 0)result += months + " months ";
+    // if(days > 0)result += days + " days ";
+    // if(hours > 0)result += hours + " hours ";
+    // if(minutes > 0)result += minutes + " minutes ";
+    // if(seconds > 0)result += seconds + " seconds";
+
+    // return result + ' ago.';
  }
 
 const initRepos = (repos) => {
     const $container = $('#works_gh-repo');
     $container.empty();
 
-    const currTime = Date.now();
+    const currTime = new Date();
 
     repos.forEach(repo => {
         const repoDate = new Date(repo['updated_at']);
@@ -161,10 +201,13 @@ const initRepos = (repos) => {
                 <div class="card-body">
                     <h3>${repo['full_name']}</h3>
                     <p class="text-muted">${repo['description'] || repo['name']}</p>
-                    <a href="${repo['html_url']}" class="btn btn-light">Go to repo</a>
+                    <a href="${repo['html_url']}" class="btn btn-light card-link" target="_blank">Go to repo</a>
+                    ${repo['homepage']?`
+                    <a href="${repo['homepage']}" class="btn btn-light card-link" target="_blank">Page</a>
+                    `:''}
                 </div>
                 <div class="card-footer">
-                    <small class="text-body-secondary">Last updated ${getElapsedTime(currTime - repoDate)}</small>
+                    <small class="text-body-secondary">Updated ${getElapsedTime(repoDate,currTime)}</small>
                 </div>
             </div>
         </div>
@@ -174,7 +217,7 @@ const initRepos = (repos) => {
 }
 
 var settings = {
-    "url": "https://api.github.com/users/ryomario/repos",
+    "url": "https://api.github.com/users/ryomario/repos?sort=updated",
     "method": "GET",
     "timeout": 0,
     "headers": {
