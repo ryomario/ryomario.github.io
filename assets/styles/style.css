@@ -51,6 +51,9 @@ html, body {
 }
 
 /* my Works */
+#works{
+  --color-gradient: rgb(150, 150, 150);
+}
 #workCarousel .highlight-works-content-image {
   width: 100%;
   height: 60dvh;
@@ -61,7 +64,7 @@ html, body {
   content: '';
   position: absolute;
   top: 0;left: 0;right: 0;bottom: 0;
-  background-image: linear-gradient(transparent, var(--bs-gray-500));
+  background-image: linear-gradient(transparent, var(--color-gradient));
 }
 #workCarousel .carousel-caption {
   color: var(--bs-gray-900);
@@ -71,4 +74,12 @@ html, body {
   #workCarousel .carousel-caption {
     display: none;
   }
+}
+
+#works .bg-gradient-top {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100vh;
+  background-image: linear-gradient(var(--color-gradient), transparent);
 }

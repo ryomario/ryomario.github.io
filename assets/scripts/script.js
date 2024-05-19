@@ -1,5 +1,5 @@
-import profile from '../datas/profile.json' assert { type: 'json' };
-import works from '../datas/works.json' assert { type: 'json' };
+import profile from '../datas/profile.json' with { type: 'json' };
+import works from '../datas/works.json' with { type: 'json' };
 
 const nameElements = document.querySelectorAll('[data-profile=name]');
 const emailElements = document.querySelectorAll('[data-profile=email]');
