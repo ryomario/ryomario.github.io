@@ -201,9 +201,9 @@ const initRepos = (repos) => {
                 <div class="card-body">
                     <h3>${repo['full_name']}</h3>
                     <p class="text-muted">${repo['description'] || repo['name']}</p>
-                    <a href="${repo['html_url']}" class="btn btn-light card-link" target="_blank">Go to repo</a>
+                    <a href="${repo['html_url']}" class="btn btn-light mb-2 me-2" target="_blank">Go to repo</a>
                     ${repo['homepage']?`
-                    <a href="${repo['homepage']}" class="btn btn-light card-link" target="_blank">Page</a>
+                    <a href="${repo['homepage']}" class="btn btn-light mb-2" target="_blank">Page</a>
                     `:''}
                 </div>
                 <div class="card-footer">
