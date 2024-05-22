@@ -187,6 +187,11 @@ function getElapsedTime(startDate, endDate) {
     // return result + ' ago.';
  }
 
+function randomBSColor(prefix = '',excludes = []) {
+    const bs_colors = ['primary','secondary','success','danger','warning','info','light','dark'].filter(color => !excludes.find(c => c.toLowerCase() == color.toLowerCase()));
+    return prefix + '' + bs_colors[Math.floor(Math.random() * bs_colors.length)];
+}
+
 const initRepos = (repos) => {
     const $container = $('#works_gh-repo');
     $container.empty();
@@ -201,6 +206,7 @@ const initRepos = (repos) => {
                 <div class="card-body">
                     <h3>${repo['full_name']}</h3>
                     <p class="text-muted">${repo['description'] || repo['name']}</p>
+                    <p><span class="badge ${randomBSColor('text-bg-',['secondary'])}">${repo['language']}</span></p>
                     <a href="${repo['html_url']}" class="btn btn-light mb-2 me-2" target="_blank">Go to repo</a>
                     ${repo['homepage']?`
                     <a href="${repo['homepage']}" class="btn btn-light mb-2" target="_blank">Page</a>
