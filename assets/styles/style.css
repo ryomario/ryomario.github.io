@@ -200,3 +200,10 @@ body.no-scroll {
 .label.copy {
   cursor: pointer;
 }
+
+.ui.horizontal.celled.list>.item {
+  border: 0 !important;
+}
+.ui.horizontal.list>.item>.content {
+  width: fit-content;
+}
