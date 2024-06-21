@@ -101,8 +101,42 @@ body.no-scroll {
   }
 }
 
+#works .cards {
+  max-height: 100vh;
+  overflow-y: hidden;
+  position: relative;
+}
+
+#works .cards .show.more {
+  font-weight: bold;
+  font-size: 1.5em;
+  line-height: 1em;
+  display: flex;
+  position: absolute;
+  height: 100px;
+  background-image: linear-gradient(transparent, #fff 85%);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  visibility: visible;
+  justify-content: center;
+  align-items: flex-end;
+  cursor: pointer;
+  color: #0008;
+  transition: color 100ms linear;
+}
+#works .cards .show.more:hover {
+  color: #000a;
+}
+
 .card > .image {
   aspect-ratio: 2 / 1;
+}
+.card > .image img {
+  aspect-ratio: inherit;
+  object-fit: cover;
+  object-position: top;
 }
 .card {
   overflow: hidden;

@@ -3,6 +3,7 @@ import works from '../datas/works.json' with { type: 'json' };
 
 const nameElements = document.querySelectorAll('[data-profile=name]');
 const emailElements = document.querySelectorAll('[data-profile=email]');
+const anchorElements = document.querySelectorAll('a[data-anchor]');
 const jobsInlineElements = document.querySelectorAll('[data-profile=jobs-inline]');
 const jobsDescElements = document.querySelectorAll('[data-profile=jobs-desc]');
 const downloadCVAnchorElements = document.querySelectorAll('a[data-profile=download-cv]');
@@ -16,6 +17,13 @@ emailElements.forEach(el => {
         el.action = 'mailto:'+profile.email;
     } else {
         el.textContent = profile.email;
+    }
+
+});
+anchorElements.forEach(el => {
+    if (el instanceof HTMLAnchorElement) {
+        if(!el.classList.contains('no-text'))el.textContent = profile[el.dataset.profile];
+        el.href = profile[el.dataset.profile];
     }
 
 });
@@ -92,6 +100,24 @@ works.forEach((work, idx) => {
 });
 
 worksProgress.setDone();
+
+if((worksContainer.scrollHeight + 100) >= window.innerHeight) {
+    const btn_showmore = $('<div class="show more"><div>Show More</div><i class="angle down icon"></i></div>');
+    btn_showmore.appendTo(worksContainer);
+
+    btn_showmore.click(e => {
+        worksContainer.animate([{
+            maxHeight: worksContainer.scrollHeight + 'px'
+        }],{duration:500,iterations:1,easing:'ease-in-out'})
+            .finished.then(val => {
+                worksContainer.style.maxHeight = 'unset';
+                worksContainer.style.overflowY = 'visible';
+                btn_showmore[0].animate([{opacity: 0}],200).finished.then(() => {
+                    btn_showmore.remove();
+                });
+            });
+    });
+}
 
 
 // Github profile

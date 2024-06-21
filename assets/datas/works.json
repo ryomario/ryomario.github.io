@@ -1,7 +1,7 @@
 [
     {
         "name": "Tic Tac Toe - xOxO",
-        "desc": "Strategic game 1 vs 1.",
+        "desc": "Strategic game 1 vs 1. (AI implemented)",
         "imageSrc": "https://github.com/ryomario/tic-tac-toe_xoxo/blob/main/assets/images/preview.png?raw=true",
         "links": [
             {
@@ -13,6 +13,42 @@
                 "title": "Repo",
                 "icon": "github",
                 "href": "https://github.com/ryomario/tic-tac-toe_xoxo"
+            }
+        ]
+    }
+    ,
+    {
+        "name": "VLab - Suhu",
+        "desc": "Aplikasi interaktif berbasis Web - Virtual Laboratorium Materi Suhu",
+        "imageSrc": "https://github.com/ryomario/vlab-suhu/blob/main/images/preview.png?raw=true",
+        "links": [
+            {
+                "title": "Demo",
+                "icon": "external alternate",
+                "href": "https://ryomario.github.io/vlab-suhu/"
+            },
+            {
+                "title": "Repo",
+                "icon": "github",
+                "href": "https://github.com/ryomario/vlab-suhu"
+            }
+        ]
+    }
+    ,
+    {
+        "name": "VLab - Tatasurya",
+        "desc": "Aplikasi interaktif berbasis Web - Virtual Laboratorium Materi Tatasurya",
+        "imageSrc": "https://github.com/ryomario/vlab-tatasurya/blob/main/images/preview.png?raw=true",
+        "links": [
+            {
+                "title": "Demo",
+                "icon": "external alternate",
+                "href": "https://ryomario.github.io/vlab-tatasurya/"
+            },
+            {
+                "title": "Repo",
+                "icon": "github",
+                "href": "https://github.com/ryomario/vlab-tatasurya"
             }
         ]
     }
@@ -80,6 +116,45 @@
                 "title": "Pen",
                 "icon": "codepen",
                 "href": "https://codepen.io/ryomario/full/zYezvgR"
+            }
+        ]
+    }
+    ,
+    {
+        "name": "Star Rating - With Input Range (CSS Only)",
+        "desc": "Rate 0 - 5 using stars. Build with input range, no JavaScript needed!",
+        "imageSrc": "https://codepen.io/ryomario/pen/WNYXpRG/image/small.png",
+        "links": [
+            {
+                "title": "Pen",
+                "icon": "codepen",
+                "href": "https://codepen.io/ryomario/full/WNYXpRG"
+            }
+        ]
+    }
+    ,
+    {
+        "name": "Age Calculator",
+        "desc": "Count the date difference between two dates.",
+        "imageSrc": "https://codepen.io/ryomario/pen/YzbemWQ/image/small.png",
+        "links": [
+            {
+                "title": "Pen",
+                "icon": "codepen",
+                "href": "https://codepen.io/ryomario/full/YzbemWQ"
+            }
+        ]
+    }
+    ,
+    {
+        "name": "Chars Rain",
+        "desc": "Canvas rendering many chars in whole screen like a rain.",
+        "imageSrc": "https://codepen.io/ryomario/pen/oNdGrLd/image/small.png",
+        "links": [
+            {
+                "title": "Pen",
+                "icon": "codepen",
+                "href": "https://codepen.io/ryomario/full/oNdGrLd"
             }
         ]
     }
