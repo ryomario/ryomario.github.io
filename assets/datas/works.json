@@ -1,15 +1,35 @@
 [
     {
-        "name": "Webstatic BookShelf",
-        "desc": "BookShelf web application ",
-        "imageSrc": "https://github.com/ryomario/webstatic-bookshelf/blob/main/images/preview [theme dark].png?raw=true",
+        "name": "Tic Tac Toe - xOxO",
+        "desc": "Strategic game 1 vs 1.",
+        "imageSrc": "https://github.com/ryomario/tic-tac-toe_xoxo/blob/main/assets/images/preview.png?raw=true",
         "links": [
             {
                 "title": "Demo",
+                "icon": "external alternate",
+                "href": "https://ryomario.github.io/tic-tac-toe_xoxo/"
+            },
+            {
+                "title": "Repo",
+                "icon": "github",
+                "href": "https://github.com/ryomario/tic-tac-toe_xoxo"
+            }
+        ]
+    }
+    ,
+    {
+        "name": "Webstatic BookShelf",
+        "desc": "BookShelf web application ",
+        "imageSrc": "https://github.com/ryomario/webstatic-bookshelf/blob/main/assets/images/preview [theme dark].png?raw=true",
+        "links": [
+            {
+                "title": "Demo",
+                "icon": "external alternate",
                 "href": "https://ryomario.github.io/webstatic-bookshelf/"
             },
             {
-                "title": "Go to Repos",
+                "title": "Repo",
+                "icon": "github",
                 "href": "https://github.com/ryomario/webstatic-bookshelf"
             }
         ]
@@ -22,10 +42,12 @@
         "links": [
             {
                 "title": "Demo",
+                "icon": "external alternate",
                 "href": "https://ryomario.github.io/homepage/"
             },
             {
-                "title": "Go to Repos",
+                "title": "Repo",
+                "icon": "github",
                 "href": "https://github.com/ryomario/homepage"
             }
         ]
@@ -34,14 +56,16 @@
     {
         "name": "CalcKu",
         "desc": "Calculator web based application. Do some actions like real calculator.",
-        "imageSrc": "https://github.com/ryomario/calcku/blob/main/images/preview.png?raw=true",
+        "imageSrc": "https://github.com/ryomario/calcku/blob/main/images/ryomario.github.io_calcku_.png?raw=true",
         "links": [
             {
                 "title": "Demo",
+                "icon": "external alternate",
                 "href": "http://ryomario.github.io/calcku/"
             },
             {
-                "title": "Go to Repos",
+                "title": "Repo",
+                "icon": "github",
                 "href": "https://github.com/ryomario/calcku"
             }
         ]
@@ -50,10 +74,11 @@
     {
         "name": "Clock Javascript",
         "desc": "Clock web based application. Running on web client JavaScript engine.",
-        "imageSrc": "assets/images/pen-clock.jpg",
+        "imageSrc": "https://codepen.io/ryomario/pen/zYezvgR/image/small.png",
         "links": [
             {
-                "title": "Go to Pen",
+                "title": "Pen",
+                "icon": "codepen",
                 "href": "https://codepen.io/ryomario/full/zYezvgR"
             }
         ]

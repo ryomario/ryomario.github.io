@@ -1,86 +1,168 @@
-/* Override bootstrap styles */
-#nav .nav-link:not(.active):not(:hover):focus {
-  color: var(--bs-nav-link-color);
-}
-#single-page-nav.scrolling .nav-link.active {
-  color: var(--bs-nav-link-color);
-  background: 0 0;
-}
-
 html, body {
   scroll-behavior: inherit !important;
   overflow-x: hidden;
-  font-family: 'Open Sans', Arial, sans-serif;
+  height: auto;
 }
-/* Navbar */
-#nav {
-  z-index: 999;
-}
-@media (max-width: 576px) {
-  #nav, #nav .nav-pills {
-    width: 100%;
-  }
-  #nav .nav {
-    flex-direction: column;
-  }
-  #nav .nav-pills {
-    border-radius: 0.5rem !important;
-  }
-}
-#scrollUp {
-  background-image: url(/assets/images/top.png);
-  background-size: 50px 50px; /* same with element size */
-  bottom: 30px;
-  right: 30px;
-  width: 50px;
-  height: 50px;
-}
-/* Custom Styles */
-.section {
-}
-.intro-section {
-  min-height: 100dvh;
-  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
-  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+*:not(i) {
+  font-family: 'Open Sans', Arial, sans-serif !important;
 }
 
-.fixed-top-fit-center {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+
+.hidden.menu {
+  display: none;
 }
 
-/* my Works */
-#works{
-  --color-gradient: rgb(150, 150, 150);
-}
-#workCarousel .highlight-works-content-image {
-  width: 100%;
-  height: 60dvh;
-  object-fit: contain;
-  background-color: var(--bs-dark);
-}
-#workCarousel .carousel-item::after {
-  content: '';
+body.no-scroll {
+  overflow-y: hidden;
   position: absolute;
-  top: 0;left: 0;right: 0;bottom: 0;
-  background-image: linear-gradient(transparent, var(--color-gradient));
 }
-#workCarousel .carousel-caption {
-  color: var(--bs-gray-900);
-  z-index: 5;
+
+.masthead.segment {
+  min-height: 100vh;
+  padding: 1em 0em;
 }
-@media (max-width: 680px) {
-  #workCarousel .carousel-caption {
+.masthead .logo.item img {
+  margin-right: 1em;
+}
+.masthead .ui.menu .ui.button {
+  margin-left: 0.5em;
+}
+.masthead h1.ui.header {
+  margin-top: 3em;
+  margin-bottom: 0em;
+  font-size: 4em;
+  font-weight: normal;
+}
+.masthead h2 {
+  font-size: 1.7em;
+  font-weight: normal;
+}
+
+.ui.vertical.stripe {
+  padding: 8em 0em;
+}
+.ui.vertical.stripe h3 {
+  font-size: 2em;
+}
+.ui.vertical.stripe .button + h3,
+.ui.vertical.stripe p + h3 {
+  margin-top: 3em;
+}
+.ui.vertical.stripe .floated.image {
+  clear: both;
+}
+.ui.vertical.stripe p {
+  font-size: 1.33em;
+}
+.ui.vertical.stripe .horizontal.divider {
+  margin: 3em 0em;
+}
+
+.quote.stripe.segment {
+  padding: 0em;
+}
+.quote.stripe.segment .grid .column {
+  padding-top: 5em;
+  padding-bottom: 5em;
+}
+
+.footer.segment {
+  padding: 5em 0 1em;
+}
+
+.secondary.pointing.menu .toc.item {
+  display: none;
+}
+.segment h1.header {
+  margin-bottom: 2em;
+}
+
+@media only screen and (max-width: 700px) {
+  .ui.fixed.menu {
+    display: none !important;
+  }
+  .secondary.pointing.menu .item,
+  .secondary.pointing.menu .menu {
+    display: none;
+  }
+  .secondary.pointing.menu .toc.item {
+    display: block;
+  }
+  .masthead.segment {
+    min-height: 350px;
+  }
+  .masthead h1.ui.header {
+    font-size: 2em;
+    margin-top: 1.5em;
+  }
+  .masthead h2 {
+    margin-top: 0.5em;
+    font-size: 1.5em;
+  }
+}
+
+.card > .image {
+  aspect-ratio: 2 / 1;
+}
+.card {
+  overflow: hidden;
+}
+
+.card>.content.work {
+  position: absolute;
+  width: 100%;
+  background-color: #0009 !important;
+  color: #fff;
+  border: 0 !important;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition-property: opacity visibility;
+  transition-duration: 100ms;
+  transition-timing-function: linear;
+  user-select: none;
+}
+.card>.content.work * {
+  color: inherit !important;
+}
+.card:hover>.content.work {
+  opacity: 1;
+  visibility: visible;
+}
+
+.spaced .button {
+  margin-top: 0.5em;
+}
+
+@media only screen and (max-width: 767px) {
+  .ui.stackable.grid .ui.vertical.divider {
     display: none;
   }
 }
 
-#works .bg-gradient-top {
-  position: absolute;
-  display: block;
-  width: 100%;
-  height: 100vh;
-  background-image: linear-gradient(var(--color-gradient), transparent);
+#contact .button {
+  display: inline-block;
+}
+
+.ui.telegram.button {
+  background-color: #0088cc;
+  color: #fff;
+  text-shadow: none;
+  background-image: none;
+  box-shadow: 0 0 0 0 rgba(34, 36, 38, .15) inset;
+}
+.ui.whatsapp.button {
+  background-color: #25D366;
+  color: #fff;
+  text-shadow: none;
+  background-image: none;
+  box-shadow: 0 0 0 0 rgba(34, 36, 38, .15) inset;
+}
+.label.copy {
+  cursor: pointer;
 }

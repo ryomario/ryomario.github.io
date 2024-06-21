@@ -185,7 +185,7 @@
 			//If the position is set
 			if(position !== null) {
 				$link = this.$elem.find('a[href$="#' + position + '"]');
-				$parent = $link.parent();
+				$parent = $link;
 
 				//If it's not already the current section
 				if(!$parent.hasClass(this.config.currentClass)) {

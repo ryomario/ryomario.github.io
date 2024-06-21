@@ -28,252 +28,231 @@
     <title>Ryomario | Landing Page</title>
 
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/styles/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/semantic-ui/semantic.min.css">
     <link rel="stylesheet" href="/assets/styles/style.css">
 </head>
-<body data-bs-theme="dark">
-    <!-- NAVIGATION -->
-    <nav id="nav" class="navbar navbar-expand-sm fixed-top-fit-center">
-        <div class="container-fluid">
-            <div class="nav-pills bg-body text-body rounded-5 shadow-sm" style="--bs-body-bg-rgb: 53, 57, 61;">
-                <!-- <a class="navbar-brand" href="#">Ryomario</a> -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div id="navbar" class="collapse navbar-collapse" style="--bs-scroll-height: 250px;">
-                    <ul class="nav flex-nowrap nav-fill gap-2 p-1 small mx-auto" id="single-page-nav" role="tablist" style="--bs-nav-link-color: var(--bs-white); --bs-nav-pills-link-active-color: var(--bs-dark); --bs-nav-link-hover-color: rgba(var(--bs-body-color-rgb),0.7); --bs-nav-pills-link-active-bg: var(--bs-light);">
-                        <li class="nav-item" role="presentation">
-                           <a href="#homepage" class="nav-link active rounded-5" id="homepage-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">Homepage</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                           <a href="#works" class="nav-link rounded-5" id="works-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">Works</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                           <a href="#about" class="nav-link rounded-5" id="about-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">About</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                           <a href="#contact" class="nav-link rounded-5" id="contact-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+<body class="pushable">
+    <!-- Following Menu -->
+    <div class="ui large top fixed menu transition hidden">
+        <div class="ui container">
+            <a href="#home" class="item active">Home</a>
+            <a href="#works" class="item">Works</a>
+            <a href="#about" class="item">About</a>
+            <a href="#contact" class="item">Contact</a>
         </div>
-    </nav>
-    <!-- END - NAVIGATION -->
-
-    <div id="homepage" class="section text-center text-bg-dark intro-section d-flex flex-column">
-        <header id="header-area" class="pt-10 flex-grow-1 d-flex align-items-center">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12 px-4 py-5 my-5">
-                        <div class="header-content">
-                            <h3>Hello, my name is </h3>
-                            <h1 data-profile="name" class="display-5 fw-bold">Mario</h1>
-                            <h4 data-profile="jobs-inline">Web Developer, Front-End & Back-End Engineer</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <footer class="mt-auto text-white-50">
-            <p>Scroll for more &darr;</p>
-        </footer>
     </div>
-    <!-- Works -->
-    <section id="works" class="section">
-        <div id="workCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
-            <div class="carousel-inner" data-container="works">
-                <!-- Inserted by script -->
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#workCarousel" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#workCarousel" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-        <div class="bg-gradient-top"></div>
-        <div class="container mt-5">
-            <div class="row" id="works_gh-repo">
-                <!-- Fill async -->
-            </div>
-        </div>
-    </section>
-    <!-- End Works -->
-    
-    <!-- <div style="min-height: 200vh;"></div> -->
-    <section class="section" id="about">
-        <div class="container">
-            <div class="card text-bg-secondary overflow-hidden shadow-lg">
-                <div class="row g-0 align-items-center justify-content-between flex-row-reverse">
-                    <div class="col-lg-6">
-                        <div class="card-body">
-                            <h3 class="card-title">Do some awsome stuff with me.</h3>
-                            <h5 class="card-subtitle mb-4 text-body-secondary" data-profile="jobs-inline">Web Developer</h5>
-                            <div data-profile="jobs-desc" class="card-text">
-                                <p>I design</p>
-                            </div>
-                            <div class="mt-4">
-                                <a href="#" data-profile="download-cv" class="btn btn-warning">Download CV</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5 text-center">
-                        <div class="about-img">
-                            <img src="/assets/images/profile.jpg" alt="Mario" class="img-fluid">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Sidebar Menu -->
+    <div class="ui vertical inverted sidebar menu left">
+        <a href="#home" class="item active">Home</a>
+        <a href="#works" class="item">Works</a>
+        <a href="#about" class="item">About</a>
+        <a href="#contact" class="item">Contact</a>
+    </div>
 
-    <!-- Start Contact Area -->
-    <section id="contact" class="section">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12 text-center">
-                    <div class="contact-content">
-                        <h1 class="display-5 fw-bold text-body-emphasis">Contact Form</h1>
-                        <div class="row">                            
-                            <div class="col-sm-12">
-                                <p class="lead mb-4">Send me some messages on <a href="mailto:" data-profile="email"></a> or type what you want to send to me via the form below.</p>
+    <div class="pusher">
+        <div id="home" class="ui inverted vertical masthead center aligned segment">
+            <div class="ui container">
+                <div class="ui large secondary inverted pointing menu">
+                    <a href="#" class="toc item"><i class="sidebar icon"></i></a>
+                    <a href="#home" class="item active inpage-href">Home</a>
+                    <a href="#works" class="item inpage-href">Works</a>
+                    <a href="#about" class="item inpage-href">About</a>
+                    <a href="#contact" class="item inpage-href">Contact</a> 
+                </div>
+            </div>
+            <div class="ui text container">
+                <h1 data-profile="name" class="ui inverted header">Mario</h1>
+                <h2 data-profile="jobs-inline">Web Developer, Front-End & Back-End Engineer</h2>
+                <a href="#works" class="ui huge primary button inpage-href">
+                    My Works
+                    <i class="right arrow icon"></i>
+                </a>
+            </div>
+        </div>
+        <!-- Works -->
+        <div id="works" class="ui vertical stripe segment">
+            <h1 class="ui header centered">My Works</h1>
+            <div class="ui middle aligned three stackable cards container" data-container="works">
+                <!-- auto attached -->
+            </div>
+        </div>
+        <!-- End Works -->
+        
+        <!-- About -->
+        <div id="about" class="ui vertical stripe segment">
+            <div class="ui middle aligned stackable grid container">
+                <div class="row">
+                    <div class="eight wide column">
+                        <h1 class="ui header">Do some awesome stuff with me.</h1>
+                        <div class="ui content" data-profile="jobs-desc"></div>
+                        <br>
+                        <a  href="#" data-profile="download-cv" class="ui button teal large">Download CV</a>
+                    </div>
+                    <div class="six wide right floated column">
+                        <img src="assets/images/profile.jpg" alt="Mario" class="ui centered large bordered rounded image">
+                    </div>
+                </div>
+                <div class="row"></div>
+            </div>
+        </div>
+    
+        <!-- Start Contact Area -->
+        <div id="contact" class="ui vertical stripe segment">
+            <div class="ui text center aligned container">
+                <h1 class="header">Connect With Me!</h1>
+            </div>
+            <div class="ui placeholder container segment">
+                <div class="ui two column stackable center aligned grid">
+                    <div class="ui vertical divider">Or</div>
+                    <div class="middle aligned row">
+                        <div class="column">
+                            <div class="container fluid" style="margin-bottom: 1em;">
+                                <div class="ui label copy with-popup" data-content="Copy to clipboard">
+                                    <i class="mail icon"></i>
+                                    <span data-profile="email"></span>
+                                </div>
+                            </div>
+                            <a href="https://www.linkedin.com/in/ryomario" target="_blank" class="ui circular linkedin icon button">
+                                <i class="linkedin icon"></i>
+                            </a>
+                            <a data-profile="email" href="#" class="ui circular icon button no-text">
+                                <i class="envelope outline icon"></i>
+                            </a>
+                            <a href="https://web.facebook.com/profile.php?id=100026771774590" target="_blank" class="ui circular facebook icon button">
+                                <i class="facebook icon"></i>
+                            </a>
+                            <a href="https://t.me/mario_ryo" target="_blank" class="ui circular telegram icon button">
+                                <i class="telegram plane icon"></i>
+                            </a>
+                            <a href="https://wa.me/62895613750022" target="_blank" class="ui circular whatsapp icon button">
+                                <i class="whatsapp icon"></i>
+                            </a>
+                        </div>
+                        <div class="column left aligned">
+                            <div class="ui items" style="margin: 0 2em;" data-github="profile">
+                                <a href="https://github.com/ryomario" target="_blank" class="ui massive icon button">
+                                    <i class="github icon"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <form action="mailto:" data-profile="email" method="get" enctype="text/plain" class="needs-validation" novalidate>
-                    <div class="row g-3">
-                        <div class="col-md-5">
-                            <div class="row g-2">
-                                <div class="col-12">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input name="name" type="text" class="form-control" id="name" required>
-                                    <div class="invalid-feedback">Valid name is required.</div>
-                                </div>
-                                <div class="col-12">
-                                    <label for="mail" class="form-label">Email</label>
-                                    <input type="email" name="mail" class="form-control" id="mail" placeholder="you@example.com" required>
-                                    <div class="invalid-feedback">Valid Email is required.</div>
-                                </div>
-                                <div class="col-12">
-                                    <label for="subject" class="form-label">Subject</label>
-                                    <input name="subject" type="text" class="form-control" id="subject" value="From your BIG FAN" required>
-                                    <div class="invalid-feedback">Valid Subject is required.</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
-                            <div class="form-group mb-3">
-                                <label for="comment" class="form-label">Message</label>
-                                <textarea name="body" rows="8" class="form-control" id="comment" placeholder="Your messages here..." required></textarea>
-                                <div class="invalid-feedback">Write some messages.</div>
-                            </div>
-                            <button type="submit" class="btn btn-success px-4 text-uppercase fw-bold">Send</button>
-                        </div>                        
-                    </div>
-                </form>    
             </div>
-        </section>
+        </div>
         <!-- End Contact Area -->
-    
-    <!-- Start Footer Area -->
-    <footer id="footer" class="pt-3 mt-4">
-        <div class="container">
-            <div class="row lead text-center border-bottom mb-3 pb-3">
-                <h1>Bring me up!</h1>
-                <p>“Dare to try, take the risks, 
-                    <br>don't complain, just do it.”</p>
+        
+        <!-- Start Footer Area -->
+        <div id="footer" class="ui inverted vertical footer segment">
+            <div class="ui center aligned container">
+                <div class="row lead text-center border-bottom mb-3 pb-3">
+                    <h1>Bring me up!</h1>
+                    <p>“Dare to try, take the risks, 
+                        <br>don't complain, just do it.”
+                    </p>
                 </div>
             </div>
-            <p class="text-center text-body-secondary">Copyright © 2023 Ryomario. <a href="mailto:" data-profile="email"></a></p>
-        </footer>
+            <div class="ui divider"></div>
+            <div class="ui center aligned container">Copyright © 2024 Ryomario. <a href="mailto:" data-profile="email"></a></div>
+        </div>
         <!-- End Footer Area -->
+    </div>
 
-    <script src="/assets/scripts/jquery-1.11.2.min.js"></script>
-    <script src="/assets/scripts/jquery.scrollUp.min.js"></script> <!-- https://github.com/markgoodyear/scrollup -->
+    <script src="/assets/scripts/jquery-2.1.4.min.js"></script>
     <script src="/assets/scripts/jquery.singlePageNav.js"></script> <!-- http://github.com/davist11/jQuery-One-Page-Nav -->
-    <script src="/assets/scripts/bootstrap.min.js"></script> <!-- https://github.com/ChrisWojcik/single-page-nav -->
+    <script src="/assets/semantic-ui/semantic.min.js"></script>
     
     <script type="module" src="/assets/scripts/script.js"></script>
     <script>
-        (() => {
-            'use strict'
-
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            const forms = document.querySelectorAll('.needs-validation')
-
-            // Loop over them and prevent submission
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-
-                form.classList.add('was-validated')
-                }, false)
-            })
-        })()
-
         // HTML document is loaded. DOM is ready.
-        $(function() {
-    
-            // jQuery Scroll Up / Back To Top Image
-            $.scrollUp({
-                    scrollName: 'scrollUp',      // Element ID
-                    scrollDistance: 300,         // Distance from top/bottom before showing element (px)
-                    scrollFrom: 'top',           // 'top' or 'bottom'
-                    scrollSpeed: 300,            // Speed back to top (ms)
-                    easingType: 'linear',        // Scroll to top easing (see http://easings.net/)
-                    animation: 'slide',           // Fade, slide, none
-                    animationSpeed: 200,         // Animation speed (ms)		        
-                    scrollText: 'Scroll to top', // Text for element, can contain HTML		        
-                    scrollImg: true            // Set true to use image		        
-                });
-    
-            // ScrollUp Placement
-            // $( window ).on( 'scroll', function() {
-            //     if ($('#maxBottomScrollUp').offset().top - $( window ).height() <= $( window ).scrollTop()) {
-    
-            //         // Adjust the scrollUp image so that it's a few pixels above the footer
-            //         $('#scrollUp').css( 'bottom', 30 + ($( document ).scrollTop() + $( window ).height() - $('#maxBottomScrollUp').offset().top) + 'px' );
-    
-            //     } else {      
-            //         // Otherwise, leave set it to its default value.
-            //         $('#scrollUp').css( 'bottom', '30px' );        
-            //     }
-            // });
-    
-            $('#single-page-nav').onePageNav({
+        $(document).ready(function() {    
+            $('.fixed.menu').onePageNav({
                 // offset: $('#nav').outerHeight(),
+                container: document.body,
                 snap: true,
                 scrollThreshold: 0.3,
                 scrollSpeed: 750,
                 filter: ':not(.external)',
                 changeHash: false,
                 currentClass: "active",
-                begin: () => {
-                    $('#navbar').removeClass('show');
-                },
-                // end: () => {
-                //     $('#single-page-nav').removeClass('scrolling');
-                //     console.log('stop');
-                // },
             });
-            $('.section').css('padding-top',$('#nav').outerHeight());
     
-            // $('.navbar-toggler').click(function(){
-            //     $('.single-page-nav').toggleClass('show');
-            // });
+
+            // fix menu when passed
+            $('.masthead .menu').visibility({
+                once: false,
+                onBottomPassed: function() {
+                    $('.fixed.menu').transition('fade in');
+                },
+                onBottomPassedReverse: function() {
+                    $('.fixed.menu').transition('fade out');
+                }
+            });
+
+            // create sidebar and attach to menu open
+            $('.ui.sidebar')
+                .sidebar({
+                    onVisible: () => {
+                        $(document.body).addClass('no-scroll');
+                    },
+                    onHide: () => {
+                        $(document.body).removeClass('no-scroll');
+                    }
+                })
+                .sidebar('attach events', '.toc.item', 'show')
+            ;
+            $('.ui.sidebar a')
+                .on('click', (e) => {
+                    e.preventDefault();
+                    $('.ui.sidebar').sidebar('hide', (el) => {
+                        const $link = $(e.currentTarget);
+                        const target = $link.attr('href').trim();
     
-            // $('.single-page-nav a').click(function(){
-                // $('.navbar-toggler').click();
-            //     $('.single-page-nav').removeClass('show');
-            // });
-            
+                        const offset = $(target).offset().top;
+                        $('html, body').animate({
+                            scrollTop: offset
+                        }, 750, 'swing', () => {
+                            // after scroll
+                        });
+                    });
+                })
+            ;
+            $('a.inpage-href')
+                .on('click', (e) => {
+                    e.preventDefault();
+                    const $link = $(e.currentTarget);
+                    const target = $link.attr('href').trim();
+
+                    const offset = $(target).offset().top;
+                    $('html, body').animate({
+                        scrollTop: offset
+                    }, 750, 'swing', () => {
+                        // after scroll
+                    });
+                })
+            ;
+            $('.with-popup')
+                .popup({
+                    inline: true,
+                    position: 'right center',
+                });
+
+            $('.label.copy')
+                .click(e => {
+                    e.preventDefault();
+                    const textToCopy = $(e.currentTarget).text().trim();
+                    var tempTextarea = $('<textarea>');
+                    $('body').append(tempTextarea);
+                    tempTextarea.val(textToCopy).select();
+                    document.execCommand('copy');
+                    tempTextarea.remove();
+                    
+                    $(e.currentTarget).popup('show');
+                    $(e.currentTarget).popup('change content', 'Copied!');
+                    setTimeout(() => {
+                        $(e.currentTarget).popup('change content', 'Copy to clipboard!');
+                        $(e.currentTarget).popup('hide');
+                    }, 500);
+                });
         });
     </script>
 </body>
