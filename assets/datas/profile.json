@@ -16,5 +16,90 @@
         "I ensure that the site meets user expectations by making sure it looks good, runs smoothly, and offers an easy access point without page-to-page loading issues or error messages.",
         "I can also change a website interface design in the form of graphic design into static web files in the form of HTML, CSS & JS."
     ],
-    "downloadCV": "https://www.cakeresume.com/pdf/s--_5MMuYUKfPWfjxT2U30KHg--/YD9ZO.pdf"
+    "downloadCV": "https://www.cakeresume.com/pdf/s--_5MMuYUKfPWfjxT2U30KHg--/YD9ZO.pdf",
+    "experiences": [
+        {
+            "icon": "graduation cap",
+            "instance": {
+                "name": "Universitas Teknologi Digital Indonesia",
+                "website": "https://www.utdi.ac.id/",
+                "position": "Bachelor"
+            },
+            "date": "2019 - 2023",
+            "desc": "Informatics study program",
+            "detail": "GPA 3.79"
+        },
+        {
+            "icon": "briefcase",
+            "instance": {
+                "name": "PT. Stechoq Robotika Indonesia",
+                "website": "https://stechoq.com/",
+                "position": "Software Engineer (Intern)"
+            },
+            "date": "Aug 2022",
+            "desc": "Build web-based interactive applications using the TypeScript programming language."
+        },
+        {
+            "icon": "briefcase",
+            "instance": {
+                "name": "PT. Solusi Kampus Indonesia (eCampuz)",
+                "website": "https://ecampuz.com/",
+                "position": "Web Developer"
+            },
+            "date": "Nov 2023 - now",
+            "desc": "Developing websites using the PHP programming language, managing MySQL databases and using HTML/CSS Javascript front-end displays."
+        }
+    ],
+    "skills": [
+        {
+            "icon": "html5",
+            "name": "HTML",
+            "rating": 5
+        },
+        {
+            "icon": "css3",
+            "name": "CSS",
+            "rating": 5
+        },
+        {
+            "icon": "js",
+            "name": "JavaScript",
+            "rating": 5
+        },
+        {
+            "icon": "php",
+            "name": "PHP",
+            "rating": 5
+        },
+        {
+            "icon": "laravel",
+            "name": "Laravel",
+            "rating": 4
+        },
+        {
+            "icon": "node js",
+            "name": "NodeJS",
+            "rating": 4
+        },
+        {
+            "icon": "python",
+            "name": "Python",
+            "rating": 3
+        },
+        {
+            "icon": "linux",
+            "name": "Linux",
+            "rating": 3
+        },
+        {
+            "icon": "git",
+            "name": "GIT",
+            "rating": 3
+        },
+        {
+            "icon": "npm",
+            "name": "NPM",
+            "rating": 3
+        }
+    ]
 }

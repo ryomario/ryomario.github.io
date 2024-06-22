@@ -7,6 +7,8 @@ const anchorElements = document.querySelectorAll('a[data-anchor]');
 const jobsInlineElements = document.querySelectorAll('[data-profile=jobs-inline]');
 const jobsDescElements = document.querySelectorAll('[data-profile=jobs-desc]');
 const downloadCVAnchorElements = document.querySelectorAll('a[data-profile=download-cv]');
+const experiencesElements = document.querySelectorAll('[data-profile=experiences]');
+const skillsElements = document.querySelectorAll('[data-profile=skills]');
 
 nameElements.forEach(el => el.textContent = profile.name);
 emailElements.forEach(el => {
@@ -31,6 +33,44 @@ jobsInlineElements.forEach(el => el.textContent = profile.jobs.join(', '))
 jobsDescElements.forEach(el => el.innerHTML = profile.jobsDesc.map(v => `<p>${v}</p>`).join(''));
 downloadCVAnchorElements.forEach(el => el.href = profile.downloadCV);
 // console.log(new Date(profile.born));
+skillsElements.forEach(el => {
+    while(el.firstChild)el.removeChild(el.lastChild);
+
+    profile.skills.forEach(skill => {
+        const skillel = $.parseHTML(`
+        <div class="item">
+            <div class="image">
+                <i class="${skill.icon} large icon"></i>
+            </div>
+            <div class="content">
+                <div class="header">${skill.name}</div>
+                <div class="ui mini star rating" data-rating="${skill.rating}" data-max-rating="5"></div>
+            </div>
+        </div>`.trim())[0];
+        el.appendChild(skillel);
+    });
+});
+experiencesElements.forEach(el => {
+    while(el.firstChild)el.removeChild(el.lastChild);
+
+    profile.experiences.forEach(exp => {
+        const expel = $.parseHTML(`
+        <div class="event">
+            <div class="label">
+                <i class="${exp.icon} icon"></i>
+            </div>
+            <div class="content">
+                <div class="summary">
+                    ${exp.instance.position} - <a href="${exp.instance.website}" target="_blank">${exp.instance.name}</a>
+                    <div class="date">${exp.date}</div>
+                </div>
+                <div class="extra text">${exp.desc}</div>
+                ${exp.detail?`<div class="meta">${exp.detail}</div>`:''}
+            </div>
+        </div>`.trim())[0];
+        el.appendChild(expel);
+    });
+});
 
 function initProgress(containerSegment, total) {
     const $loader = $('<div class="ui bottom attached progress"><div class="bar"></div></div>');
