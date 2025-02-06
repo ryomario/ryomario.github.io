@@ -1,3 +1,4 @@
+import { HeroSection } from "@/components/sections/home/hero";
 import { Link, Locale, routing } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import Image from "next/image";
@@ -18,6 +19,8 @@ export default async function HomePage({ params }: Readonly<{
   const t = await getTranslations('HomePage')
 
   return (
-    <></>
+    <>
+      <HeroSection/>
+    </>
   );
 }

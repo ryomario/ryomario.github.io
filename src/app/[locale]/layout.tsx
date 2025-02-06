@@ -57,7 +57,11 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <div className="bg-secondary-light dark:bg-primary-dark transition duration-300 min-h-screen">
             <Navbar/>
-            {children}
+            <div className="sm:container sm:mx-auto">
+              <div className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+                {children}
+              </div>
+            </div>
           </div>
         </NextIntlClientProvider>
       </body>

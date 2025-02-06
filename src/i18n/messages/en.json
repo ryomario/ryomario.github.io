@@ -21,5 +21,12 @@
     "buttons": {
       "hireme": "Hire Me"
     }
+  },
+  "HeroSection": {
+    "heading_1": "Hi, Iam {name}",
+    "heading_2": "A Web Developer, Front-End & Back-End Engineer",
+    "download_cv": "Download CV",
+    "hero_img_alt": "Developer",
+    "download_cv_filename": "{name}-resume.{ext}"
   }
 }
