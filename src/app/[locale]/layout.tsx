@@ -4,7 +4,10 @@ import "../globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
+import { Locale, routing } from "@/i18n/routing";
+import { Navbar } from "@/components/navigation/navbar";
+import "flag-icons";
+import { ThemeModeLoader } from "@/components/themeModeLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +39,7 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale)) {
+  if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
   
@@ -50,8 +53,12 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ThemeModeLoader/>
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <div className="bg-secondary-light dark:bg-primary-dark transition duration-300 min-h-screen">
+            <Navbar/>
+            {children}
+          </div>
         </NextIntlClientProvider>
       </body>
     </html>

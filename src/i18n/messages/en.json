@@ -1,6 +1,25 @@
 {
-    "HomePage": {
-        "option_1": "Get started by editing <code>src/app/page.tsx</code>.",
-        "option_2": "Save and see your changes instantly."
+  "HomePage": {
+    "option_1": "Get started by editing <code>src/app/page.tsx</code>.",
+    "option_2": "Save and see your changes instantly."
+  },
+  "LanguageSelector": {
+    "languages": {
+      "en": "English",
+      "id": "Indonesian"
     }
+  },
+  "Navbar": {
+    "srOnly": {
+      "closeMenu": "Close Main Menu",
+      "openMenu": "Open Main Menu"
+    },
+    "menus": {
+      "projects": "Projects",
+      "aboutme": "About Me"
+    },
+    "buttons": {
+      "hireme": "Hire Me"
+    }
+  }
 }

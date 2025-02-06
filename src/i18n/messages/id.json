@@ -1,6 +1,25 @@
 {
-    "HomePage": {
-        "option_1": "Mulai dengan mengubah file <code>src/app/page.tsx</code>.",
-        "option_2": "Simpan dan lihat perubahan secara langsung."
+  "HomePage": {
+    "option_1": "Mulai dengan mengubah file <code>src/app/page.tsx</code>.",
+    "option_2": "Simpan dan lihat perubahan secara langsung."
+  },
+  "LanguageSelector": {
+    "languages": {
+      "en": "Bahasa Inggris",
+      "id": "Bahasa Indonesia"
     }
+  },
+  "Navbar": {
+    "srOnly": {
+      "closeMenu": "Tutup Menu Utama",
+      "openMenu": "Buka Menu Utama"
+    },
+    "menus": {
+      "projects": "Proyek",
+      "aboutme": "Tentang Saya"
+    },
+    "buttons": {
+      "hireme": "Rekrut Saya"
+    }
+  }
 }
