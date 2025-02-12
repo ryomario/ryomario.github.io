@@ -9,6 +9,9 @@ import { Navbar } from "@/components/navigation/navbar";
 import "flag-icons";
 import { ThemeModeLoader } from "@/components/themeModeLoader";
 import NextTopLoader from "nextjs-toploader";
+import { Footer } from "@/components/navigation/footer";
+import { ScrollTop } from "@/components/scrollTop";
+import { ScrollToTop } from "@/components/scrollToTop";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +58,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeModeLoader/>
+        <ScrollTop/>
         <NextIntlClientProvider messages={messages}>
           <div className="bg-secondary-light dark:bg-primary-dark transition duration-300 min-h-screen">
             <Navbar/>
@@ -63,8 +67,10 @@ export default async function RootLayout({
                 {children}
               </div>
             </div>
+            <Footer/>
           </div>
         </NextIntlClientProvider>
+        <ScrollToTop/>
         <NextTopLoader
           showSpinner={false}
         />
