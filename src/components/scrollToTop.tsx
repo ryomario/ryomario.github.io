@@ -28,7 +28,6 @@ export function ScrollToTop() {
 		});
 	};
 
-	window.addEventListener('scroll', onScroll);
   return (
     <button
       type="button"
