@@ -1,7 +1,10 @@
-import { HeroSection } from "@/components/sections/home/hero";
+import { Button } from "@/components/reusable/button";
+import {
+  HeroSection,
+  ProjectsShowcase
+} from "@/components/sections/home";
 import { Link, Locale, routing } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 
 export default async function HomePage({ params }: Readonly<{
@@ -21,6 +24,14 @@ export default async function HomePage({ params }: Readonly<{
   return (
     <>
       <HeroSection/>
+      <ProjectsShowcase maxItems={6}/>
+      <div className="mt-8 sm:mt-10 flex justify-center">
+        <Button
+          href="/projects"
+          text={t('btn_more_projects')}
+          label={t('btn_more_projects')}
+        />
+			</div>
     </>
   );
 }

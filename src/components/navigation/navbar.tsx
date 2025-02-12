@@ -6,6 +6,7 @@ import { LanguageSelector } from "./tools/languageSelector"
 import { useState } from "react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import { Button } from "../reusable/button";
 
 export function Navbar() {
 	const [showMenu, setShowMenu] = useState(false);
@@ -23,7 +24,7 @@ export function Navbar() {
     <nav className="sm:container sm:mx-auto">
       <div className="z-10 mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
-          <a href="/" className="-m-1.5 p-1.5">
+          <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Ryomario</span>
             <Image
               className="dark:invert transition duration-300 max-[360px]:hidden"
@@ -32,7 +33,7 @@ export function Navbar() {
               height={35}
               width={35}
             />
-          </a>
+          </Link>
         </div>
 
         <div className="flex lg:hidden gap-3">
@@ -103,9 +104,10 @@ export function Navbar() {
         >
           {t('menus.aboutme')}
         </Link>
-        <button className="text-md font-general-medium bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm rounded-md sm:mx-4 px-5 py-2.5 duration-300" aria-label="Hire Me Button">
-          {t('buttons.hireme')}
-        </button>
+        <Button
+          text={t('buttons.hireme')}
+          label={t('buttons.hireme')}
+        />
       </div>
     </nav>
   )

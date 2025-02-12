@@ -1,13 +1,13 @@
 {
   "HomePage": {
-    "option_1": "Mulai dengan mengubah file <code>src/app/page.tsx</code>.",
-    "option_2": "Simpan dan lihat perubahan secara langsung."
+    "btn_more_projects": "Proyek Lainnya"
   },
   "LanguageSelector": {
     "languages": {
       "en": "Bahasa Inggris",
       "id": "Bahasa Indonesia"
-    }
+    },
+    "loading": "Memuat..."
   },
   "Navbar": {
     "srOnly": {
@@ -28,5 +28,12 @@
     "download_cv": "Unduh CV",
     "hero_img_alt": "Developer",
     "download_cv_filename": "{name}-resume.{ext}"
+  },
+  "ProjectsShowcase": {
+    "title": "Portofolio Proyek",
+    "search_by_helper": "Cari proyek berdasarkan judul atau filter menggunakan nama tag",
+    "search_projects": "Cari Proyek",
+    "empty_projects": "Tidak ada data",
+    "select_allProjects": "Semua Proyek"
   }
 }
