@@ -38,5 +38,9 @@
   },
   "Footer": {
     "follow_me": "Ikuti saya"
+  },
+  "AboutMe": {
+    "about_me": "Tentang Saya",
+    "text": "Saya merancang dan membangun sebuah situs web. Saya memastikan bahwa situs tersebut memenuhi ekspektasi pengguna dengan memastikan tampilannya bagus, berjalan lancar, dan menawarkan jalur akses yang mudah tanpa masalah pemuatan antar halaman atau pesan error. Saya juga dapat mengubah desain antarmuka website berupa desain grafis menjadi file web statis berupa HTML, CSS & JS."
   }
 }
