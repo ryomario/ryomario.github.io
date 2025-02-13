@@ -35,5 +35,8 @@
     "search_projects": "Cari Proyek",
     "empty_projects": "Tidak ada data",
     "select_allProjects": "Semua Proyek"
+  },
+  "Footer": {
+    "follow_me": "Ikuti saya"
   }
 }

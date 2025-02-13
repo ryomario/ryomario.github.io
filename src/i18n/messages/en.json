@@ -35,5 +35,8 @@
     "search_projects": "Search Projects",
     "empty_projects": "No Data",
     "select_allProjects": "All Projects"
+  },
+  "Footer": {
+    "follow_me": "Follow me"
   }
 }
