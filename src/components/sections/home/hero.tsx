@@ -9,9 +9,9 @@ export function HeroSection() {
   return (
     <>
       <div
-        className="flex flex-col sm:justify-between items-center sm:flex-row mt-12 md:mt-2"
+        className="w-full flex flex-col sm:justify-between items-center sm:flex-row mt-12 md:mt-2"
       >
-        <div className="w-full md:w-1/2 text-left">
+        <div className="w-full md:w-1/3 text-left">
           <h1 className="font-general-semibold text-2xl lg:text-3xl xl:text-4xl text-center sm:text-left text-ternary-dark dark:text-primary-light uppercase">
             {t('heading_1',{ name: profileData.name })}
           </h1>
@@ -35,11 +35,11 @@ export function HeroSection() {
             </a>
           </div>
         </div>
-        <div className="w-2/3 sm:w-1/2 text-right float-right mt-8 sm:mt-0">
+        <div className="w-full sm:w-2/3 text-right float-right mt-8 sm:mt-0">
           <img
-            src="/profile.png"
+            src="/illustration.svg"
             alt={t('hero_img_alt')}
-            className="rounded-full aspect-square object-cover bg-[radial-gradient(at_25%_25%,_var(--tw-gradient-stops))] from-secondary-light to-ternary-light dark:from-ternary-dark dark:to-primary-dark to-75% transition duration-300"
+            className="w-full object-cover"
           />
         </div>
       </div>
