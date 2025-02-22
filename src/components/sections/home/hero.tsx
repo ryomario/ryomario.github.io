@@ -1,6 +1,7 @@
 "use client"
 
 import { profileData } from "@/data";
+import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl"
 
 export function HeroSection() {
@@ -20,9 +21,10 @@ export function HeroSection() {
           </p>
 
           <div className="flex justify-center sm:block">
-            <a
+            <Link
               download={t('download_cv_filename',{ name: profileData.name, ext: 'pdf' })}
               href={profileData.downloadCV}
+              target="_blank"
               className="font-general-medium flex justify-center items-center w-36 sm:w-48 mt-12 mb-6 sm:mb-0 text-lg border border-indigo-200 dark:border-ternary-dark py-2.5 sm:py-3 shadow-lg rounded-lg bg-indigo-50 focus:ring-1 focus:ring-indigo-900 hover:bg-indigo-500 text-gray-700 hover:text-white duration-500"
               aria-label={t('download_cv')}
             >
@@ -32,7 +34,7 @@ export function HeroSection() {
               <span className="text-sm sm:text-lg font-general-medium duration-100">
                 {t('download_cv')}
               </span>
-            </a>
+            </Link>
           </div>
         </div>
         <div className="w-full sm:w-2/3 text-right float-right mt-8 sm:mt-0">

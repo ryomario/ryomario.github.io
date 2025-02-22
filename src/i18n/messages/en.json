@@ -42,5 +42,9 @@
   "AboutMe": {
     "about_me": "About Me",
     "text": "I design and construct a website. I ensure that the site meets user expectations by making sure it looks good, runs smoothly, and offers an easy access point without page-to-page loading issues or error messages. I can also change a website interface design in the form of graphic design into static web files in the form of HTML, CSS & JS."
+  },
+  "CV": {
+    "title": "Resume for {name}, {year}",
+    "section": "Section #{num}"
   }
 }
