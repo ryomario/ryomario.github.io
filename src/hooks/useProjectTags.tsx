@@ -6,22 +6,18 @@ import { useLocale } from "next-intl"
 import { useEffect, useState } from "react"
 
 type Filter = {
-  tags?: string[]
-  dateStart?: Date
-  dateEnd?: Date
   q: string
-  limit?: number
 }
 
-export function useProjects(initialFilter?: Filter): {
-  projects: Project[]
+export function useProjectTags(initialFilter?: Filter): {
+  tags: string[]
   isLoading: boolean
   currentFilter: Filter
   filterBy: (filter: Filter) => void
   addFilter: (filter: Partial<Filter>) => void
 } {
   const locale = useLocale()
-  const [data, setData] = useState<Project[]>([])
+  const [data, setData] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [filter, setFilter] = useState<Filter>(initialFilter ?? { q: '' })
 
@@ -41,21 +37,16 @@ export function useProjects(initialFilter?: Filter): {
   useEffect(() => {
     setIsLoading(true);
     (async function(){
-      const { data: projectsData } = await fetch(`/${locale}/api/projects/data`).then(res => res.json())
-      const filteredData = (projectsData as Project[]).filter((project => {
-        if(filter.tags && !filter.tags.every(tag => project.tags.includes(tag))) return false
-        if(filter.dateStart && project.dateCreated.getTime() < filter.dateStart.getTime()) return false
-        if(filter.dateEnd && project.dateCreated.getTime() > filter.dateEnd.getTime()) return false
-  
+      const { data } = await fetch(`/${locale}/api/projects/tags`).then(res => res.json())
+      const filteredData = (data as string[]).filter((tag => {
         if(filter.q && filter.q.trim()) {
-          if(!searchStringContains(project.title, filter.q)) return false
+          if(!searchStringContains(tag, filter.q)) return false
         }
   
         return true
       }))
-      const limitedDate = filteredData.slice(0,filter.limit ? filter.limit : filteredData.length)
 
-      return limitedDate
+      return filteredData
     })().then((data) => {
       setData(data)
     }).catch(() => {
@@ -66,7 +57,7 @@ export function useProjects(initialFilter?: Filter): {
   },[filter, locale])
 
   return {
-    projects: data,
+    tags: data,
     isLoading,
     currentFilter: filter,
     filterBy,

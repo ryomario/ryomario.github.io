@@ -1,7 +1,8 @@
 "use client"
 
-import { Project, projectTagsData } from "@/data/projects"
+import { Project } from "@/data/projects"
 import { useProjects } from "@/hooks/useProjects"
+import { useProjectTags } from "@/hooks/useProjectTags"
 import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
 import { ChangeEventHandler } from "react"
@@ -105,6 +106,10 @@ export function ProjectsShowcase({ maxItems }: { maxItems?: number }) {
 function ProjectTagsSelect({ value, onChange }: { value: string, onChange: ChangeEventHandler<HTMLSelectElement> }) {
   const t = useTranslations("ProjectsShowcase")
 
+  const { tags, isLoading: isLoadingTags } = useProjectTags({
+    q: '',
+  })
+
   return (
     <select
       value={value}
@@ -125,9 +130,10 @@ function ProjectTagsSelect({ value, onChange }: { value: string, onChange: Chang
         text-primary-dark
         dark:text-ternary-light
       "
+      disabled={isLoadingTags}
     >
       <option className="text-sm sm:text-md" value={'all'}>{t('select_allProjects')}</option>
-      {projectTagsData.map(option => (
+      {!isLoadingTags && tags.map(option => (
         <option className="text-sm sm:text-md" key={option}>{option}</option>
       ))}
     </select>

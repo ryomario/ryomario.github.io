@@ -1,0 +1,17 @@
+{
+  "webstatic_bookshelf": {
+    "title": "Webstatic BookShelf",
+    "desc": "BookShelf web application",
+    "tags": "Web Application|Mini Project"
+  },
+  "homepage": {
+    "title": "Homepage",
+    "desc": "Web application build with ReactJS. Includes a simple clock app and the main function is to store some URL in web storage.",
+    "tags": "Web Application|Mini Project"
+  },
+  "calcku": {
+    "title": "CalcKu",
+    "desc": "Calculator web based application. Do some actions like real calculator.",
+    "tags": "Web Application|Mini Project"
+  }
+}
