@@ -1,5 +1,6 @@
 "use client"
 
+import { ButtonDownloadCV } from "@/components/reusable/buttonDownloadCV"
 import { useTranslations } from "next-intl"
 
 export function AboutMe() {
@@ -24,6 +25,9 @@ export function AboutMe() {
               </h2>
               <p className="font-normal text-xl leading-8 max-lg:text-center max-w-2xl mx-auto opacity-75">
                 {t('text')}
+              </p>
+              <p>
+                <ButtonDownloadCV/>
               </p>
             </div>
           </div>

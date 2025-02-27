@@ -25,9 +25,7 @@
   "HeroSection": {
     "heading_1": "Hai, Saya {name}",
     "heading_2": "Seorang Web Developer, Front-End & Back-End Engineer",
-    "download_cv": "Unduh CV",
-    "hero_img_alt": "Developer",
-    "download_cv_filename": "{name}-resume.{ext}"
+    "hero_img_alt": "Developer"
   },
   "ProjectsShowcase": {
     "title": "Portofolio Proyek",
@@ -44,6 +42,8 @@
     "text": "Saya merancang dan membangun sebuah situs web. Saya memastikan bahwa situs tersebut memenuhi ekspektasi pengguna dengan memastikan tampilannya bagus, berjalan lancar, dan menawarkan jalur akses yang mudah tanpa masalah pemuatan antar halaman atau pesan error. Saya juga dapat mengubah desain antarmuka website berupa desain grafis menjadi file web statis berupa HTML, CSS & JS."
   },
   "CV": {
+    "download_btn": "Unduh CV",
+    "download_filename": "{name}-resume.{ext}",
     "title": "Resume {name}, {year}",
     "section": "Bagian #{num}"
   }

@@ -25,9 +25,7 @@
   "HeroSection": {
     "heading_1": "Hi, Iam {name}",
     "heading_2": "A Web Developer, Front-End & Back-End Engineer",
-    "download_cv": "Download CV",
-    "hero_img_alt": "Developer",
-    "download_cv_filename": "{name}-resume.{ext}"
+    "hero_img_alt": "Developer"
   },
   "ProjectsShowcase": {
     "title": "Projects portofolio",
@@ -44,6 +42,8 @@
     "text": "I design and construct a website. I ensure that the site meets user expectations by making sure it looks good, runs smoothly, and offers an easy access point without page-to-page loading issues or error messages. I can also change a website interface design in the form of graphic design into static web files in the form of HTML, CSS & JS."
   },
   "CV": {
+    "download_btn": "Download CV",
+    "download_filename": "{name}-resume.{ext}",
     "title": "Resume for {name}, {year}",
     "section": "Section #{num}"
   }
