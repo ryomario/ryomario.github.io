@@ -12,7 +12,6 @@ export default getRequestConfig(async ({requestLocale}) => {
 
   const messages = {
     ...(await import(`@/i18n/messages/${locale}.json`)).default,
-    projects: (await import(`@/i18n/projects/${locale}.json`)).default
   }
  
   return {

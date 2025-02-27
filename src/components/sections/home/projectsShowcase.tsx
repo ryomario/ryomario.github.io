@@ -96,7 +96,7 @@ export function ProjectsShowcase({ maxItems }: { maxItems?: number }) {
         </div>
       </> : (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6 sm:gap-10">
-        {projects.map(project => <ProjectCard key={project.id} project={project}/>)}
+        {projects.map(project => <ProjectCard key={project.name} project={project}/>)}
       </div>
       )}
     </section>
@@ -143,7 +143,7 @@ function ProjectTagsSelect({ value, onChange }: { value: string, onChange: Chang
 function ProjectCard({ project }: { project: Project }) {
   return (
     <div>
-      <Link href={`/projects/${project.id}`} aria-label="Project">
+      <Link href={`/projects/${project.name}`} aria-label="Project">
         <div className="rounded-xl shadow-lg hover:shadow-xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark">
           <div>
             <img src={project.imgUrl} alt={`${project.title} image`} className="rounded-t-xl border-none aspect-[3/2] object-cover object-top" />

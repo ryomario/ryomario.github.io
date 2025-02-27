@@ -1,4 +1,4 @@
-import { projectsData } from "@/data/projects";
+import { getProjectsData } from "@/data/projects";
 import { Locale, routing } from "@/i18n/routing";
 import { createTranslator } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -21,18 +21,12 @@ export async function GET(
   if (!routing.locales.includes(locale as Locale)) {
     locale = routing.defaultLocale
   }
-
-  const messages = await getMessages({locale})
-
-  const t = createTranslator({
-    locale,
-    messages,
-    namespace: "projects",
-  })
+  
+  const projects = await getProjectsData(locale)
 
   return NextResponse.json({
-    data: projectsData.reduce<string[]>(
-      (arr,project) => arr.concat(...(t.has(`${project.name}.tags`) ? t(`${project.name}.tags`).split('|') : project.tags)),
+    data: projects.reduce<string[]>(
+      (arr,project) => arr.concat(...project.tags),
     []).filter((str, i, self) => i === self.indexOf(str))
   },{
     status: 200
