@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { Button } from "../reusable/button";
+import { profileData } from "@/data";
 
 export function Navbar() {
 	const [showMenu, setShowMenu] = useState(false);
@@ -75,9 +76,9 @@ export function Navbar() {
         
         <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-3">
           <div className="hidden md:flex">
-            <button className="text-md font-general-medium bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm rounded-md px-5 py-2.5 duration-300" aria-label={t('buttons.hireme')}>
+            {profileData.hireable && <button className="text-md font-general-medium bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm rounded-md px-5 py-2.5 duration-300" aria-label={t('buttons.hireme')}>
               {t('buttons.hireme')}
-            </button>
+            </button>}
           </div>
           <LanguageSelector/>
           <ThemeToggler/>
@@ -104,10 +105,10 @@ export function Navbar() {
         >
           {t('menus.aboutme')}
         </Link>
-        <Button
+        {profileData.hireable && <Button
           text={t('buttons.hireme')}
           label={t('buttons.hireme')}
-        />
+        />}
       </div>
     </nav>
   )

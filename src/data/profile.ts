@@ -1,5 +1,6 @@
 export const profileData = {
   name: 'Mario',
+  hireable: false,
 
   downloadCV: '/cv/download',
 
