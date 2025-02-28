@@ -45,6 +45,9 @@
     "download_btn": "Download CV",
     "download_filename": "{name}-resume.{ext}",
     "title": "Resume for {name}, {year}",
-    "section": "Section #{num}"
+    "work_experience": "Work Experiences",
+    "education": "Education",
+    "skills": "Skills",
+    "languages": "Languages"
   }
 }

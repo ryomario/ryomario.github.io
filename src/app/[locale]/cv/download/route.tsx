@@ -1,4 +1,4 @@
-import { cvData } from "@/data/cv"
+import { getCVData } from "@/data/cv"
 import { NextRequest, NextResponse } from "next/server"
 import { Locale, routing } from "@/i18n/routing"
 import { CV } from "@/components/pdf/cv"
@@ -26,6 +26,8 @@ export async function GET(
   const messages = await getMessages({locale})
 
   try {
+    const cvData = await getCVData(locale)
+
     const pdfBuffer = await renderToBuffer(
       <CV locale={locale} messages={messages} data={cvData}/>
     )

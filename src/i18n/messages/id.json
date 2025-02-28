@@ -45,6 +45,9 @@
     "download_btn": "Unduh CV",
     "download_filename": "{name}-resume.{ext}",
     "title": "Resume {name}, {year}",
-    "section": "Bagian #{num}"
+    "work_experience": "Pengalaman Kerja",
+    "education": "Pendidikan",
+    "skills": "Kemampuan",
+    "languages": "Bahasa"
   }
 }

@@ -1,0 +1,50 @@
+{
+  "name": "Mario",
+  "aboutme": "Full-stack web developer with 2 years of experience in creating efficient and quality web solutions. Proficient in PHP and JavaScript programming languages, especially in the Laravel framework, NextJS, and experienced in handling web application's UI that focus on HTML, CSS & JavaScript.",
+  "location": "Yogyakarta, Yogyakarta City, Special Region of Yogyakarta, Indonesia",
+  "work_experiences": [
+    {
+      "instance_name": "PT Solusi Kampus Indonesia (eCampuz)",
+      "position": "Web Developer",
+      "start_date": "November 2023",
+      "end_date": "Present",
+      "description": "Developing a PHP and MYSQL based Academic Information System web. Participate in building NextJS based applications while maintaining the previous system."
+    },
+    {
+      "instance_name": "PT. Stechoq Robotika Indonesia",
+      "position": "Software Engineer",
+      "start_date": "August 2022",
+      "end_date": "December 2022",
+      "description": "Build web-based interactive applications using the TypeScript programming language."
+    }
+  ],
+  "education": [
+    {
+      "instance_name": "Indonesian Digital Technology University",
+      "instance_location": "Yogyakarta, Indonesia",
+      "description": "Bachelor Degree Computer Science",
+      "start_date": "2019",
+      "end_date": "2023"
+    }
+  ],
+  "skills": [
+    "HTML/CSS",
+    "JavaScript",
+    "PHP",
+    "Laravel",
+    "NodeJS",
+    "NextJS",
+    "ReactJS",
+    "MYSQL"
+  ],
+  "languages": [
+    {
+      "name": "Indonesian",
+      "level": "Fluent"
+    },
+    {
+      "name": "English",
+      "level": "Intermediate"
+    }
+  ]
+}
