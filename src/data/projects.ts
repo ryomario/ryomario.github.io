@@ -13,41 +13,6 @@ export type Project = {
   dateCreated: Date
 }
 
-// default values (callback values), the real values are fetched from i18n messages
-export const projectsData: Project[] = [
-  {
-    name: "webstatic_bookshelf",
-    title: "Webstatic BookShelf",
-    desc: "BookShelf web application",
-    imgUrl: "https://github.com/ryomario/webstatic-bookshelf/blob/main/images/preview%20%5Btheme%20dark%5D.png?raw=true",
-    tags: [
-      "Web Application",
-    ],
-    dateCreated: new Date('02-08-2022'),
-  },
-  {
-    name: "homepage",
-    title: "Homepage",
-    desc: "Web application build with ReactJS. Includes a simple clock app and the main function is to store some URL in web storage.",
-    imgUrl: "https://github.com/ryomario/homepage/blob/main/images/preview.png?raw=true",
-    tags: [
-      "Web Application",
-    ],
-    dateCreated: new Date('11-12-2023'),
-  },
-  {
-    name: "calcku",
-    title: "CalcKu",
-    desc: "Calculator web based application. Do some actions like real calculator.",
-    imgUrl: "https://github.com/ryomario/calcku/blob/main/images/preview.png?raw=true",
-    tags: [
-      "Web Application",
-    ],
-    dateCreated: new Date('02-19-2024'),
-  },
-]
-.map((data, id) => ({...data,id: id +1})) // set id by array index
-
 export async function getProjects(): Promise<string[]> {
   return await fs.readdir(PROJECTS_DIR)
 }
@@ -81,7 +46,7 @@ export async function getProjectsData(locale: string): Promise<Project[]> {
       let project
       try {
         project = await getOneProjectData(projectName,locale)
-      } catch (error) {
+      } catch {
         project = await getOneProjectData(projectName,routing.defaultLocale)
       } finally {
         if(!!project) {

@@ -1,7 +1,5 @@
 import { getProjectsData } from "@/data/projects";
 import { Locale, routing } from "@/i18n/routing";
-import { createTranslator } from "next-intl";
-import { getMessages } from "next-intl/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = 'force-static'

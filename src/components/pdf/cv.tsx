@@ -42,8 +42,8 @@ export function CV({ data, messages, locale }: Props) {
         <View style={styles.section}>
           <Text style={[fontStyles.heading_2,fontStyles.section_title]}>{t('work_experience')}</Text>
           {
-            data.work_experiences.map(exp => (
-              <View style={styles.work_section}>
+            data.work_experiences.map((exp, i) => (
+              <View style={styles.work_section} key={i}>
                 <Text style={fontStyles.heading_3}> - </Text>
                 <View style={{ width: '100%' }}>
                   <Text style={[fontStyles.heading_3,{ display: 'flex' }]}>
@@ -61,8 +61,8 @@ export function CV({ data, messages, locale }: Props) {
         <View style={styles.section}>
           <Text style={[fontStyles.heading_2,fontStyles.section_title]}>{t('education')}</Text>
           {
-            data.education.map(edu => (
-              <View style={styles.work_section}>
+            data.education.map((edu, i) => (
+              <View style={styles.work_section} key={i}>
                 <Text style={fontStyles.heading_3}> - </Text>
                 <View style={{ width: '100%' }}>
                   <Text style={[fontStyles.heading_3,{ display: 'flex', flexWrap: 'wrap' }]}>

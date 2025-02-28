@@ -36,7 +36,7 @@ export async function getCVData(locale: string): Promise<CVProperties> {
 
   try {
     data = JSON.parse(await fs.readFile(path.resolve(CV_DIR,`${locale}.json`),'utf-8'))
-  } catch (error) {
+  } catch {
     data = JSON.parse(await fs.readFile(path.resolve(CV_DIR,`${routing.defaultLocale}.json`),'utf-8'))
   } finally {
     if(!data) {

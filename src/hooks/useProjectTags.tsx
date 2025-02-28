@@ -1,6 +1,5 @@
 "use client"
 
-import { Project } from "@/data/projects"
 import { searchStringContains } from "@/lib/strings"
 import { useLocale } from "next-intl"
 import { useEffect, useState } from "react"

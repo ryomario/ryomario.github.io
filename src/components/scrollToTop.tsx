@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname } from "@/i18n/routing"
 import { useEffect, useState } from "react"
 
 export function ScrollToTop() {

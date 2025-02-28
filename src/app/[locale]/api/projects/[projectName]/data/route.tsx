@@ -1,4 +1,4 @@
-import { getOneProjectData, getProjects, getProjectsData, projectsData } from "@/data/projects";
+import { getOneProjectData, getProjects } from "@/data/projects";
 import { Locale, routing } from "@/i18n/routing";
 import { NextRequest, NextResponse } from "next/server";
 

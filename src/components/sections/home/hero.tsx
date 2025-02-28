@@ -2,7 +2,6 @@
 
 import { ButtonDownloadCV } from "@/components/reusable/buttonDownloadCV";
 import { profileData } from "@/data";
-import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl"
 
 export function HeroSection() {

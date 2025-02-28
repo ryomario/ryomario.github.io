@@ -3,7 +3,7 @@ import {
   HeroSection,
   ProjectsShowcase
 } from "@/components/sections/home";
-import { Link, Locale, routing } from "@/i18n/routing";
+import { Locale, routing } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
