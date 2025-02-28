@@ -1,6 +1,53 @@
 {
-    "HomePage": {
-        "option_1": "Mulai dengan mengubah file <code>src/app/page.tsx</code>.",
-        "option_2": "Simpan dan lihat perubahan secara langsung."
+  "HomePage": {
+    "btn_more_projects": "Proyek Lainnya"
+  },
+  "LanguageSelector": {
+    "languages": {
+      "en": "Bahasa Inggris",
+      "id": "Bahasa Indonesia"
+    },
+    "loading": "Memuat..."
+  },
+  "Navbar": {
+    "srOnly": {
+      "closeMenu": "Tutup Menu Utama",
+      "openMenu": "Buka Menu Utama"
+    },
+    "menus": {
+      "projects": "Proyek",
+      "aboutme": "Tentang Saya"
+    },
+    "buttons": {
+      "hireme": "Rekrut Saya"
     }
+  },
+  "HeroSection": {
+    "heading_1": "Hai, Saya {name}",
+    "heading_2": "Seorang Web Developer, Front-End & Back-End Engineer",
+    "hero_img_alt": "Developer"
+  },
+  "ProjectsShowcase": {
+    "title": "Portofolio Proyek",
+    "search_by_helper": "Cari proyek berdasarkan judul atau filter menggunakan nama tag",
+    "search_projects": "Cari Proyek",
+    "empty_projects": "Tidak ada data",
+    "select_allProjects": "Semua Proyek"
+  },
+  "Footer": {
+    "follow_me": "Ikuti saya"
+  },
+  "AboutMe": {
+    "about_me": "Tentang Saya",
+    "text": "Saya merancang dan membangun sebuah situs web. Saya memastikan bahwa situs tersebut memenuhi ekspektasi pengguna dengan memastikan tampilannya bagus, berjalan lancar, dan menawarkan jalur akses yang mudah tanpa masalah pemuatan antar halaman atau pesan error. Saya juga dapat mengubah desain antarmuka website berupa desain grafis menjadi file web statis berupa HTML, CSS & JS."
+  },
+  "CV": {
+    "download_btn": "Unduh CV",
+    "download_filename": "{name}-resume.{ext}",
+    "title": "Resume {name}, {year}",
+    "work_experience": "Pengalaman Kerja",
+    "education": "Pendidikan",
+    "skills": "Kemampuan",
+    "languages": "Bahasa"
+  }
 }

@@ -1,6 +1,53 @@
 {
-    "HomePage": {
-        "option_1": "Get started by editing <code>src/app/page.tsx</code>.",
-        "option_2": "Save and see your changes instantly."
+  "HomePage": {
+    "btn_more_projects": "More Projects"
+  },
+  "LanguageSelector": {
+    "languages": {
+      "en": "English",
+      "id": "Indonesian"
+    },
+    "loading": "Loading..."
+  },
+  "Navbar": {
+    "srOnly": {
+      "closeMenu": "Close Main Menu",
+      "openMenu": "Open Main Menu"
+    },
+    "menus": {
+      "projects": "Projects",
+      "aboutme": "About Me"
+    },
+    "buttons": {
+      "hireme": "Hire Me"
     }
+  },
+  "HeroSection": {
+    "heading_1": "Hi, Iam {name}",
+    "heading_2": "A Web Developer, Front-End & Back-End Engineer",
+    "hero_img_alt": "Developer"
+  },
+  "ProjectsShowcase": {
+    "title": "Projects portofolio",
+    "search_by_helper": "Search projects by title or filter by tags",
+    "search_projects": "Search Projects",
+    "empty_projects": "No Data",
+    "select_allProjects": "All Projects"
+  },
+  "Footer": {
+    "follow_me": "Follow me"
+  },
+  "AboutMe": {
+    "about_me": "About Me",
+    "text": "I design and construct a website. I ensure that the site meets user expectations by making sure it looks good, runs smoothly, and offers an easy access point without page-to-page loading issues or error messages. I can also change a website interface design in the form of graphic design into static web files in the form of HTML, CSS & JS."
+  },
+  "CV": {
+    "download_btn": "Download CV",
+    "download_filename": "{name}-resume.{ext}",
+    "title": "Resume for {name}, {year}",
+    "work_experience": "Work Experiences",
+    "education": "Education",
+    "skills": "Skills",
+    "languages": "Languages"
+  }
 }

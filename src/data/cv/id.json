@@ -1,0 +1,50 @@
+{
+  "name": "Mario",
+  "aboutme": "Pengembang web full-stack dengan pengalaman 2 tahun dalam menciptakan solusi web yang efisien dan berkualitas. Mahir dalam bahasa pemrograman PHP dan JavaScript, khususnya di framework Laravel, NextJS, dan berpengalaman dalam menangani UI aplikasi web yang berfokus di HTML, CSS & JavaScript.",
+  "location": "Yogyakarta, Kota Yogyakarta, Daerah Istimewa Yogyakarta, Indonesia",
+  "work_experiences": [
+    {
+      "instance_name": "PT Solusi Kampus Indonesia (eCampuz)",
+      "position": "Web Developer",
+      "start_date": "November 2023",
+      "end_date": "Sekarang",
+      "description": "Mengembangkan web Sistem Informasi Akademik berbasis PHP dan MYSQL. Ikut membangun aplikasi berbasis NextJS dengan mempertahankan sistem sebelumnya."
+    },
+    {
+      "instance_name": "PT. Stechoq Robotika Indonesia",
+      "position": "Software Engineer",
+      "start_date": "Agustus 2022",
+      "end_date": "Desember 2022",
+      "description": "Membangun aplikasi interaktif berbasis web menggunakan bahasa pemrograman TypeScript."
+    }
+  ],
+  "education": [
+    {
+      "instance_name": "Universitas Teknologi Digital Indonesia",
+      "instance_location": "Yogyakarta, Indonesia",
+      "description": "Sarjana Komputer",
+      "start_date": "2019",
+      "end_date": "2023"
+    }
+  ],
+  "skills": [
+    "HTML/CSS",
+    "JavaScript",
+    "PHP",
+    "Laravel",
+    "NodeJS",
+    "NextJS",
+    "ReactJS",
+    "MYSQL"
+  ],
+  "languages": [
+    {
+      "name": "Indonesia",
+      "level": "Lancar"
+    },
+    {
+      "name": "Inggris",
+      "level": "Menengah"
+    }
+  ]
+}
