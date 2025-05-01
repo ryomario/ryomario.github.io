@@ -7,11 +7,12 @@ import { useState } from "react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { Button } from "../reusable/button";
-import { profileData } from "@/data";
+import { useProfileData } from "@/contexts/profileDataContext";
 
 export function Navbar() {
 	const [showMenu, setShowMenu] = useState(false);
   const t = useTranslations('Navbar');
+  const profileData = useProfileData()
   
 	function toggleMenu() {
 		if (!showMenu) {

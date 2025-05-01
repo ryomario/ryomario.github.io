@@ -12,6 +12,8 @@ import NextTopLoader from "nextjs-toploader";
 import { Footer } from "@/components/navigation/footer";
 import { ScrollTop } from "@/components/scrollTop";
 import { ScrollToTop } from "@/components/scrollToTop";
+import { ProfileDataProvider } from "@/contexts/profileDataContext";
+import { getAllProfileData } from "../db/functions/profile_data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,6 +54,8 @@ export default async function RootLayout({
 
   const messages = await getMessages()
 
+  const profileData = await getAllProfileData()
+
   return (
     <html lang={locale}>
       <body
@@ -60,15 +64,17 @@ export default async function RootLayout({
         <ThemeModeLoader/>
         <ScrollTop/>
         <NextIntlClientProvider messages={messages}>
-          <div className="bg-secondary-light dark:bg-primary-dark transition duration-300 min-h-screen">
-            <Navbar/>
-            <div className="sm:container sm:mx-auto">
-              <div className="mx-auto flex flex-col max-w-7xl items-center justify-between p-6 lg:px-8">
-                {children}
+          <ProfileDataProvider data={profileData}>
+            <div className="bg-secondary-light dark:bg-primary-dark transition duration-300 min-h-screen">
+              <Navbar/>
+              <div className="sm:container sm:mx-auto">
+                <div className="mx-auto flex flex-col max-w-7xl items-center justify-between p-6 lg:px-8">
+                  {children}
+                </div>
               </div>
+              <Footer/>
             </div>
-            <Footer/>
-          </div>
+          </ProfileDataProvider>
         </NextIntlClientProvider>
         <ScrollToTop/>
         <NextTopLoader
