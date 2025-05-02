@@ -1,6 +1,6 @@
 "use client"
 
-import { getAllProfileData } from "@/app/db/functions/profile_data";
+import RepoProfileData from "@/db/repositories/RepoProfileData";
 import { EMPTY_PROFILE_DATA } from "@/factories/profileDataFactory";
 import { IProfile } from "@/types/IProfile";
 import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from "react";
@@ -21,10 +21,10 @@ export function ProfileDataProvider({ children, data = EMPTY_PROFILE_DATA }: Pro
   const [_data, _setData] = useState<IProfile>(data)
 
   const refresh = useCallback(async () => {
-    const profileData = await getAllProfileData(true)
+    const profileData = await RepoProfileData.getAll(true)
     _setData(profileData)
     return profileData
-  },[_data, _setData])
+  },[_setData])
 
   const value = useMemo(() => ({
     data: _data,

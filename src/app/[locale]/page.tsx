@@ -6,7 +6,6 @@ import {
 import { Locale, routing } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { getProfileData } from "../db/functions/profile_data";
 
 export default async function HomePage({ params }: Readonly<{
   params: Promise<{ locale: string }>;

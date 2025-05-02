@@ -13,7 +13,7 @@ import { Footer } from "@/components/navigation/footer";
 import { ScrollTop } from "@/components/scrollTop";
 import { ScrollToTop } from "@/components/scrollToTop";
 import { ProfileDataProvider } from "@/contexts/profileDataContext";
-import { getAllProfileData } from "../db/functions/profile_data";
+import RepoProfileData from "@/db/repositories/RepoProfileData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,7 +54,7 @@ export default async function RootLayout({
 
   const messages = await getMessages()
 
-  const profileData = await getAllProfileData()
+  const profileData = await RepoProfileData.getAll()
 
   return (
     <html lang={locale}>

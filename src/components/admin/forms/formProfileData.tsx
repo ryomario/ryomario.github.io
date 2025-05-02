@@ -1,10 +1,12 @@
-import { updateProfileData } from "@/app/db/functions/profile_data"
+"use client"
+
 import { useProfileData, useRefreshProfileData } from "@/contexts/profileDataContext"
 import { IProfile } from "@/types/IProfile"
-import { useCallback, useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { ButtonLoading } from "./buttonLoading"
 import { date2string } from "@/lib/date"
+import RepoProfileData from "@/db/repositories/RepoProfileData"
 
 export function FormProfileData() {
   const profileData = useProfileData()
@@ -26,6 +28,9 @@ export function FormProfileData() {
   const socialLinks = watch(['socialLinks.website', 'socialLinks.codepen', 'socialLinks.github', 'socialLinks.linkedin'])
   const lastUpdated = watch('lastUpdated')
 
+  const linkCVRef = useRef<string>(profileData.downloadCV)
+  const [isDownloadCVExternal,setIsDownloadCVExternal] = useState(!profileData.downloadCV.startsWith('/'))
+
   const isCompleteUserInfo = useMemo(() => userInfo.every((value, idx) => {
     if(idx == 1) return true // optional hireable
     return !!value && value != ''
@@ -35,6 +40,17 @@ export function FormProfileData() {
     return !!value && value != ''
   }),[socialLinks])
 
+  const handleChangeDownloadExternalLinkCV = useCallback((isExternalLink: boolean) => {
+    if(isExternalLink) {
+      setValue('downloadCV', linkCVRef.current)
+    } else {
+      linkCVRef.current = userInfo[2]
+      setValue('downloadCV', '/cv/download')
+    }
+    trigger('downloadCV')
+    setIsDownloadCVExternal(isExternalLink)
+  },[setValue,trigger,userInfo,setIsDownloadCVExternal])
+
   const onSubmit = handleSubmit(async (values: IProfile) => {
     const updatedAt = new Date()
     const data: IProfile = {
@@ -42,7 +58,7 @@ export function FormProfileData() {
       lastUpdated: updatedAt,
     }
     setValue('lastUpdated', updatedAt)
-    await updateProfileData(data)
+    await RepoProfileData.updateProfileData(data)
     await refreshProfileData()
   })
 
@@ -50,11 +66,12 @@ export function FormProfileData() {
     trigger() // trigger validation on init
   },[trigger, profileData])
 
+
   // console.log(isSubmitting)
 
   return <>
-    <div className="flex w-full space-x-4">
-      <ol className="space-y-4 w-72 hidden sm:block flex-none">
+    <div className="flex items-start w-full space-x-4">
+      <ol className="space-y-4 w-72 hidden sm:block flex-none sticky top-4">
         <StepperItem label="1. User info" completed={isCompleteUserInfo}/>
         <StepperItem label="2. Social accounts" completed={isCompleteSocialLinks}/>
         <li><b>Last updated : </b>{date2string(lastUpdated)}</li>
@@ -65,9 +82,9 @@ export function FormProfileData() {
           <div className="grid gap-6 mb-3 md:grid-cols-2 items-end">
             <div>
               <label htmlFor="name" className={[
-                "block mb-2 text-sm font-medium",
+                "inline-block mb-2 text-sm font-medium",
                 (errors.name ? "text-red-700 dark:text-red-500":"text-gray-900 dark:text-white")
-              ].join(' ')}>Profile name</label>
+              ].join(' ')}>Name</label>
               <input
                 id="name"
                 className={[
@@ -92,12 +109,12 @@ export function FormProfileData() {
           </div>
           <div className="mb-6">
             <label htmlFor="download-cv" className={[
-              "block mb-2 text-sm font-medium",
+              "inline-block mb-2 text-sm font-medium",
               (errors.downloadCV ? "text-red-700 dark:text-red-500":"text-gray-900 dark:text-white")
-            ].join(' ')}>Download CV URL</label>
+            ].join(' ')}>Download CV (External URL)</label>
             <div className="flex">
               <span className={[
-                "inline-flex items-center px-3 text-sm border rounded-e-0 border-e-0 rounded-s-md",
+                "inline-flex items-center px-3 text-sm border rounded-0 border-e-0 rounded-s-md",
                 (errors.downloadCV ? 
                   "text-red-900 bg-red-200 border-red-300 dark:bg-red-600 dark:text-red-400 dark:border-red-600"
                   : "text-gray-900 bg-gray-200 border-gray-300 dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
@@ -108,20 +125,44 @@ export function FormProfileData() {
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.213 9.787a3.391 3.391 0 0 0-4.795 0l-3.425 3.426a3.39 3.39 0 0 0 4.795 4.794l.321-.304m-.321-4.49a3.39 3.39 0 0 0 4.795 0l3.424-3.426a3.39 3.39 0 0 0-4.794-4.795l-1.028.961"/>
                 </svg>
               </span>
+              <label className={[
+                "inline-flex items-center cursor-pointer px-3 border rounded-0 border-e-0",
+                (errors.downloadCV ? 
+                  "text-red-900 bg-red-200 border-red-300 dark:bg-red-600 dark:text-red-400 dark:border-red-600"
+                  : "text-gray-900 bg-gray-200 border-gray-300 dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
+                )
+              ].join(' ')}
+              >
+                <input type="checkbox" className="peer sr-only" checked={isDownloadCVExternal} onChange={(e) => handleChangeDownloadExternalLinkCV(e.target.checked)}/>
+                <div className={[
+                  "relative w-9 h-5 bg-[#0002] peer-focus:outline-none peer-focus:ring-4 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600",
+                  (errors.downloadCV ? 
+                    "peer-focus:ring-red-300 dark:peer-focus:ring-red-800 peer-checked:bg-red-600 dark:peer-checked:bg-red-600"
+                    : "peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"
+                  )
+                ].join(' ')}
+                ></div>
+              </label>
               <input
                 id="download-cv"
                 className={[
                   "border text-sm rounded-e-md block w-full p-2.5",
                   (errors.downloadCV ? 
                     "bg-red-50 border-red-500 text-red-900 placeholder-red-400 focus:outline-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                    : !isDownloadCVExternal ?
+                    "bg-gray-200 border-gray-300 text-gray-900 dark:placeholder-gray-400 focus:outline-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-600 dark:text-white dark:focus:outline-blue-500 dark:focus:border-blue-500"
                     : "bg-gray-50 border-gray-300 text-gray-900 dark:placeholder-gray-400 focus:outline-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:outline-blue-500 dark:focus:border-blue-500"
                   )
                 ].join(' ')}
-                type="text" 
+                type="url" 
                 placeholder="URL Download CV"
                 {...register('downloadCV', { required: true })}
+                disabled={!isDownloadCVExternal}
               />
             </div>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Internal URL is default to <code className="bg-[#0002] inline-block px-1 rounded-md">{"{locale}"}/cv/download</code>
+            </p>
           </div>
           <h4 className="text-2xl font-bold dark:text-white mb-4" id="social-accounts">Social Accounts</h4>
           <div className="mb-3">

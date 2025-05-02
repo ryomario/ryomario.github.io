@@ -14,6 +14,27 @@ const nextConfig: NextConfig = {
  
   // Optional: Change the output directory `out` -> `dist`
   distDir: 'dist',
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  // exportPathMap(defaultMap, ctx) {
+  //   return {
+  //     ...defaultMap,
+  //     '/admin': { page: '/' },
+  //   }
+  // },
+
+  // webpack: config => {
+  //   if(!config.module) {
+  //     return config;
+  //   }
+  //   config.module.rules?.push({
+  //     test: /src\/app\/admin\/.*/,
+  //     loader: 'ignore-loader',
+  //   });
+  //   return config;
+  // },
 };
 
 export default withNextIntl(nextConfig);

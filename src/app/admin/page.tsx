@@ -1,7 +1,5 @@
-import { AdminView } from "@/components/admin/adminView";
+import { FormProfileData } from "@/components/admin/forms/formProfileData";
 
-export default async function HomePage() {
-  return (
-    <AdminView/>
-  );
+export default async function Page() {
+  return <FormProfileData/>
 }
