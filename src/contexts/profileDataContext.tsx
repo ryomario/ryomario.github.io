@@ -7,10 +7,10 @@ import { createContext, PropsWithChildren, useCallback, useContext, useMemo, use
 
 const Context = createContext<{
   data: IProfile
-  refresh: () => Promise<IProfile>
+  update: (data: IProfile) => void
 }>({
   data: EMPTY_PROFILE_DATA,
-  refresh: async () => EMPTY_PROFILE_DATA
+  update: (data: IProfile) => {},
 })
 
 type Props = {
@@ -20,16 +20,14 @@ type Props = {
 export function ProfileDataProvider({ children, data = EMPTY_PROFILE_DATA }: Props) {
   const [_data, _setData] = useState<IProfile>(data)
 
-  const refresh = useCallback(async () => {
-    const profileData = await RepoProfileData.getAll(true)
+  const update = useCallback((profileData: IProfile) => {
     _setData(profileData)
-    return profileData
   },[_setData])
 
   const value = useMemo(() => ({
     data: _data,
-    refresh,
-  }),[refresh,_data])
+    update,
+  }),[update,_data])
   return <Context.Provider value={value}>
     {children}
   </Context.Provider>
@@ -39,7 +37,7 @@ export const useProfileData = () => {
   const { data } = useContext(Context)
   return data
 }
-export const useRefreshProfileData = () => {
-  const { refresh } = useContext(Context)
-  return refresh
+export const useUpdateProfileData = () => {
+  const { update } = useContext(Context)
+  return update
 }

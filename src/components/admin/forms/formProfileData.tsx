@@ -1,16 +1,16 @@
 "use client"
 
-import { useProfileData, useRefreshProfileData } from "@/contexts/profileDataContext"
+import { useProfileData, useUpdateProfileData } from "@/contexts/profileDataContext"
 import { IProfile } from "@/types/IProfile"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { ButtonLoading } from "./buttonLoading"
 import { date2string } from "@/lib/date"
-import RepoProfileData from "@/db/repositories/RepoProfileData"
+import * as RepoProfileData_server from "@/db/repositories/RepoProfileData.server"
 
 export function FormProfileData() {
   const profileData = useProfileData()
-  const refreshProfileData = useRefreshProfileData()
+  const updateProfileData = useUpdateProfileData()
 
   const {
     register,
@@ -58,8 +58,9 @@ export function FormProfileData() {
       lastUpdated: updatedAt,
     }
     setValue('lastUpdated', updatedAt)
-    await RepoProfileData.updateProfileData(data)
-    await refreshProfileData()
+    await RepoProfileData_server.updateProfileData(data)
+    
+    updateProfileData(data)
   })
 
   useEffect(() => {
