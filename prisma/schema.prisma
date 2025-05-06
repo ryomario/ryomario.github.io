@@ -12,6 +12,22 @@ datasource db {
 }
 
 model profile_data {
-  data_name   String  @id
-  data_value  String  @default("")
+  data_name  String @id
+  data_value String @default("")
+}
+
+model projects {
+  project_id      Int            @id @default(autoincrement())
+  project_title   String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  published       Boolean        @default(false)
+  project_desc    String
+  project_preview String
+  project_tags    project_tags[]
+}
+
+model project_tags {
+  tag_name           String    @id
+  projects           projects[]
 }

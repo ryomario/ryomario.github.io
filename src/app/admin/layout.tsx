@@ -7,6 +7,7 @@ import { FormProfileData } from "@/components/admin/forms/formProfileData";
 import { AdminTabLink } from "@/components/admin/tabs/adminTab";
 import { notFound } from "next/navigation";
 import RepoProfileData from "@/db/repositories/RepoProfileData";
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -81,6 +82,9 @@ export default async function RootLayout({
             </div>
           </div>
         </ProfileDataProvider>
+        <NextTopLoader
+          showSpinner={false}
+        />
       </body>
     </html>
   );
