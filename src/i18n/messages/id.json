@@ -9,6 +9,9 @@
     },
     "loading": "Memuat..."
   },
+  "LanguageSwitcher": {
+    "label": "Ganti Bahasa. Bahasa saat ini: {current_lang}"
+  },
   "Navbar": {
     "srOnly": {
       "closeMenu": "Tutup Menu Utama",

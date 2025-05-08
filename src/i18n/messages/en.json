@@ -9,6 +9,9 @@
     },
     "loading": "Loading..."
   },
+  "LanguageSwitcher": {
+    "label": "Switch language. Current: {current_lang}"
+  },
   "Navbar": {
     "srOnly": {
       "closeMenu": "Close Main Menu",
