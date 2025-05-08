@@ -57,10 +57,10 @@ export function Pagination({
           <li>
             <button
               onClick={() => onPageChange(1)}
-              className={`flex items-center justify-center text-sm py-2 px-3 leading-tight bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${
+              className={`flex items-center justify-center text-sm py-2 px-3 leading-tight border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${
                 1 === currentPage
                   ? 'bg-blue-500 text-white'
-                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white'
+                  : 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white'
               }`}
             >
               1
@@ -80,10 +80,10 @@ export function Pagination({
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`flex items-center justify-center text-sm py-2 px-3 leading-tight bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${
+            className={`flex items-center justify-center text-sm py-2 px-3 leading-tight border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${
               page === currentPage
                 ? 'bg-blue-500 text-white'
-                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white'
+                : 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white'
             }`}
           >
             {page}
@@ -102,10 +102,10 @@ export function Pagination({
           <li>
             <button
               onClick={() => onPageChange(totalPages)}
-              className={`flex items-center justify-center text-sm py-2 px-3 leading-tight bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${
+              className={`flex items-center justify-center text-sm py-2 px-3 leading-tight border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${
                 totalPages === currentPage
                   ? 'bg-blue-500 text-white'
-                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white'
+                  : 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white'
               }`}
             >
               {totalPages}
