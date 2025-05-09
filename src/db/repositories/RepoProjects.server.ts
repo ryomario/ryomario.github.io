@@ -7,6 +7,7 @@ import { join } from "path"
 import { writeFile, rm } from "fs/promises"
 
 export const getAll = RepoProjects.getAll
+export const getOne = RepoProjects.getOne
 
 export async function save(data: Omit<IProject,'project_id'>) {
   try {

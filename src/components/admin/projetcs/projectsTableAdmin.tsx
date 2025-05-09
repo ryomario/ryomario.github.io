@@ -75,7 +75,7 @@ export function ProjectsTableAdmin() {
               <td className="px-4 py-3">{date2string(project.createdAt,false)}</td>
               <td className="px-4 py-3">{date2string(project.updatedAt)}</td>
               <td className="px-4 py-3 flex items-center justify-end">
-                <ProjectsTableAdminButtonActions />
+                <ProjectsTableAdminButtonActions project_id={project.project_id}/>
               </td>
             </tr>)}
           </tbody>

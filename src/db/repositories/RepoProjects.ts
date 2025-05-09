@@ -21,6 +21,31 @@ async function getAll() {
   }
 }
 
+async function getOne(id: number) {
+  try {
+    const project = await prisma.projects.findFirst({
+      where: {
+        project_id: id,
+      },
+      include: {
+        project_tags: true,
+      }
+    })
+    if(!project) throw Error(`project with id "${id}" not found`)
+  
+    return project
+  } catch(error: any) {
+    let message = 'unknown'
+    if(typeof error == 'string') message = error
+    else if(error.message) message = error.message
+
+    console.log('project getOne error', message)
+
+    return null
+  }
+}
+
 export default {
   getAll,
+  getOne,
 }
