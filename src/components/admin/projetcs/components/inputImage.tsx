@@ -137,13 +137,13 @@ export function InputImage({
                 <p className="mb-2 text-sm text-gray-500">
                   <span className="font-semibold">Click to upload</span> or drag and drop
                 </p>
-                <p className="text-xs text-gray-500">PNG, JPG, GIF (MAX. 5MB)</p>
+                <p className="text-xs text-gray-500">PNG, JPG (MAX. 5MB)</p>
               </div>
               <input
                 id="file-upload"
                 type="file"
                 className="hidden"
-                accept="image/*"
+                accept="image/png,image/jpeg"
                 onChange={handleFileChange}
                 ref={fileInputRef}
               />
