@@ -5,13 +5,12 @@ import { IProject } from "@/types/IProject"
 import * as RepoProjects_server from "@/db/repositories/RepoProjects.server"
 import { useUpdateProjects } from "@/contexts/projectsContext"
 import { InputProjectTags } from "../components/inputProjectTags"
-import { UploadImagePreview } from "../components/uploadImagePreview"
+import { InputImage } from "../components/inputImage"
 
 export function TableAdminAddProject() {
   const [open, setOpen] = useState(false)
   const updateProjects = useUpdateProjects()
-  const [file, setFile] = useState<File>()
-  const [preview, setPreview] = useState<string | null>(null);
+  const [file, setFile] = useState<File|null>(null)
 
   const {
     handleSubmit,
@@ -26,29 +25,9 @@ export function TableAdminAddProject() {
 
   const project_tags = watch('project_tags')
   
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      clearErrors('project_preview')
-      if(!file.type.startsWith("image/")) {
-        setError('project_preview',{
-          message: "The selected file is not an image",
-          type: 'value'
-        });
-        setPreview(null)
-        return;
-      }
-      setFile(file)
-      // Create preview for images
-      const reader = new FileReader();
-      reader.onload = () => setPreview(reader.result as string)
-      reader.onerror = () => setPreview(null)
-      reader.readAsDataURL(file);
-    } else {
-      setFile(undefined)
-      setPreview(null)
-    }
-  },[])
+  useEffect(() => {
+    if(file) clearErrors('project_preview')
+  },[file])
 
   const onSave = handleSubmit(async (value: Partial<IProject>) => {
     console.log('save', value)
@@ -194,33 +173,8 @@ export function TableAdminAddProject() {
           >
             Project Preview
           </label>
-          <div className="flex items-center">
-            <input
-              id="file"
-              name="file"
-              type="file"
-              onChange={handleFileChange}
-              onAbort={handleFileChange}
-              accept="image/*"
-              className="block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-md file:border-0
-                file:text-sm file:font-semibold
-                file:bg-blue-50 file:text-blue-700
-                hover:file:bg-blue-100"
-            />
-          </div>
+          <InputImage onImageChange={setFile}/>
           {errors.project_preview && <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.project_preview.message}</p>}
-          {preview && (
-            <div className="mt-2">
-              <p className="text-sm text-gray-600 mb-1">Preview Image :</p>
-              <img 
-                src={preview} 
-                alt="Preview" 
-                className="max-h-40 rounded-md border border-gray-200"
-              />
-            </div>
-          )}
         </div>
       </form>
     </Modal>

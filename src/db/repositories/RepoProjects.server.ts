@@ -101,7 +101,7 @@ export async function uploadImagePreview(file?: File) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  const filename = `project_preview_${file.name}`
+  const filename = `${Date.now()}_project_preview_${file.name}`
 
   const path = join(process.cwd(), "public/images", filename);
   await writeFile(path, buffer);
