@@ -25,6 +25,15 @@ export function TableAdminProjectDetails({
     }
   },[open,project_id])
 
+  useEffect(() => {
+    if(project?.project_preview) {
+      const img = new Image()
+      img.onload = () => setPreview(img.src)
+      img.onerror = () => setPreview(null)
+      img.src = project.project_preview
+    }
+  },[project])
+
   return <>
     <Modal
       open={open}
@@ -66,7 +75,7 @@ export function TableAdminProjectDetails({
         {project.project_preview && (
           <div className="my-6">
             <img 
-              src={project.project_preview}
+              src={preview ?? '/images/placeholder-image.jpg'}
               alt={`Preview of ${project.project_title}`}
               className="max-w-full max-h-80 object-contain rounded-lg shadow-sm border border-gray-200"
             />

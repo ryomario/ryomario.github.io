@@ -76,7 +76,7 @@ export function Pagination({
 
       {/* Visible pages */}
       {visiblePages.map((page) => (
-        <li>
+        <li key={page}>
           <button
             key={page}
             onClick={() => onPageChange(page)}

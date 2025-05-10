@@ -4,14 +4,31 @@ import { date2string } from "@/lib/date";
 import { ProjectsTableAdminButtonActions } from "./tableAdmin/buttonActions";
 import { TableAdminButtonToggleLayoutType } from "./tableAdmin/buttonToggleLayoutType";
 import { TableAdminButtonFilters } from "./tableAdmin/buttonFilters";
-import Link from "next/link";
 import { TableAdminAddProject } from "./views/formProject";
-import { useProjects, useProjectsWithPagination } from "@/contexts/projectsContext";
-import { useCallback, useMemo, useState } from "react";
+import { useProjectsWithPagination } from "@/contexts/projectsContext";
+import { useEffect, useState } from "react";
 import { Pagination } from "./components/pagination";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+const PAGE_PARAM_NAME = 'page'
 
 export function ProjectsTableAdmin() {
-  const [page, setPage] = useState(1)
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+  
+  const [page, setPage] = useState(() => {
+    const cPage = Number(searchParams.get(PAGE_PARAM_NAME) ?? '1')
+    if(isNaN(cPage) || cPage <= 0) return 1
+    return cPage
+  })
+
+  useEffect(() => {
+    const sp = new URLSearchParams()
+    sp.set(PAGE_PARAM_NAME, page.toString())
+    router.replace(`${pathname}?${sp.toString()}`)
+  },[page])
+
   const {
     data: projects,
     total,
