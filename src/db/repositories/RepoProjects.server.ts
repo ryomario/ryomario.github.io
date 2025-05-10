@@ -44,6 +44,42 @@ export async function save(data: Omit<IProject,'project_id'>) {
   }
 }
 
+export async function remove(project_id: IProject['project_id']) {
+  try {
+    const project = await prisma.projects.delete({
+      where: {
+        project_id,
+      },
+      include: {
+        project_tags: true,
+      }
+    })
+    if(!project) throw Error(`project not removed`)
+    
+    try {
+      if(project.project_preview) {
+        await deleteFileUploadImagePreview(project.project_preview)
+      }
+    } catch(error: any) {
+      let message = 'unknown'
+      if(typeof error == 'string') message = error
+      else if(error.message) message = error.message
+  
+      console.log('projects remove deleteFileUploadImagePreview error', message)
+    }
+  
+    return project
+  } catch(error: any) {
+    let message = 'unknown'
+    if(typeof error == 'string') message = error
+    else if(error.message) message = error.message
+
+    console.log('projects remove error', message)
+
+    return false
+  }
+}
+
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png"];
 
@@ -76,6 +112,7 @@ export async function uploadImagePreview(file?: File) {
   };
 }
 
-export async function deleteFileUploadImagePreview(path: string) {
+export async function deleteFileUploadImagePreview(url_path: string) {
+  const path = join(process.cwd(), "public", url_path);
   await rm(path)
 }

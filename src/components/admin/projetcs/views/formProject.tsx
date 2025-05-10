@@ -21,6 +21,7 @@ export function TableAdminAddProject() {
     watch,
     setValue,
     setError,
+    clearErrors,
   } = useForm<Partial<IProject>>()
 
   const project_tags = watch('project_tags')
@@ -28,6 +29,7 @@ export function TableAdminAddProject() {
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      clearErrors('project_preview')
       if(!file.type.startsWith("image/")) {
         setError('project_preview',{
           message: "The selected file is not an image",
@@ -42,6 +44,9 @@ export function TableAdminAddProject() {
       reader.onload = () => setPreview(reader.result as string)
       reader.onerror = () => setPreview(null)
       reader.readAsDataURL(file);
+    } else {
+      setFile(undefined)
+      setPreview(null)
     }
   },[])
 
@@ -195,6 +200,7 @@ export function TableAdminAddProject() {
               name="file"
               type="file"
               onChange={handleFileChange}
+              onAbort={handleFileChange}
               accept="image/*"
               className="block w-full text-sm text-gray-500
                 file:mr-4 file:py-2 file:px-4
@@ -204,6 +210,7 @@ export function TableAdminAddProject() {
                 hover:file:bg-blue-100"
             />
           </div>
+          {errors.project_preview && <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.project_preview.message}</p>}
           {preview && (
             <div className="mt-2">
               <p className="text-sm text-gray-600 mb-1">Preview Image :</p>

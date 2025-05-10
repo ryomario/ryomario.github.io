@@ -23,22 +23,26 @@ export function ProjectsTableAdmin() {
     return cPage
   })
 
-  useEffect(() => {
-    const sp = new URLSearchParams()
-    sp.set(PAGE_PARAM_NAME, page.toString())
-    router.replace(`${pathname}?${sp.toString()}`)
-  },[page])
-
   const {
     data: projects,
     total,
     totalPage,
-    startIdx,
-    lastIdx,
+    startNum,
+    lastNum,
   } = useProjectsWithPagination({
     page,
     perPage: 5,
   })
+
+  useEffect(() => {
+    const sp = new URLSearchParams()
+    sp.set(PAGE_PARAM_NAME, page.toString())
+    if(page > totalPage) {
+      setPage(totalPage)
+      return;
+    }
+    router.replace(`${pathname}?${sp.toString()}`)
+  },[page,totalPage])
 
   return <>
     <div className="relative sm:rounded-lg overflow-hidden">
@@ -88,7 +92,18 @@ export function ProjectsTableAdmin() {
             </tr>}
             {projects.map(project => <tr key={`${project.project_id}`} className="border-b dark:border-gray-700">
               <th scope="row" className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{project.project_title}</th>
-              <td className="px-4 py-3">{project.project_tags.map(tag => tag.tag_name).join(', ')}</td>
+              <td className="px-4 py-3">
+                <div className="flex flex-wrap gap-2">
+                  {project.project_tags.map(tag => (
+                    <span 
+                      key={tag.tag_name}
+                      className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
+                    >
+                      {tag.tag_name}
+                    </span>
+                  ))}
+                </div>
+              </td>
               <td className="px-4 py-3">{date2string(project.createdAt,false)}</td>
               <td className="px-4 py-3">{date2string(project.updatedAt)}</td>
               <td className="px-4 py-3 flex items-center justify-end">
@@ -104,7 +119,7 @@ export function ProjectsTableAdmin() {
         <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
           Showing
           <span className="font-semibold text-gray-900 dark:text-white">
-            {` ${startIdx + 1} - ${lastIdx + 1} `}
+            {` ${startNum} - ${lastNum} `}
           </span>
           of
           <span className="font-semibold text-gray-900 dark:text-white">

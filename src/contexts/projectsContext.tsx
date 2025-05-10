@@ -44,7 +44,7 @@ export const useProjectsWithPagination = ({
 }) => {
   const { data } = useContext(Context)
   const total = data.length
-  const totalPage = Math.ceil(total / perPage)
+  const totalPage = !total ? 1 : Math.ceil(total / perPage)
   const startIdx = perPage * (page - 1)
   const endIdx = startIdx + perPage
   const paginatedData = data.slice(startIdx, endIdx)
@@ -53,8 +53,8 @@ export const useProjectsWithPagination = ({
     total,
     totalPage,
     data: paginatedData,
-    startIdx,
-    lastIdx: startIdx + (paginatedData.length - 1),
+    startNum: !total ? 0 : startIdx + 1,
+    lastNum: startIdx + paginatedData.length,
   }
 }
 export const useUpdateProjects = () => {

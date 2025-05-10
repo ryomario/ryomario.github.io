@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Modal } from "../components/modal"
 import { IProject } from "@/types/IProject"
 import * as RepoProjects_server from "@/db/repositories/RepoProjects.server"
@@ -8,12 +8,14 @@ type Props = {
   project_id: number
   open: boolean
   onClose?: () => void
+  onDelete?: () => Promise<boolean>
 }
 
 export function TableAdminProjectDetails({
   project_id,
   open,
   onClose = () => {},
+  onDelete = async () => true,
 }: Props) {
   const [project, setProject] = useState<IProject|null>(null)
   const [preview, setPreview] = useState<string | null>(null);
@@ -34,6 +36,11 @@ export function TableAdminProjectDetails({
     }
   },[project])
 
+  const handleDeleteProject = useCallback(async () => {
+    const deleted = await onDelete()
+    if(deleted) onClose()
+  },[project_id])
+
   return <>
     <Modal
       open={open}
@@ -45,8 +52,7 @@ export function TableAdminProjectDetails({
         <button onClick={onClose} type="button" className="py-2.5 px-5 bg-blue-600 text-white text-sm font-medium rounded-lg focus:outline-none border border-gray-200 hover:bg-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 transition-colors">
           Edit
         </button>
-        {/* @TODO delete project */}
-        <button onClick={onClose} type="button" className="ms-2 py-2.5 px-5 bg-gray-100 text-red-600 text-sm font-medium rounded-lg focus:outline-none border border-gray-200 hover:bg-gray-200 focus:z-10 focus:ring-4 focus:ring-gray-100 transition-colors">
+        <button onClick={handleDeleteProject} type="button" className="ms-2 py-2.5 px-5 bg-gray-100 text-red-600 text-sm font-medium rounded-lg focus:outline-none border border-gray-200 hover:bg-gray-200 focus:z-10 focus:ring-4 focus:ring-gray-100 transition-colors">
           Delete
         </button>
       </>}
@@ -90,7 +96,7 @@ export function TableAdminProjectDetails({
                   key={tag.tag_name}
                   className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
                 >
-                  #{tag.tag_name}
+                  {tag.tag_name}
                 </span>
               ))}
             </div>
