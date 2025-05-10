@@ -44,6 +44,48 @@ export async function save(data: Omit<IProject,'project_id'>) {
   }
 }
 
+export async function update(project_id: IProject['project_id'], data: Omit<IProject,'project_id'>) {
+  try {
+    const old_project = await getOne(project_id)
+    if(old_project?.project_preview && old_project?.project_preview != data.project_preview) {
+      // delete old image
+      await deleteFileUploadImagePreview(old_project?.project_preview)
+    }
+    const project = await prisma.projects.update({
+      data: {
+        project_title: data.project_title,
+        project_desc: data.project_desc,
+        project_preview: data.project_preview,
+        project_tags: {
+          connectOrCreate: data.project_tags.map(({ tag_name }) => ({
+            where: { tag_name },
+            create: { tag_name },
+          }))
+        },
+        published: data.published,
+        updatedAt: data.updatedAt,
+      },
+      include: {
+        project_tags: true,
+      },
+      where: {
+        project_id,
+      }
+    })
+    if(!project) throw Error(`project not updated`)
+  
+    return project
+  } catch(error: any) {
+    let message = 'unknown'
+    if(typeof error == 'string') message = error
+    else if(error.message) message = error.message
+
+    console.log('projects update error', message)
+
+    return false
+  }
+}
+
 export async function remove(project_id: IProject['project_id']) {
   try {
     const project = await prisma.projects.delete({

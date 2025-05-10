@@ -4,7 +4,7 @@ import { date2string } from "@/lib/date";
 import { ProjectsTableAdminButtonActions } from "./tableAdmin/buttonActions";
 import { TableAdminButtonToggleLayoutType } from "./tableAdmin/buttonToggleLayoutType";
 import { TableAdminButtonFilters } from "./tableAdmin/buttonFilters";
-import { TableAdminAddProject } from "./views/formProject";
+import { TableAdminAddProject } from "./views/formAddProject";
 import { useProjectsWithPagination } from "@/contexts/projectsContext";
 import { useEffect, useState } from "react";
 import { Pagination } from "./components/pagination";

@@ -1,7 +1,7 @@
 "use client"
 
 import { urlToFile } from '@/lib/file';
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 
 export function InputImage({
   onImageChange,
@@ -81,6 +81,30 @@ export function InputImage({
     onImageChange(null);
     setError(null);
   };
+
+  useEffect(() => {
+    if(initialValue) {
+      setIsLoading(true);
+      setError(null);
+      // Convert URL to File
+      urlToFile(
+        imageUrl,
+        `downloaded-${Date.now()}.jpg`, // You can extract filename from URL if needed
+        'image/jpeg' // Default mime type
+      ).then(file => {
+        // Create preview
+        const previewUrl = URL.createObjectURL(file);
+        setPreview(previewUrl);
+        // onImageChange(file);
+      }).catch(err => {
+        console.error('Error processing image URL:', err);
+        setError('Failed to load image from URL. Please check the link and try again.');
+        // onImageChange(null);
+      }).finally(() => {
+        setIsLoading(false);
+      })
+    }
+  },[initialValue])
 
   return (
     <div className="space-y-4">
