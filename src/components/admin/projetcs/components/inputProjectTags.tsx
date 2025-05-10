@@ -1,9 +1,10 @@
+import { IProject } from "@/types/IProject"
 import { useCallback, useEffect, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 
 type Props = {
-  tags?: { tag_name: string }[]
-  onChange?: (tags: { tag_name: string }[]) => void
+  tags?: IProject['project_tags']
+  onChange?: (tags: IProject['project_tags']) => void
 }
 
 export function InputProjectTags({
@@ -11,11 +12,8 @@ export function InputProjectTags({
   onChange = () => {},
 }: Props) {
   const {
-    clearErrors,
     formState: { errors },
-    setError,
     control,
-    watch,
     resetField,
     register,
     handleSubmit,
@@ -42,12 +40,6 @@ export function InputProjectTags({
     append({ tag_name: newTag.trim() })
     resetField('newTag')
   })
-
-  const newTag = watch('newTag')
-
-  useEffect(() => {
-    remove(0)
-  }, [remove])
 
   return <div className="mb-3">
     <label htmlFor="project-tag"

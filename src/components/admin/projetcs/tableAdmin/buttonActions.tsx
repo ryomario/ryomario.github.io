@@ -37,7 +37,10 @@ export function ProjectsTableAdminButtonActions({
       return false
     }
     await RepoProjects_server.remove(project_id)
-    updateProjects(await RepoProjects_server.getAll())
+    updateProjects(
+      await RepoProjects_server.getAll(),
+      await RepoProjects_server.getAllTags(),
+    )
     setOpen(false)
     return true
   },[project_id])

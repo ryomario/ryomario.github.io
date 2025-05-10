@@ -45,7 +45,25 @@ async function getOne(id: number) {
   }
 }
 
+async function getAllTags() {
+  try {
+    const project_tags = await prisma.project_tags.findMany()
+    if(!project_tags) throw Error(`project_tags not found`)
+  
+    return project_tags
+  } catch(error: any) {
+    let message = 'unknown'
+    if(typeof error == 'string') message = error
+    else if(error.message) message = error.message
+
+    console.log('project_tags getAllTags error', message)
+
+    return []
+  }
+}
+
 export default {
   getAll,
   getOne,
+  getAllTags,
 }

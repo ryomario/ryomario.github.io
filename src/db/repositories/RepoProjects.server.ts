@@ -8,6 +8,7 @@ import { writeFile, rm } from "fs/promises"
 
 export const getAll = RepoProjects.getAll
 export const getOne = RepoProjects.getOne
+export const getAllTags = RepoProjects.getAllTags
 
 export async function save(data: Omit<IProject,'project_id'>) {
   try {
@@ -57,6 +58,7 @@ export async function update(project_id: IProject['project_id'], data: Omit<IPro
         project_desc: data.project_desc,
         project_preview: data.project_preview,
         project_tags: {
+          set: [],
           connectOrCreate: data.project_tags.map(({ tag_name }) => ({
             where: { tag_name },
             create: { tag_name },
