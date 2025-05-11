@@ -42,7 +42,7 @@ export function ModalFormProject({
   },[file])
 
   const onSave = handleSubmit(async (value: Partial<IProject>) => {
-    console.log('save',value)
+    // console.log('save',value)
     if(!isFormUpdate && !file) {
       setError('project_preview', {
         type: 'required',
@@ -95,7 +95,7 @@ export function ModalFormProject({
         saved = await RepoProjects_server.save(new_project)
 
       }
-      console.log('saved', saved)
+      // console.log('saved', saved)
       if(saved) {
         updateProjects(
           await RepoProjects_server.getAll(),

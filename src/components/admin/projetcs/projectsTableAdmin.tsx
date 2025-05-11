@@ -220,7 +220,7 @@ function GridView({ projects }: ViewProps) {
           {/* Dropdown toggle (Only shows on hover) */}
           <ProjectsTableAdminButtonActions
             project_id={project.project_id}
-            className={`${cardStyles['card-actions']} absolute top-3 right-3 bg-white`}
+            className={`${cardStyles['card-actions']} absolute top-3 right-3 bg-white shadow`}
           />
         </div>
         {/* content */}
@@ -236,7 +236,7 @@ function GridView({ projects }: ViewProps) {
             ))}
           </div>
           <h3 className="text-lg font-semibold text-gray-800 mt-1">{project.project_title}</h3>
-          <p className="text-gray-600 mt-2 text-sm line-clamp-3">{project.project_desc}</p>
+          <p className="text-gray-600 mt-2 text-sm line-clamp-3 whitespace-pre-line">{project.project_desc}</p>
         </div>
       </div>
     ))}
