@@ -3,19 +3,14 @@
 import { date2string } from "@/lib/date";
 import { ProjectsTableAdminButtonActions } from "./tableAdmin/buttonActions";
 import { TableAdminButtonToggleLayoutType } from "./tableAdmin/buttonToggleLayoutType";
-import { TableAdminButtonFilters } from "./tableAdmin/buttonFilters";
 import { TableAdminAddProject } from "./views/formAddProject";
 import { useProjectsWithPagination } from "@/contexts/projectsContext";
 import { useEffect, useState } from "react";
 import { Pagination } from "./components/pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { IProject } from "@/types/IProject";
+import { IProject, IProjectsTableAdminFilter } from "@/types/IProject";
 import cardStyles from "./styles/card.module.css";
-
-export type IProjectsTableAdminFilter = {
-  q: string
-  tags?: IProject['project_tags']
-}
+import { ProjectsButtonFilters } from "@/components/reusable/buttonFilters";
 
 const PAGE_PARAM_NAME = 'page'
 const LAYOUT_PARAM_NAME = 'layout'
@@ -101,7 +96,7 @@ export function ProjectsTableAdmin() {
         <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
             <div className="flex items-center space-x-3 w-full md:w-auto">
                 <TableAdminButtonToggleLayoutType layoutType={layout} onChange={setLayout}/>
-                <TableAdminButtonFilters
+                <ProjectsButtonFilters
                   filter={filter}
                   onChangeFilter={(_filter) => setFilter(old => ({
                     ...old,

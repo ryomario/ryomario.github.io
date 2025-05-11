@@ -61,8 +61,8 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeModeLoader/>
-        <ScrollTop/>
         <NextIntlClientProvider messages={messages}>
+          <ScrollTop/>
           <ProfileDataProvider data={profileData}>
             <div className="bg-secondary-light dark:bg-primary-dark transition duration-300 min-h-screen">
               <Navbar/>

@@ -10,3 +10,9 @@ export interface IProject {
     tag_name: string
   }[]
 }
+
+export type IProjectsTableAdminFilter = {
+  q?: string
+  tags?: IProject['project_tags']
+  published?: boolean
+}
