@@ -13,6 +13,7 @@ import { ScrollTop } from "@/components/scrollTop";
 import { ScrollToTop } from "@/components/scrollToTop";
 import { ProfileDataProvider } from "@/contexts/profileDataContext";
 import RepoProfileData from "@/db/repositories/RepoProfileData";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,7 +69,9 @@ export default async function RootLayout({
               <Navbar/>
               <div className="sm:container sm:mx-auto">
                 <div className="mx-auto flex flex-col max-w-7xl items-center justify-between p-6 lg:px-8">
-                  {children}
+                  <Suspense>
+                    {children}
+                  </Suspense>
                 </div>
               </div>
               <Footer/>
