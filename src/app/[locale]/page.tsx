@@ -3,6 +3,8 @@ import {
   HeroSection,
   ProjectsShowcase
 } from "@/components/sections/home";
+import { ProjectsProvider } from "@/contexts/projectsContext";
+import RepoProjects from "@/db/repositories/RepoProjects";
 import { Locale, routing } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -21,10 +23,15 @@ export default async function HomePage({ params }: Readonly<{
 
   const t = await getTranslations('HomePage')
 
+  const projects = await RepoProjects.getAll()
+  const project_tags = await RepoProjects.getAllTags()
+
   return (
     <>
       <HeroSection/>
-      <ProjectsShowcase maxItems={6}/>
+      <ProjectsProvider data={projects} tags={project_tags}>
+        <ProjectsShowcase/>
+      </ProjectsProvider>
       <div className="mt-8 sm:mt-10 flex justify-center">
         <Button
           href="/projects"

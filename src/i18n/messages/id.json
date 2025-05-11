@@ -9,6 +9,9 @@
     },
     "loading": "Memuat..."
   },
+  "LanguageSwitcher": {
+    "label": "Ganti Bahasa. Bahasa saat ini: {current_lang}"
+  },
   "Navbar": {
     "srOnly": {
       "closeMenu": "Tutup Menu Utama",
@@ -32,7 +35,14 @@
     "search_by_helper": "Cari proyek berdasarkan judul atau filter menggunakan nama tag",
     "search_projects": "Cari Proyek",
     "empty_projects": "Tidak ada data",
-    "select_allProjects": "Semua Proyek"
+    "select_allProjects": "Semua Proyek",
+    "filters": {
+      "tags": "Tag",
+      "buttons": {
+        "no_filter": "Filter",
+        "tag_filtered": "Ter-filter ({count} tag)"
+      }
+    }
   },
   "Footer": {
     "follow_me": "Ikuti saya"

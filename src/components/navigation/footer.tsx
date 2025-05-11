@@ -1,9 +1,11 @@
-import { profileData } from "@/data";
+"use client"
+
+import { useProfileData } from "@/contexts/profileDataContext";
 import { useTranslations } from "next-intl";
 import React from "react";
 
 export function Footer() {
-  const socialLinks = profileData.socialLinks
+  const { socialLinks, lastUpdated } = useProfileData()
 
   const t = useTranslations('Footer')
 
@@ -41,7 +43,7 @@ export function Footer() {
 
         <div className="font-general-regular flex justify-center items-center text-center">
           <div className="text-lg text-ternary-dark dark:text-ternary-light">
-            &copy; {profileData.footer.year}
+            &copy; {lastUpdated.getFullYear()}
             <a
               href="https://github.com/ryomario/ryomario.github.io/"
               target="__blank"

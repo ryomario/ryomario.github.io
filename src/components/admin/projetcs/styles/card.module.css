@@ -1,0 +1,9 @@
+.card-actions {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.card:hover .card-actions,
+.card-actions:focus,
+.card-actions:global(.open) {
+  opacity: 1;
+}

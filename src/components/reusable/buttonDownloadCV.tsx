@@ -1,14 +1,15 @@
-import { profileData } from "@/data";
+import { useProfileData } from "@/contexts/profileDataContext";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 
 export function ButtonDownloadCV() {
   const t = useTranslations('CV')
+  const { name, downloadCV } = useProfileData()
 
   return (
     <Link
-      download={t('download_filename',{ name: profileData.name, ext: 'pdf' })}
-      href={profileData.downloadCV}
+      download={t('download_filename',{ name, ext: 'pdf' })}
+      href={downloadCV}
       target="_blank"
       className="font-general-medium flex justify-center items-center w-36 sm:w-48 mt-12 mb-6 sm:mb-0 text-lg border border-indigo-200 dark:border-ternary-dark py-2.5 sm:py-3 shadow-lg rounded-lg bg-indigo-50 focus:ring-1 focus:ring-indigo-900 hover:bg-indigo-500 text-gray-700 hover:text-white duration-500"
       aria-label={t('download_btn')}

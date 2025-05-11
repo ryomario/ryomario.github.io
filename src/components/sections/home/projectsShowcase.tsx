@@ -1,19 +1,56 @@
 "use client"
 
-import { Project } from "@/data/projects"
-import { useProjects } from "@/hooks/useProjects"
-import { useProjectTags } from "@/hooks/useProjectTags"
-import { Link } from "@/i18n/routing"
+import { ProjectsButtonFilters } from "@/components/reusable/buttonFilters"
+import { useProjectsWithPagination } from "@/contexts/projectsContext"
+import { Link, usePathname, useRouter } from "@/i18n/routing"
+import { IProject, IProjectsTableAdminFilter } from "@/types/IProject"
 import { useTranslations } from "next-intl"
-import { ChangeEventHandler } from "react"
+import { useSearchParams } from "next/navigation"
+import { ChangeEventHandler, useEffect, useState } from "react"
 
-export function ProjectsShowcase({ maxItems }: { maxItems?: number }) {
+const PAGE_PARAM_NAME = 'page'
+const maxItemsPerPage = 6
+
+export function ProjectsShowcase({ showAll = false }: { showAll?: boolean }) {
   const t = useTranslations("ProjectsShowcase")
 
-  const { projects, currentFilter, addFilter } = useProjects({
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const [filter, setFilter] = useState<IProjectsTableAdminFilter>({
     q: '',
-    limit: maxItems,
+    published: true,
   })
+  
+  const [page, setPage] = useState(() => {
+    const cPage = Number(searchParams.get(PAGE_PARAM_NAME) ?? '1')
+    if(isNaN(cPage) || cPage <= 0) return 1
+    return cPage
+  })
+
+  const {
+    data: projects,
+    total,
+    totalPage,
+    startNum,
+    lastNum,
+  } = useProjectsWithPagination({
+    page,
+    perPage: maxItemsPerPage,
+    filter,
+  })
+
+  useEffect(() => {
+    if(!showAll) return;
+    const sp = new URLSearchParams(searchParams)
+    sp.set(PAGE_PARAM_NAME, page.toString())
+    if(page > totalPage) {
+      setPage(totalPage)
+      return;
+    }
+    router.replace(`${pathname}?${sp.toString()}`)
+  },[page,totalPage,showAll])
 
   return (
     <section className="w-full py-5 sm:py-10 mt-5 sm:mt-10">
@@ -55,9 +92,12 @@ export function ProjectsShowcase({ maxItems }: { maxItems?: number }) {
               </svg>
             </span>
             <input
-              value={currentFilter.q}
+              value={filter.q}
               onChange={(e) => {
-                addFilter({ q: e.target.value })
+                setFilter(old => ({
+                  ...old,
+                  q: e.target.value,
+                }))
               }}
               className="
                 font-general-medium 
@@ -83,11 +123,20 @@ export function ProjectsShowcase({ maxItems }: { maxItems?: number }) {
 							aria-label={t('search_projects')}
             />
           </label>
-          <ProjectTagsSelect value={currentFilter.tags?.[0] ?? 'all'} onChange={(e) => {
-            const tags = []
-            if(e.target.value != 'all')tags.push(e.target.value)
-            addFilter({ tags })
-          }}/>
+          <ProjectsButtonFilters
+            filter={filter}
+            onChangeFilter={(_filter) => setFilter(old => ({
+              ...old,
+              tags: _filter.tags,
+            }))}
+            labels={{
+              tags: t('filters.tags'),
+              button(filter) {
+                if(!filter.tags?.length) return t('filters.buttons.no_filter')
+                return t('filters.buttons.tag_filtered', { count: filter.tags.length })
+              },
+            }}
+          />
         </div>
       </div>
       {projects.length == 0 ? <>
@@ -96,68 +145,41 @@ export function ProjectsShowcase({ maxItems }: { maxItems?: number }) {
         </div>
       </> : (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6 sm:gap-10">
-        {projects.map(project => <ProjectCard key={project.name} project={project}/>)}
+        {projects.map(project => <ProjectCard key={project.project_id} project={project}/>)}
       </div>
       )}
     </section>
   )
 }
 
-function ProjectTagsSelect({ value, onChange }: { value: string, onChange: ChangeEventHandler<HTMLSelectElement> }) {
-  const t = useTranslations("ProjectsShowcase")
-
-  const { tags, isLoading: isLoadingTags } = useProjectTags({
-    q: '',
-  })
-
+function ProjectCard({ project }: { project: IProject }) {
   return (
-    <select
-      value={value}
-      onChange={onChange}
-      className="
-        font-general-medium 
-        px-4
-        sm:px-6
-        py-2
-        border
-        dark:border-secondary-dark
-        rounded-lg
-        text-sm
-        sm:text-md
-        dark:font-medium
-        bg-secondary-light
-        dark:bg-ternary-dark
-        text-primary-dark
-        dark:text-ternary-light
-      "
-      disabled={isLoadingTags}
+    <Link href={`/projects/${project.project_id}`} aria-label="Project"
+      className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark"
     >
-      <option className="text-sm sm:text-md" value={'all'}>{t('select_allProjects')}</option>
-      {!isLoadingTags && tags.map(option => (
-        <option className="text-sm sm:text-md" key={option}>{option}</option>
-      ))}
-    </select>
-  )
-}
-
-function ProjectCard({ project }: { project: Project }) {
-  return (
-    <div>
-      <Link href={`/projects/${project.name}`} aria-label="Project">
-        <div className="rounded-xl shadow-lg hover:shadow-xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark">
-          <div>
-            <img src={project.imgUrl} alt={`${project.title} image`} className="rounded-t-xl border-none aspect-[3/2] object-cover object-top" />
-          </div>
-          <div className="text-center px-4 py-6">
-            <p className="font-general-medium text-lg md:text-xl text-ternary-dark dark:text-ternary-light mb-2 text-bold">
-              {project.title}
-            </p>
-            <span className="text-lg text-ternary-dark dark:text-ternary-light">
-              {project.tags.join(', ')}
+      {/* Image */}
+      <div className="relative pt-[56.25%] overflow-hidden">
+        <img
+          src={project.project_preview}
+          alt={`${project.project_title} image`}
+          className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-500 object-top"
+        />
+      </div>
+      {/* Content */}
+      <div className="px-4 py-6">
+        <div className="flex flex-wrap gap-2">
+          {project.project_tags.map(tag => (
+            <span 
+              key={tag.tag_name}
+              className="inline-block px-2.5 py-0.5 bg-gray-300 dark:bg-gray-600 rounded-full text-xs text-gray-700 dark:text-gray-200"
+            >
+              {tag.tag_name}
             </span>
-          </div>
+          ))}
         </div>
-      </Link>
-    </div>
+        <h3 className="font-general-medium text-lg md:text-xl text-bold text-ternary-dark dark:text-ternary-light mt-1">{project.project_title}</h3>
+        <p className="text-ternary-dark dark:text-ternary-light mt-2 text-sm line-clamp-3 whitespace-pre-line">{project.project_desc}</p>
+      </div>
+    </Link>
   )
 }

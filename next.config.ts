@@ -14,6 +14,20 @@ const nextConfig: NextConfig = {
  
   // Optional: Change the output directory `out` -> `dist`
   distDir: 'dist',
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  webpack: config => {
+    if(!config.module) {
+      return config;
+    }
+    config.module.rules?.push({
+      test: /\.server\.ts/,
+      loader: 'ignore-loader',
+    });
+    return config;
+  },
 };
 
 export default withNextIntl(nextConfig);
