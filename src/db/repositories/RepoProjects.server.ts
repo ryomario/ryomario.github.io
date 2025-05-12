@@ -9,6 +9,7 @@ import { writeFile, rm } from "fs/promises"
 export const getAll = RepoProjects.getAll
 export const getOne = RepoProjects.getOne
 export const getAllTags = RepoProjects.getAllTags
+export const getAllTechs = RepoProjects.getAllTechs
 
 export async function save(data: Omit<IProject,'project_id'>) {
   try {
@@ -23,12 +24,21 @@ export async function save(data: Omit<IProject,'project_id'>) {
             create: { tag_name },
           }))
         },
+        project_tech: {
+          connectOrCreate: data.project_tech.map(({ tech_name }) => ({
+            where: { tech_name },
+            create: { tech_name },
+          }))
+        },
         createdAt: data.createdAt,
         published: data.published,
         updatedAt: data.updatedAt,
+        link_repo: data.link_repo ?? null,
+        link_demo: data.link_demo ?? null,
       },
       include: {
         project_tags: true,
+        project_tech: true,
       }
     })
     if(!project) throw Error(`project not saved`)
@@ -64,11 +74,21 @@ export async function update(project_id: IProject['project_id'], data: Omit<IPro
             create: { tag_name },
           }))
         },
+        project_tech: {
+          set: [],
+          connectOrCreate: data.project_tech.map(({ tech_name }) => ({
+            where: { tech_name },
+            create: { tech_name },
+          }))
+        },
         published: data.published,
         updatedAt: data.updatedAt,
+        link_repo: data.link_repo ?? null,
+        link_demo: data.link_demo ?? null,
       },
       include: {
         project_tags: true,
+        project_tech: true,
       },
       where: {
         project_id,
@@ -96,6 +116,7 @@ export async function remove(project_id: IProject['project_id']) {
       },
       include: {
         project_tags: true,
+        project_tech: true,
       }
     })
     if(!project) throw Error(`project not removed`)

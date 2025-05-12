@@ -146,6 +146,7 @@ function TableView({ projects }: ViewProps) {
         <tr>
           <th scope="col" className="px-4 py-4">Project</th>
           <th scope="col" className="px-4 py-3">Tags</th>
+          <th scope="col" className="px-4 py-3">Tech</th>
           <th scope="col" className="px-4 py-3">Date Created</th>
           <th scope="col" className="px-4 py-3">Last Updated</th>
           <th scope="col" className="px-4 py-3">
@@ -166,7 +167,19 @@ function TableView({ projects }: ViewProps) {
                   key={tag.tag_name}
                   className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
                 >
-                  {tag.tag_name}
+                  #{tag.tag_name}
+                </span>
+              ))}
+            </div>
+          </td>
+          <td className="px-4 py-3">
+            <div className="flex flex-wrap gap-2">
+              {project.project_tech.map(tech => (
+                <span 
+                  key={tech.tech_name}
+                  className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
+                >
+                  {tech.tech_name}
                 </span>
               ))}
             </div>
@@ -198,7 +211,7 @@ function GridView({ projects }: ViewProps) {
         {/* Card header with Dropdown */}
         <div className="relative">
           {/* Image */}
-          <div className="relative pt-[56.25%] overflow-hidden">
+          <div className="relative pt-[87.5%] overflow-hidden">
             <img
               src={project.project_preview} 
               alt={project.project_title} 
@@ -226,12 +239,22 @@ function GridView({ projects }: ViewProps) {
                 key={tag.tag_name}
                 className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
               >
-                {tag.tag_name}
+                #{tag.tag_name}
               </span>
             ))}
           </div>
           <h3 className="text-lg font-semibold text-gray-800 mt-1">{project.project_title}</h3>
           <p className="text-gray-600 mt-2 text-sm line-clamp-3 whitespace-pre-line">{project.project_desc}</p>
+          {project.project_tech.length > 0 && <div className="flex flex-wrap gap-2 mt-3">
+            {project.project_tech.map(tech => (
+              <span 
+                key={tech.tech_name}
+                className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
+              >
+                {tech.tech_name}
+              </span>
+            ))}
+          </div>}
         </div>
       </div>
     ))}

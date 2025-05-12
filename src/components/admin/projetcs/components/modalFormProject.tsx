@@ -6,6 +6,7 @@ import * as RepoProjects_server from "@/db/repositories/RepoProjects.server"
 import { Modal } from "./modal"
 import { InputProjectTags } from "./inputProjectTags"
 import { InputImage } from "./inputImage"
+import { InputProjectTechs } from "./inputProjectTechs"
 
 type Props = {
   project?: IProject
@@ -35,6 +36,7 @@ export function ModalFormProject({
     defaultValues: project ?? {},
   })
   const project_tags = watch('project_tags')
+  const project_tech = watch('project_tech')
   const project_preview = watch('project_preview')
   
   useEffect(() => {
@@ -85,7 +87,10 @@ export function ModalFormProject({
         createdAt: new Date(),
         updatedAt: new Date(),
         project_tags: value.project_tags ?? [],
+        project_tech: value.project_tech ?? [],
         published: value.published ?? false,
+        link_demo: value.link_demo ?? '',
+        link_repo: value.link_repo ?? '',
       }
 
       let saved
@@ -100,6 +105,7 @@ export function ModalFormProject({
         updateProjects(
           await RepoProjects_server.getAll(),
           await RepoProjects_server.getAllTags(),
+          await RepoProjects_server.getAllTechs(),
         )
         onClose()
         reset()
@@ -202,6 +208,50 @@ export function ModalFormProject({
           tags={project_tags}
           onChange={(tags) => setValue('project_tags', tags)}
         />
+        <InputProjectTechs
+          tech={project_tech}
+          onChange={(tech) => setValue('project_tech', tech)}
+        />
+        <div className="mb-3">
+          <label htmlFor="link_repo"
+            className={[
+              "block mb-2 text-sm font-medium",
+              (errors.link_repo ? "text-red-700 dark:text-red-500":"text-gray-900 dark:text-white")
+            ].join(' ')}>Link Repo</label>
+          <input
+            id="link_repo"
+            type="text"
+            className={[
+              "border text-sm rounded-lg block w-full p-2.5",
+              (errors.link_repo ? 
+                "bg-red-50 border-red-500 text-red-900 placeholder-red-400 focus:outline-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                : "bg-gray-50 border-gray-300 text-gray-900 dark:placeholder-gray-400 focus:outline-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:outline-blue-500 dark:focus:border-blue-500"
+              )
+            ].join(' ')}
+            placeholder="Link Repo"
+            {...register('link_repo')}
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="link_demo"
+            className={[
+              "block mb-2 text-sm font-medium",
+              (errors.link_demo ? "text-red-700 dark:text-red-500":"text-gray-900 dark:text-white")
+            ].join(' ')}>Link Demo</label>
+          <input
+            id="link_demo"
+            type="text"
+            className={[
+              "border text-sm rounded-lg block w-full p-2.5",
+              (errors.link_demo ? 
+                "bg-red-50 border-red-500 text-red-900 placeholder-red-400 focus:outline-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                : "bg-gray-50 border-gray-300 text-gray-900 dark:placeholder-gray-400 focus:outline-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:outline-blue-500 dark:focus:border-blue-500"
+              )
+            ].join(' ')}
+            placeholder="Link Demo"
+            {...register('link_demo')}
+          />
+        </div>
         <div className="mb-3">
           <label htmlFor="image_file"
             className={[

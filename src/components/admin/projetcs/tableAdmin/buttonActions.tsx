@@ -40,6 +40,7 @@ export function ProjectsTableAdminButtonActions({
     updateProjects(
       await RepoProjects_server.getAll(),
       await RepoProjects_server.getAllTags(),
+      await RepoProjects_server.getAllTechs(),
     )
     setOpen(false)
     return true

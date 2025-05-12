@@ -25,11 +25,12 @@ export default async function HomePage({ params }: Readonly<{
 
   const projects = await RepoProjects.getAll()
   const project_tags = await RepoProjects.getAllTags()
+  const project_tech = await RepoProjects.getAllTechs()
 
   return (
     <>
       <HeroSection/>
-      <ProjectsProvider data={projects} tags={project_tags}>
+      <ProjectsProvider data={projects} tags={project_tags} tech={project_tech}>
         <ProjectsShowcase/>
       </ProjectsProvider>
       <div className="mt-8 sm:mt-10 flex justify-center">

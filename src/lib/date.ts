@@ -1,3 +1,5 @@
+import { Locale } from "@/i18n/routing"
+
 export function date2string(date?: Date|number|string, showTime = true) {
   if(!date) date = Date.now()
   if(!(date instanceof Date)) date = new Date(date)
@@ -15,4 +17,21 @@ export function date2string(date?: Date|number|string, showTime = true) {
   } ${
     showTime ? [hour,minute,second].map(n => String(n).padStart(2,'0')).join(':') : ''
   }`.trim()
+}
+
+export function date2localeString(date?: Date|number|string, showTime = false, locale: Locale = 'en') {
+  if(!date) date = Date.now()
+  if(!(date instanceof Date)) date = new Date(date)
+
+  const dateLocale = locale == 'en' ? 'en-US' : 'id-ID'
+
+  return date.toLocaleDateString(dateLocale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    ...(showTime && {
+      hour: 'numeric',
+      minute: 'numeric',
+    })
+  })
 }

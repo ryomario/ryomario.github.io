@@ -25,9 +25,17 @@ model projects {
   project_desc    String
   project_preview String
   project_tags    project_tags[]
+  project_tech    project_tech[]
+  link_repo       String?
+  link_demo       String?
 }
 
 model project_tags {
   tag_name           String    @id
+  projects           projects[]
+}
+
+model project_tech {
+  tech_name          String @id
   projects           projects[]
 }

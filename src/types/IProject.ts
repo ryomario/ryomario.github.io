@@ -9,6 +9,11 @@ export interface IProject {
   project_tags: {
     tag_name: string
   }[]
+  project_tech: {
+    tech_name: string
+  }[]
+  link_repo: string | null
+  link_demo: string | null
 }
 
 export type IProjectsTableAdminFilter = {
