@@ -160,7 +160,7 @@ export function ProjectCard({ project, previewOnly = false }: { project: IProjec
       {/* Image */}
       <div className="relative pt-[87.5%] overflow-hidden">
         <img
-          src={project.project_preview}
+          src={project.project_preview[0].preview_url ?? '/images/placeholder-image.jpg'}
           alt={`${project.project_title} image`}
           className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-500"
         />

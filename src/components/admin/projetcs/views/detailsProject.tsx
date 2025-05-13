@@ -3,6 +3,7 @@ import { Modal } from "../components/modal"
 import { IProject } from "@/types/IProject"
 import * as RepoProjects_server from "@/db/repositories/RepoProjects.server"
 import { date2string } from "@/lib/date"
+import { GalleryHorizontalScroll } from "@/components/reusable/images/galleryHorizontalScroll"
 
 type Props = {
   project_id: number
@@ -18,7 +19,7 @@ export function TableAdminProjectDetails({
   onDelete = async () => true,
 }: Props) {
   const [project, setProject] = useState<IProject|null>(null)
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<(string | null)[]>([]);
 
   useEffect(() => {
     if(open) {
@@ -28,11 +29,20 @@ export function TableAdminProjectDetails({
   },[open,project_id])
 
   useEffect(() => {
-    if(project?.project_preview) {
-      const img = new Image()
-      img.onload = () => setPreview(img.src)
-      img.onerror = () => setPreview(null)
-      img.src = project.project_preview
+    if(project?.project_preview && project?.project_preview.length > 0) {
+      project?.project_preview.forEach((preview, idx) => {
+        const img = new Image()
+        const setImgPreview = (src: string|null) => {
+          setPreview(old => {
+            const newData = [...old]
+            newData[idx] = src
+            return newData
+          })
+        }
+        img.onload = () => setImgPreview(img.src)
+        img.onerror = () => setImgPreview(null)
+        img.src = preview.preview_url
+      })
     }
   },[project])
 
@@ -78,12 +88,10 @@ export function TableAdminProjectDetails({
           <h1 className="text-2xl font-bold text-gray-900">{project.project_title}</h1>
         </header>
         {/* Preview Image */}
-        {project.project_preview && (
+        {(project.project_preview && project.project_preview.length > 0) && (
           <div className="my-6">
-            <img 
-              src={preview ?? '/images/placeholder-image.jpg'}
-              alt={`Preview of ${project.project_title}`}
-              className="max-w-full max-h-80 object-contain rounded-lg shadow-sm border border-gray-200"
+            <GalleryHorizontalScroll
+              images={project.project_preview.map(p => p.preview_url)}
             />
           </div>
         )}

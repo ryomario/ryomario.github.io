@@ -6,6 +6,7 @@ async function getAll() {
       include: {
         project_tags: true,
         project_tech: true,
+        project_preview: true,
       }
     })
     if(!projects) throw Error(`projects not found`)
@@ -31,6 +32,7 @@ async function getOne(id: number) {
       include: {
         project_tags: true,
         project_tech: true,
+        project_preview: true,
       }
     })
     if(!project) throw Error(`project with id "${id}" not found`)

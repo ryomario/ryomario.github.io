@@ -1,6 +1,6 @@
 import { useUpdateProjects } from "@/contexts/projectsContext"
 import { IProject } from "@/types/IProject"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as RepoProjects_server from "@/db/repositories/RepoProjects.server"
 import { Modal } from "./modal"
@@ -21,6 +21,7 @@ export function ModalFormProject({
 }: Props) {
   const isFormUpdate = useMemo(() => !!project,[project])
   const updateProjects = useUpdateProjects()
+  const [images, setImages] = useState<(File|string)[]>([])
   const [file, setFile] = useState<File|null>(null)
 
   const {
@@ -40,12 +41,12 @@ export function ModalFormProject({
   const project_preview = watch('project_preview')
   
   useEffect(() => {
-    if(file) clearErrors('project_preview')
-  },[file])
+    if(images) clearErrors('project_preview')
+  },[images])
 
   const onSave = handleSubmit(async (value: Partial<IProject>) => {
     // console.log('save',value)
-    if(!isFormUpdate && !file) {
+    if(!isFormUpdate && images.length == 0) {
       setError('project_preview', {
         type: 'required',
         message: 'Please choose an image preview',
@@ -55,22 +56,34 @@ export function ModalFormProject({
 
     let res_upload
     try {
-      if(!file) {
+      if(images.length == 0) {
         if(isFormUpdate) {
-          if(!value.project_preview) {
+          if(!value.project_preview || value.project_preview.length == 0) {
             throw Error('Please choose an image preview')
           }
           res_upload = {
             success: true,
-            path: value.project_preview,
+            previews: value.project_preview,
           }
         } else {
           throw Error('Please choose an image preview')
         }
       } else {
-        res_upload = await RepoProjects_server.uploadImagePreview(file);
+        res_upload = {
+          success: false,
+          previews: [] as IProject['project_preview'],
+        }
+        for(const image of images) {
+          let image_url
+          if(image instanceof File) {
+            const upload = await RepoProjects_server.uploadImagePreview(image)
+            image_url = upload.path
+          } else {
+            image_url = image
+          }
+          res_upload.previews.push({ preview_url: image_url })
+        }
       }
-
     } catch(error) {
       setError('project_preview', {
         type: 'value',
@@ -83,7 +96,7 @@ export function ModalFormProject({
       const new_project: Omit<IProject,'project_id'> = {
         project_title: value.project_title ?? '',
         project_desc: value.project_desc ?? '',
-        project_preview: res_upload.path,
+        project_preview: res_upload.previews,
         createdAt: new Date(),
         updatedAt: new Date(),
         project_tags: value.project_tags ?? [],
@@ -111,13 +124,6 @@ export function ModalFormProject({
         reset()
       }
     } catch(error) {
-      try {
-        if(file) {
-          await RepoProjects_server.deleteFileUploadImagePreview(res_upload.path)
-        }
-      } catch(error) {
-        console.log((error as Error).message ?? 'Delete file upload error')
-      }
       console.log((error as Error).message ?? 'Unknown error')
       return
     }
@@ -261,7 +267,20 @@ export function ModalFormProject({
           >
             Project Preview
           </label>
-          <InputImage onImageChange={setFile} initialValue={project_preview}/>
+          <InputImage
+            onImageChange={useCallback((images) => {
+              const newImages: (string|File)[] = []
+              images.forEach(image => {
+                if(image.preview?.startsWith('/')) {
+                  newImages.push(image.preview)
+                } else if(image.file) {
+                  newImages.push(image.file)
+                }
+              })
+              setImages(newImages)
+            },[setImages])}
+            initialValue={project_preview}
+            />
           {errors.project_preview && <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.project_preview.message}</p>}
         </div>
       </form>

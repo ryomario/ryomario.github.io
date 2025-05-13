@@ -16,7 +16,7 @@ export function ProjectDetailsSection({
   project,
 }: Props) {
   const locale = useLocale()
-  const [preview, setPreview] = useState<string | null>(null)
+  const [preview, setPreview] = useState<(string | null)[]>([])
   const projects = useProjects({
     published: true,
     tags: project.project_tags,
@@ -24,11 +24,20 @@ export function ProjectDetailsSection({
   const relaatedProjects = useMemo(() => projects.filter(p => p.project_id != project.project_id),[projects,project])
 
   useEffect(() => {
-    if(project.project_preview) {
-      const img = new Image()
-      img.onload = () => setPreview(img.src)
-      img.onerror = () => setPreview(null)
-      img.src = project.project_preview
+    if(project?.project_preview && project?.project_preview.length > 0) {
+      project?.project_preview.forEach((preview, idx) => {
+        const img = new Image()
+        const setImgPreview = (src: string|null) => {
+          setPreview(old => {
+            const newData = [...old]
+            newData[idx] = src
+            return newData
+          })
+        }
+        img.onload = () => setImgPreview(img.src)
+        img.onerror = () => setImgPreview(null)
+        img.src = preview.preview_url
+      })
     }
   },[project])
 
@@ -60,12 +69,14 @@ export function ProjectDetailsSection({
         </div>
       </div>
       {/* <div className="grid grid-cols-1 sm:grid-cols-3 sm:gap-10 mt-12"> */}
-      <div className="grid grid-cols-1 sm:gap-10 mt-12">
-        <img 
-          src={preview ?? '/images/placeholder-image.jpg'}
-          alt={`Preview of ${project.project_title}`}
-          className="max-w-full max-h-[50vh] object-contain rounded-xl cursor-pointer shadow-lg sm:shadow-none"
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-10 mt-12">
+        {(project.project_preview && project.project_preview.length > 0) && project.project_preview.map((preview, idx) => (
+          <img 
+            src={preview.preview_url ?? '/images/placeholder-image.jpg'}
+            alt={`Preview of ${project.project_title} ${preview.preview_url}`}
+            className={`${idx == 0 ? "col-span-full mx-auto":""} max-w-full max-h-[50vh] object-contain rounded-xl cursor-pointer shadow-lg sm:shadow-none`}
+          />
+        ))}
       </div>
 
       <div className="block sm:flex gap-0 sm:gap-10 mt-14">
