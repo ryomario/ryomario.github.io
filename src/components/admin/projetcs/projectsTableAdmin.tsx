@@ -3,7 +3,6 @@
 import { date2string } from "@/lib/date";
 import { ProjectsTableAdminButtonActions } from "./tableAdmin/buttonActions";
 import { TableAdminButtonToggleLayoutType } from "./tableAdmin/buttonToggleLayoutType";
-import { TableAdminAddProject } from "./views/formAddProject";
 import { useProjectsWithPagination } from "@/contexts/projectsContext";
 import { useEffect, useState } from "react";
 import { Pagination } from "./components/pagination";
@@ -71,7 +70,12 @@ export function ProjectsTableAdmin() {
     <div className="relative sm:rounded-lg overflow-hidden">
       {/* toolbar */}
       <div className="flex justify-end px-4 py-2">
-        <TableAdminAddProject/>
+        <a href="/admin/projects/add" role="button" className="flex items-center justify-center text-white bg-gray-900 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+          <svg className="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path clipRule="evenodd" fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+          </svg>
+          Add project
+        </a>
       </div>
       <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
         <div className="w-full md:w-1/2">
@@ -146,6 +150,7 @@ function TableView({ projects }: ViewProps) {
         <tr>
           <th scope="col" className="px-4 py-4">Project</th>
           <th scope="col" className="px-4 py-3">Tags</th>
+          <th scope="col" className="px-4 py-3">Tech</th>
           <th scope="col" className="px-4 py-3">Date Created</th>
           <th scope="col" className="px-4 py-3">Last Updated</th>
           <th scope="col" className="px-4 py-3">
@@ -166,7 +171,19 @@ function TableView({ projects }: ViewProps) {
                   key={tag.tag_name}
                   className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
                 >
-                  {tag.tag_name}
+                  #{tag.tag_name}
+                </span>
+              ))}
+            </div>
+          </td>
+          <td className="px-4 py-3">
+            <div className="flex flex-wrap gap-2">
+              {project.project_tech.map(tech => (
+                <span 
+                  key={tech.tech_name}
+                  className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
+                >
+                  {tech.tech_name}
                 </span>
               ))}
             </div>
@@ -198,9 +215,9 @@ function GridView({ projects }: ViewProps) {
         {/* Card header with Dropdown */}
         <div className="relative">
           {/* Image */}
-          <div className="relative pt-[56.25%] overflow-hidden">
+          <div className="relative pt-[87.5%] overflow-hidden">
             <img
-              src={project.project_preview} 
+              src={project.project_preview[0].preview_url ?? '/images/placeholder-image.jpg'} 
               alt={project.project_title} 
               className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-500"
             />
@@ -226,12 +243,22 @@ function GridView({ projects }: ViewProps) {
                 key={tag.tag_name}
                 className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
               >
-                {tag.tag_name}
+                #{tag.tag_name}
               </span>
             ))}
           </div>
           <h3 className="text-lg font-semibold text-gray-800 mt-1">{project.project_title}</h3>
           <p className="text-gray-600 mt-2 text-sm line-clamp-3 whitespace-pre-line">{project.project_desc}</p>
+          {project.project_tech.length > 0 && <div className="flex flex-wrap gap-2 mt-3">
+            {project.project_tech.map(tech => (
+              <span 
+                key={tech.tech_name}
+                className="inline-block px-2.5 py-0.5 bg-gray-200 rounded-full text-xs text-gray-700"
+              >
+                {tech.tech_name}
+              </span>
+            ))}
+          </div>}
         </div>
       </div>
     ))}

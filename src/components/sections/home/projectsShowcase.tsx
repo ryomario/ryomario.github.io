@@ -152,34 +152,28 @@ export function ProjectsShowcase({ showAll = false }: { showAll?: boolean }) {
   )
 }
 
-function ProjectCard({ project }: { project: IProject }) {
+export function ProjectCard({ project, previewOnly = false }: { project: IProject, previewOnly?: boolean }) {
   return (
     <Link href={`/projects/${project.project_id}`} aria-label="Project"
       className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark"
     >
       {/* Image */}
-      <div className="relative pt-[56.25%] overflow-hidden">
+      <div className="relative pt-[87.5%] overflow-hidden">
         <img
-          src={project.project_preview}
+          src={project.project_preview[0].preview_url ?? '/images/placeholder-image.jpg'}
           alt={`${project.project_title} image`}
-          className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-500 object-top"
+          className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-500"
         />
       </div>
       {/* Content */}
-      <div className="px-4 py-6">
-        <div className="flex flex-wrap gap-2">
-          {project.project_tags.map(tag => (
-            <span 
-              key={tag.tag_name}
-              className="inline-block px-2.5 py-0.5 bg-gray-300 dark:bg-gray-600 rounded-full text-xs text-gray-700 dark:text-gray-200"
-            >
-              {tag.tag_name}
-            </span>
-          ))}
-        </div>
-        <h3 className="font-general-medium text-lg md:text-xl text-bold text-ternary-dark dark:text-ternary-light mt-1">{project.project_title}</h3>
-        <p className="text-ternary-dark dark:text-ternary-light mt-2 text-sm line-clamp-3 whitespace-pre-line">{project.project_desc}</p>
-      </div>
+      {!previewOnly && <div className="text-center px-4 py-6">
+        <p className="font-medium text-lg md:text-xl text-ternary-dark dark:text-ternary-light mb-2">
+          {project.project_title}
+        </p>
+        <span className="text-lg text-ternary-dark dark:text-ternary-light">
+          {project.project_tags.map(tag => tag.tag_name).join(', ')} 
+        </span>
+      </div>}
     </Link>
   )
 }

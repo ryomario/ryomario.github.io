@@ -18,7 +18,7 @@ export function AdminTabLink({
   if(typeof active != 'boolean') {
     const paths = pathname.split('/').filter(path => !!path)
     const href_paths = href.split('/').filter(path => !!path)
-    active = pathname.startsWith(href) && paths.length == href_paths.length
+    active = pathname.startsWith(href)
   }
   return <Link
     href={href}

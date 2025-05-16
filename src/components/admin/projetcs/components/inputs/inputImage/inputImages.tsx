@@ -1,50 +1,74 @@
 "use client"
 
 import { urlToFile } from '@/lib/file';
-import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import { IProject } from '@/types/IProject';
+import { useState, useRef, ChangeEvent, useEffect, useCallback } from 'react';
+import { ImageItem } from './ImageItem';
 
-export function InputImage({
+export type ImageType = {
+  file?: File
+  preview?: string
+}
+
+export function InputImages({
   onImageChange,
-  initialValue = '',
+  initialValue = [],
 }: {
-  onImageChange: (file: File | null) => void;
-  initialValue?: string;
+  onImageChange: (images: ImageType[]) => void;
+  initialValue?: IProject['project_preview'];
 }) {
   const [inputMode, setInputMode] = useState<'upload' | 'url'>('upload');
-  const [imageUrl, setImageUrl] = useState(initialValue);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState('');
+  const [images, setImages] = useState<ImageType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const addImages = useCallback((...new_images: ImageType[]) => {
+    setImages(oldImages => {
+      const newImages = [
+        ...oldImages,
+      ]
+      for (const new_image of new_images) {
+        if(new_image.preview && oldImages.findIndex(img => img?.preview == new_image.preview) == -1) {
+          newImages.push(new_image)
+        }
+      }
+      return newImages
+    })
+  },[setImages])
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     setError(null);
-    const file = e.target.files?.[0];
-    if (file) {
-      // Create preview URL
-      const previewUrl = URL.createObjectURL(file);
-      setPreview(previewUrl);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const previewImages: ImageType[] = []
+      for (const file of files) {
+        // Create preview URL
+        const previewUrl = URL.createObjectURL(file);
+        const previewImage: ImageType = {
+          file,
+          preview: previewUrl,
+        }
+        previewImages.push(previewImage)
+      }
+      addImages(...previewImages)
       setImageUrl('');
-      onImageChange(file);
     }
   };
 
   const handleUrlChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setImageUrl(url);
-    setPreview(null);
     setError(null);
     
     // Only process when URL is complete (optional)
     if (!url) {
-      onImageChange(null);
       return;
     }
   };
 
   const handleUrlSubmit = async () => {
     if (!imageUrl) {
-      onImageChange(null);
       return;
     }
 
@@ -61,50 +85,71 @@ export function InputImage({
       
       // Create preview
       const previewUrl = URL.createObjectURL(file);
-      setPreview(previewUrl);
-      onImageChange(file);
+      addImages({
+        file,
+        preview: previewUrl,
+      })
     } catch (err) {
       console.error('Error processing image URL:', err);
       setError('Failed to load image from URL. Please check the link and try again.');
-      onImageChange(null);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRemoveImage = () => {
-    setPreview(null);
-    setImageUrl('');
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-    onImageChange(null);
-    setError(null);
+  const handleMoveImage = (dragIndex: number, hoverIndex: number) => {
+    setImages((prevImages) => {
+      const newImages = [...prevImages];
+      const [removed] = newImages.splice(dragIndex, 1);
+      newImages.splice(hoverIndex, 0, removed);
+      return newImages;
+    });
   };
 
-  useEffect(() => {
-    if(initialValue) {
-      setIsLoading(true);
-      setError(null);
-      // Convert URL to File
-      urlToFile(
-        imageUrl,
-        `downloaded-${Date.now()}.jpg`, // You can extract filename from URL if needed
-        'image/jpeg' // Default mime type
-      ).then(file => {
-        // Create preview
-        const previewUrl = URL.createObjectURL(file);
-        setPreview(previewUrl);
-        // onImageChange(file);
-      }).catch(err => {
-        console.error('Error processing image URL:', err);
-        setError('Failed to load image from URL. Please check the link and try again.');
-        // onImageChange(null);
-      }).finally(() => {
-        setIsLoading(false);
-      })
+  const handleRemoveImage = (idx: number) => {
+    setImages(old => {
+      const newData = [...old]
+      newData.splice(idx, 1)
+      return newData
+    })
+    setError(null);
+  };
+  const loadInitialValue = useCallback(async () => {
+    if(initialValue && initialValue.length > 0) {
+      setIsLoading(true)
+      setError(null)
+      
+      const initialImages: ImageType[] = []
+      for(const preview of initialValue) {
+        try {
+          const file = await urlToFile(
+            preview.preview_url,
+            `downloaded-${Date.now()}.jpg`, // You can extract filename from URL if needed
+            'image/jpeg' // Default mime type)
+          )
+          initialImages.push({
+            file,
+            preview: preview.preview_url,
+          })
+        } catch (error) {
+          initialImages.push({})
+          console.log('ini',error)
+        }
+      }
+      setImages(initialImages)
+      setIsLoading(false)
     }
   },[initialValue])
+
+  useEffect(() => {
+    loadInitialValue()
+  },[initialValue])
+
+  useEffect(() => {
+    if(!isLoading){
+      onImageChange(images)
+    }
+  },[images])
 
   return (
     <div className="space-y-4">
@@ -168,8 +213,8 @@ export function InputImage({
                 type="file"
                 className="hidden"
                 accept="image/png,image/jpeg"
+                multiple
                 onChange={handleFileChange}
-                ref={fileInputRef}
               />
             </label>
           </div>
@@ -201,45 +246,50 @@ export function InputImage({
             Make sure the URL points directly to an image file
           </p>
           {error && <p className="text-sm text-red-500">{error}</p>}
+          {(inputMode === 'url' && imageUrl) && (
+            <div className='col-span-full relative group flex items-center justify-center w-full h-32 bg-gray-100 rounded-md border border-gray-200'>
+              <p className="text-gray-500">Click "Load" to add image</p>
+              <button
+                onClick={() => setImageUrl('')}
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
       )}
 
       {/* Preview */}
-      {(preview || (inputMode === 'url' && imageUrl && !preview)) && (
+
+      {(images.length > 0) && (
         <div className="mt-4 relative">
-          <div className="text-sm font-medium text-gray-700 mb-2">Preview:</div>
-          {preview ? (
-            <img
-              src={preview}
-              alt="Preview"
-              className="max-w-full h-auto max-h-64 rounded-md border border-gray-200"
-            />
-          ) : (
-            <div className="flex items-center justify-center w-full h-32 bg-gray-100 rounded-md border border-gray-200">
-              <p className="text-gray-500">Click "Load" to preview image</p>
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={handleRemoveImage}
-            className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-            aria-label="Remove image"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
+          <div className="text-sm font-medium text-gray-700 mb-2">Images :</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {images.map((image, idx) => (
+              <ImageItem
+                key={`image-preview-${idx}`}
+                id={image.file?.name ?? `image ${image.preview}`}
+                image={image}
+                index={idx}
+                moveImage={handleMoveImage}
+                removeImage={() => handleRemoveImage(idx)}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -5,10 +5,17 @@ export interface IProject {
   updatedAt: Date
   published: boolean
   project_desc: string
-  project_preview: string
+  project_preview: {
+    preview_url: string
+  }[]
   project_tags: {
     tag_name: string
   }[]
+  project_tech: {
+    tech_name: string
+  }[]
+  link_repo: string | null
+  link_demo: string | null
 }
 
 export type IProjectsTableAdminFilter = {

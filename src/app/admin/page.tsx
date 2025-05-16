@@ -1,5 +1,5 @@
-import { FormProfileData } from "@/components/admin/forms/formProfileData";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
-  return <FormProfileData/>
+  redirect('/admin/profile')
 }

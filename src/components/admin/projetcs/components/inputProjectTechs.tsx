@@ -1,20 +1,20 @@
-import { useProjectTags } from "@/contexts/projectsContext"
+import { useProjectTech } from "@/contexts/projectsContext"
 import { IProject } from "@/types/IProject"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { TagComponent } from "./tagComponent"
 
 type Props = {
-  tags?: IProject['project_tags']
-  onChange?: (tags: IProject['project_tags']) => void
+  tech?: IProject['project_tech']
+  onChange?: (tech: IProject['project_tech']) => void
 }
 
-export function InputProjectTags({
-  tags = [],
+export function InputProjectTechs({
+  tech = [],
   onChange = () => {},
 }: Props) {
-  const availableTags = useProjectTags()
-  const [filteredSuggestions, setFilteredSuggestions] = useState<IProject['project_tags']>([]);
+  const availableTech = useProjectTech()
+  const [filteredSuggestions, setFilteredSuggestions] = useState<IProject['project_tech']>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,12 +31,12 @@ export function InputProjectTags({
     trigger,
   } = useForm({
     defaultValues: {
-      newTag: '',
-      tags: tags,
+      newTech: '',
+      tech: tech,
     },
   })
 
-  const inputValue = watch('newTag','')
+  const inputValue = watch('newTech','')
 
   const {
     fields,
@@ -44,24 +44,24 @@ export function InputProjectTags({
     remove,
   } = useFieldArray({
     control,
-    name: 'tags',
+    name: 'tech',
   })
 
-  const suggestions = useMemo(() => availableTags.filter(({tag_name}) => fields.findIndex(t => tag_name == t.tag_name) == -1),[availableTags,fields])
+  const suggestions = useMemo(() => availableTech.filter(({tech_name}) => fields.findIndex(t => tech_name == t.tech_name) == -1),[availableTech,fields])
 
   useEffect(() => {
     onChange(fields)
   },[fields])
 
-  const onSubmit = handleSubmit(({ newTag }) => {
-    append({ tag_name: newTag.trim() })
-    setValue('newTag','')
+  const onSubmit = handleSubmit(({ newTech }) => {
+    append({ tech_name: newTech.trim() })
+    setValue('newTech','')
   })
   
   useEffect(() => {
     // Filter suggestions based on input
     const filtered = inputValue 
-    ? suggestions.filter(({tag_name:suggestion}) =>
+    ? suggestions.filter(({tech_name:suggestion}) =>
       suggestion.toLowerCase().includes(inputValue.toLowerCase())
     )
     : suggestions;
@@ -85,12 +85,12 @@ export function InputProjectTags({
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('newTag',e.target.value);
+    setValue('newTech',e.target.value);
     setShowSuggestions(true);
   };
   
   const handleClick = (suggestion: string) => {
-    setValue('newTag',suggestion);
+    setValue('newTech',suggestion);
     setFilteredSuggestions([]);
     setShowSuggestions(false);
   };
@@ -122,7 +122,7 @@ export function InputProjectTags({
         return onSubmit()
       }
       if (filteredSuggestions.length > 0) {
-        setValue('newTag',filteredSuggestions[activeSuggestion].tag_name);
+        setValue('newTech',filteredSuggestions[activeSuggestion].tech_name);
         setShowSuggestions(false);
       }
     }
@@ -138,21 +138,21 @@ export function InputProjectTags({
     }
   };
 
-  const inputId = useMemo(() => `project-tag-input-${Math.random().toString(36).substring(2, 9)}`,[])
+  const inputId = useMemo(() => `project-tech-input-${Math.random().toString(36).substring(2, 9)}`,[])
 
   return <div className="mb-3">
     <label htmlFor={inputId}
       className={[
         "block mb-2 text-sm font-medium",
-        (errors.newTag ? "text-red-700 dark:text-red-500":"text-gray-900 dark:text-white")
-      ].join(' ')}>Project Tags</label>
+        (errors.newTech ? "text-red-700 dark:text-red-500":"text-gray-900 dark:text-white")
+      ].join(' ')}>Project Tech</label>
     <div className="relative flex gap-2 mb-2">
       <input
         type="text"
-        {...register('newTag', { required: true, validate: {
-          checkNotExist: async (newTag, { tags }) => {
-            if(!newTag.trim()) return 'Empty tag'
-            if(tags.findIndex(({tag_name}) => tag_name == newTag.trim()) != -1) return `Tag "${newTag.trim()}" already exist!`
+        {...register('newTech', { required: true, validate: {
+          checkNotExist: async (newTech, { tech }) => {
+            if(!newTech.trim()) return 'Empty tech'
+            if(tech.findIndex(({tech_name}) => tech_name == newTech.trim()) != -1) return `Tech "${newTech.trim()}" already exist!`
             return true
           }
         } })}
@@ -161,10 +161,10 @@ export function InputProjectTags({
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
         ref={inputRef}
-        placeholder="Add a tag"
+        placeholder="Add a tech"
         className={[
           "border text-sm rounded-lg block w-full p-2.5",
-          (errors.newTag ? 
+          (errors.newTech ? 
             "bg-red-50 border-red-500 text-red-900 placeholder-red-400 focus:outline-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
             : "bg-gray-50 border-gray-300 text-gray-900 dark:placeholder-gray-400 focus:outline-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:outline-blue-500 dark:focus:border-blue-500"
           )
@@ -184,7 +184,7 @@ export function InputProjectTags({
           ref={dropdownRef}
           className="absolute top-full z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
         >
-          {filteredSuggestions.map(({tag_name: suggestion}, index) => (
+          {filteredSuggestions.map(({tech_name: suggestion}, index) => (
             <li
               key={suggestion}
               onClick={() => handleClick(suggestion)}
@@ -205,12 +205,12 @@ export function InputProjectTags({
         Add
       </button>
     </div>
-    {errors.newTag && <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.newTag.message}</p>}
+    {errors.newTech && <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.newTech.message}</p>}
     <div className="flex flex-wrap gap-2">
-      {fields.map(({tag_name, id}, index) => (
+      {fields.map(({tech_name, id}, index) => (
         <TagComponent
           key={id}
-          tag={tag_name}
+          tag={tech_name}
           onRemove={() => remove(index)}
         />
       ))}

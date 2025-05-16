@@ -5,7 +5,6 @@ import { useUpdateProjects } from "@/contexts/projectsContext"
 import * as RepoProjects_server from "@/db/repositories/RepoProjects.server"
 import { SpinnerIcon } from "@/components/reusable/icons/spinnerIcon"
 import { confirm } from "../components/modalConfirm"
-import { TableAdminEditProject } from "../views/formEditProject"
 
 type Props = {
   project_id: number
@@ -40,6 +39,7 @@ export function ProjectsTableAdminButtonActions({
     updateProjects(
       await RepoProjects_server.getAll(),
       await RepoProjects_server.getAllTags(),
+      await RepoProjects_server.getAllTechs(),
     )
     setOpen(false)
     return true
@@ -87,9 +87,20 @@ export function ProjectsTableAdminButtonActions({
     >
       <ul className="py-1 text-sm" role="none">
         <li>
-          <TableAdminEditProject
+          {/* <TableAdminEditProject
             project_id={project_id}
-          />
+          /> */}
+          <a href={`/admin/projects/edit/${project_id}`} role="button"
+            className={`flex w-full items-center py-2 px-4 text-gray-700 dark:text-gray-200 ${
+              "hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            }`}
+          >
+            <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+              <path fillRule="evenodd" clipRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+            </svg>
+            Edit
+          </a>
         </li>
         <li>
           <button onClick={() => {

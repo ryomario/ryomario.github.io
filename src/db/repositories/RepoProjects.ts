@@ -5,6 +5,10 @@ async function getAll() {
     const projects = await prisma.projects.findMany({
       include: {
         project_tags: true,
+        project_tech: true,
+        project_preview: {
+          orderBy: { order: 'asc' },
+        },
       }
     })
     if(!projects) throw Error(`projects not found`)
@@ -29,6 +33,10 @@ async function getOne(id: number) {
       },
       include: {
         project_tags: true,
+        project_tech: true,
+        project_preview: {
+          orderBy: { order: 'asc' },
+        },
       }
     })
     if(!project) throw Error(`project with id "${id}" not found`)
@@ -62,8 +70,26 @@ async function getAllTags() {
   }
 }
 
+async function getAllTechs() {
+  try {
+    const project_techs = await prisma.project_tech.findMany()
+    if(!project_techs) throw Error(`project_techs not found`)
+  
+    return project_techs
+  } catch(error: any) {
+    let message = 'unknown'
+    if(typeof error == 'string') message = error
+    else if(error.message) message = error.message
+
+    console.log('project_techs getAllTechs error', message)
+
+    return []
+  }
+}
+
 export default {
   getAll,
   getOne,
   getAllTags,
+  getAllTechs,
 }
