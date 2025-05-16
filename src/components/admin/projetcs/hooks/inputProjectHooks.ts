@@ -3,7 +3,7 @@ import { IProject } from "@/types/IProject";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as RepoProjects_server from "@/db/repositories/RepoProjects.server"
-import { ImageType } from "../components/inputImage";
+import { ImageType } from "../components/inputs/inputImage/types";
 
 export function useInputProjectHook(project?: IProject) {
   const isFormUpdate = useMemo(() => !!project,[project])
