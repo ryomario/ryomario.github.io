@@ -7,6 +7,7 @@ import { useLocale } from "next-intl"
 import { Locale } from "@/i18n/routing"
 import { useProjects } from "@/contexts/projectsContext"
 import { ProjectCard } from "../home"
+import { ImagePreview } from "@/components/reusable/images/imagePreview"
 
 type Props = {
   project: IProject
@@ -71,10 +72,11 @@ export function ProjectDetailsSection({
       {/* <div className="grid grid-cols-1 sm:grid-cols-3 sm:gap-10 mt-12"> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-10 mt-12">
         {(project.project_preview && project.project_preview.length > 0) && project.project_preview.map((preview, idx) => (
-          <img 
+          <ImagePreview
+            key={`preview-${idx}`}
             src={preview.preview_url ?? '/images/placeholder-image.jpg'}
             alt={`Preview of ${project.project_title} ${preview.preview_url}`}
-            className={`${idx == 0 ? "col-span-full mx-auto":""} max-w-full max-h-[50vh] object-contain rounded-xl cursor-pointer shadow-lg sm:shadow-none`}
+            thumbnailClass={`${idx == 0 ? "col-span-full mx-auto":""} max-w-full max-h-[50vh] object-contain rounded-xl cursor-pointer shadow-lg sm:shadow-none`}
           />
         ))}
       </div>
