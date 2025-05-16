@@ -3,13 +3,14 @@
 import { urlToFile } from '@/lib/file';
 import { IProject } from '@/types/IProject';
 import { useState, useRef, ChangeEvent, useEffect, useCallback } from 'react';
+import { ImageItem } from './ImageItem';
 
-type ImageType = {
+export type ImageType = {
   file?: File
   preview?: string
 }
 
-export function InputImage({
+export function InputImages({
   onImageChange,
   initialValue = [],
 }: {
@@ -94,6 +95,15 @@ export function InputImage({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleMoveImage = (dragIndex: number, hoverIndex: number) => {
+    setImages((prevImages) => {
+      const newImages = [...prevImages];
+      const [removed] = newImages.splice(dragIndex, 1);
+      newImages.splice(hoverIndex, 0, removed);
+      return newImages;
+    });
   };
 
   const handleRemoveImage = (idx: number) => {
@@ -236,68 +246,49 @@ export function InputImage({
             Make sure the URL points directly to an image file
           </p>
           {error && <p className="text-sm text-red-500">{error}</p>}
+          {(inputMode === 'url' && imageUrl) && (
+            <div className='col-span-full relative group flex items-center justify-center w-full h-32 bg-gray-100 rounded-md border border-gray-200'>
+              <p className="text-gray-500">Click "Load" to add image</p>
+              <button
+                onClick={() => setImageUrl('')}
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
       )}
 
       {/* Preview */}
 
-      {(images.length > 0 || (inputMode === 'url' && imageUrl)) && (
+      {(images.length > 0) && (
         <div className="mt-4 relative">
-          <div className="text-sm font-medium text-gray-700 mb-2">Preview:</div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="text-sm font-medium text-gray-700 mb-2">Images :</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {images.map((image, idx) => (
-              <div className='relative group' key={`image-preview-${idx}`}>
-                <img
-                  src={image.preview ?? '/images/placeholder-image.jpg'}
-                  alt={`preview-${image.file?.name ?? "placeholder-image.jpg"}`}
-                  className="w-full h-32 object-cover rounded-md border border-gray-200"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(idx)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
+              <ImageItem
+                key={`image-preview-${idx}`}
+                id={image.file?.name ?? `image ${image.preview}`}
+                image={image}
+                index={idx}
+                moveImage={handleMoveImage}
+                removeImage={() => handleRemoveImage(idx)}
+              />
             ))}
-            {(inputMode === 'url' && imageUrl) && (
-              <div className='col-span-full relative group flex items-center justify-center w-full h-32 bg-gray-100 rounded-md border border-gray-200'>
-                <p className="text-gray-500">Click "Load" to preview image</p>
-                <button
-                  onClick={() => setImageUrl('')}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
-            )}
           </div>
         </div>
       )}

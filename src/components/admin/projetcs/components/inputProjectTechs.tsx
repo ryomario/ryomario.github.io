@@ -2,6 +2,7 @@ import { useProjectTech } from "@/contexts/projectsContext"
 import { IProject } from "@/types/IProject"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
+import { TagComponent } from "./tagComponent"
 
 type Props = {
   tech?: IProject['project_tech']
@@ -207,19 +208,11 @@ export function InputProjectTechs({
     {errors.newTech && <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.newTech.message}</p>}
     <div className="flex flex-wrap gap-2">
       {fields.map(({tech_name, id}, index) => (
-        <span 
+        <TagComponent
           key={id}
-          className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-sm"
-        >
-          {tech_name}
-          <button
-            type="button"
-            onClick={() => remove(index)}
-            className="ml-2 text-gray-500 hover:text-gray-700"
-          >
-            ×
-          </button>
-        </span>
+          tag={tech_name}
+          onRemove={() => remove(index)}
+        />
       ))}
     </div>
   </div>

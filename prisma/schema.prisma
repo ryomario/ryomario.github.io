@@ -34,6 +34,8 @@ model project_previews {
   preview_id         Int            @id @default(autoincrement())
   preview_url        String         @unique
 
+  order              Int            @default(0)
+
   project            projects?       @relation(fields: [project_id], references: [project_id], onDelete: SetNull)
   project_id         Int?            // relation scalar field  (used in the `@relation` attribute above)
 }

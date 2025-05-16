@@ -19,8 +19,9 @@ export async function save(data: Omit<IProject,'project_id'>) {
         project_desc: data.project_desc,
         project_preview: {
           createMany: {
-            data: data.project_preview.map(preview => ({
+            data: data.project_preview.map((preview, idx) => ({
               preview_url: preview.preview_url,
+              order: idx,
             })),
           },
         },
@@ -77,8 +78,9 @@ export async function update(project_id: IProject['project_id'], data: Omit<IPro
         project_title: data.project_title,
         project_desc: data.project_desc,
         project_preview: {
-          connectOrCreate: data.project_preview.map(({preview_url}) => ({
-            create: { preview_url },
+          upsert: data.project_preview.map(({preview_url}, idx) => ({
+            update: { order: idx },
+            create: { preview_url, order: idx },
             where: { preview_url },
           })),
         },

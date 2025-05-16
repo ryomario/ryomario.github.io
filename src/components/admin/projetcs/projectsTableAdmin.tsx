@@ -3,7 +3,6 @@
 import { date2string } from "@/lib/date";
 import { ProjectsTableAdminButtonActions } from "./tableAdmin/buttonActions";
 import { TableAdminButtonToggleLayoutType } from "./tableAdmin/buttonToggleLayoutType";
-import { TableAdminAddProject } from "./views/formAddProject";
 import { useProjectsWithPagination } from "@/contexts/projectsContext";
 import { useEffect, useState } from "react";
 import { Pagination } from "./components/pagination";
@@ -71,7 +70,12 @@ export function ProjectsTableAdmin() {
     <div className="relative sm:rounded-lg overflow-hidden">
       {/* toolbar */}
       <div className="flex justify-end px-4 py-2">
-        <TableAdminAddProject/>
+        <a href="/admin/projects/add" role="button" className="flex items-center justify-center text-white bg-gray-900 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+          <svg className="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path clipRule="evenodd" fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+          </svg>
+          Add project
+        </a>
       </div>
       <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
         <div className="w-full md:w-1/2">
