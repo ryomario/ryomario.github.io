@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 type ImagePreviewProps = {
@@ -19,136 +19,301 @@ export function ImagePreview({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  const [startDragPos, setStartDragPos] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  const lastScale = useRef(1);
+  const lastPosition = useRef({ x: 0, y: 0 });
+  const targetScale = useRef(1);
+  const targetPosition = useRef({ x: 0, y: 0 });
+  const animationRef = useRef<number>(null);
+  
+  // Add new state for pinch zoom
+  const [initialDistance, setInitialDistance] = useState<number | null>(null);
+  const [initialScale, setInitialScale] = useState(1);
+  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
 
   const openPreview = () => setIsPreviewOpen(true);
   const closePreview = () => setIsPreviewOpen(false);
 
   useEffect(() => {
-    const handleScroll = (e: TouchEvent) => {
+    const handleScroll = (e: Event) => {
       if (isPreviewOpen) {
         e.preventDefault();
-        e.stopPropagation();
-        return false;
       }
     };
 
     if (isPreviewOpen) {
-      // Disable scroll
+      resetZoom();
       document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      
-      // Add touch event listeners for mobile
+      document.addEventListener('wheel', handleScroll, { passive: false });
       document.addEventListener('touchmove', handleScroll, { passive: false });
-    } else {
-      // Re-enable scroll
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-      document.body.style.position = '';
-      
-      // Remove event listeners
-      document.removeEventListener('touchmove', handleScroll);
     }
 
     return () => {
       document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-      document.body.style.position = '';
+      document.removeEventListener('wheel', handleScroll);
       document.removeEventListener('touchmove', handleScroll);
     };
-  },[isPreviewOpen])
+  }, [isPreviewOpen]);
 
-  const zoomIn = (x = 1) => {
-    setScale(prev => Math.min(prev + (0.25 * x), 3)); // Limit max zoom to 3x
+
+  // Smooth zoom transition function
+  const smoothZoomTo = useCallback((newScale: number, focusPoint?: { x: number; y: number }) => {
+    if (!containerRef.current || !imageRef.current) return;
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const imgRect = imageRef.current.getBoundingClientRect();
+
+    // Calculate the container center
+    const containerCenter = {
+      x: containerRect.width / 2,
+      y: containerRect.height / 2
+    };
+
+    // Use provided focus point or default to center
+    const focus = focusPoint || containerCenter;
+
+    // Calculate current mouse position in image coordinates
+    const currentImgX = (focus.x - containerCenter.x) / lastScale.current - lastPosition.current.x;
+    const currentImgY = (focus.y - containerCenter.y) / lastScale.current - lastPosition.current.y;
+
+    // Calculate new position to keep the focus point stable
+    const newX = (focus.x - containerCenter.x) / newScale - currentImgX;
+    const newY = (focus.y - containerCenter.y) / newScale - currentImgY;
+
+    // Set targets for smooth animation
+    targetScale.current = newScale;
+    targetPosition.current = { x: -newX, y: -newY };
+
+    // Start animation if not already running
+    if (!animationRef.current) {
+      const animate = () => {
+        // Calculate interpolated values (ease-out effect)
+        const scaleDiff = targetScale.current - lastScale.current;
+        const posDiffX = targetPosition.current.x - lastPosition.current.x;
+        const posDiffY = targetPosition.current.y - lastPosition.current.y;
+
+        // Apply 20% of the difference each frame for smoothness
+        const newScaleVal = lastScale.current + scaleDiff * 0.2;
+        const newXVal = lastPosition.current.x + posDiffX * 0.2;
+        const newYVal = lastPosition.current.y + posDiffY * 0.2;
+
+        // Update state
+        setScale(newScaleVal);
+        setPosition({ x: newXVal, y: newYVal });
+
+        // Update refs with latest values
+        lastScale.current = newScaleVal;
+        lastPosition.current = { x: newXVal, y: newYVal };
+
+        // Continue animation if we haven't reached the target
+        if (Math.abs(newScaleVal - targetScale.current) > 0.001 ||
+            Math.abs(newXVal - targetPosition.current.x) > 0.1 ||
+            Math.abs(newYVal - targetPosition.current.y) > 0.1) {
+          animationRef.current = requestAnimationFrame(animate);
+        } else {
+          // Final update to ensure we reach exact target
+          setScale(targetScale.current);
+          setPosition(targetPosition.current);
+          lastScale.current = targetScale.current;
+          lastPosition.current = targetPosition.current;
+          animationRef.current = null;
+        }
+      };
+
+      animationRef.current = requestAnimationFrame(animate);
+    }
+  }, []);
+
+  const zoomIn = (factor = 1) => {
+    setScale(prev => {
+      const newScale = Math.min(prev + (0.25 * factor), 3)
+      lastScale.current = newScale
+      return newScale
+    });
   };
 
   const zoomOut = () => {
-    setScale(prev => Math.max(prev - 0.25, 1)); // Don't go below 1x
+    setScale(prev => {
+      const newScale = Math.max(prev - 0.25, 1);
+      if (newScale === 1) {
+        setPosition({ x: 0, y: 0 });
+      }
+      lastScale.current = newScale
+      return newScale;
+    });
   };
-
-  const resetZoom = () => {
+  
+  const resetZoom = useCallback(() => {
     setScale(1);
     setPosition({ x: 0, y: 0 });
-  };
+    lastScale.current = 1;
+  }, []);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (scale <= 1) return;
+    e.preventDefault();
     setIsDragging(true);
-    setStartPos({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
-    });
+    setStartPos(position);
+    setStartDragPos({ x: e.clientX, y: e.clientY });
+    document.body.style.cursor = 'grabbing';
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || scale <= 1) return;
+    
+    const dx = e.clientX - startDragPos.x;
+    const dy = e.clientY - startDragPos.y;
+    
     setPosition({
-      x: e.clientX - startPos.x,
-      y: e.clientY - startPos.y
+      x: startPos.x + dx,
+      y: startPos.y + dy
     });
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    if (isDragging) {
+      setIsDragging(false);
+      document.body.style.cursor = '';
+    }
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
-    if (e.ctrlKey) {
-      e.preventDefault();
-      if (e.deltaY < 0) {
-        zoomIn();
-      } else {
-        zoomOut();
+  // Pinch zoom handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      // Calculate initial distance between two fingers
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      setInitialDistance(dist);
+      setInitialScale(scale);
+      setIsDragging(false);
+    } else if (e.touches.length === 1 && scale > 1) {
+      // Single touch for dragging
+      const touch = e.touches[0];
+      setStartPos(position);
+      setStartDragPos({ x: touch.clientX, y: touch.clientY });
+      setIsDragging(true);
+      
+      // Store touch start for double tap detection
+      touchStartRef.current = {
+        x: touch.clientX,
+        y: touch.clientY,
+        time: Date.now()
+      };
+    }
+  }, [scale, position]);
+  
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    e.preventDefault();
+    
+    if (e.touches.length === 2 && initialDistance !== null) {
+      // Calculate current distance between fingers
+      const currentDistance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      
+      // Calculate new scale based on pinch distance
+      const newScale = Math.min(Math.max(
+        initialScale * (currentDistance / initialDistance),
+        1
+      ), 3);
+      
+      // Calculate midpoint between fingers for zoom center
+      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      
+      // Apply smooth zoom to the midpoint
+      smoothZoomTo(newScale, { x: midX, y: midY });
+    } else if (isDragging && e.touches.length === 1) {
+      // Single finger drag
+      const touch = e.touches[0];
+      const dx = touch.clientX - startDragPos.x;
+      const dy = touch.clientY - startDragPos.y;
+      
+      setPosition({
+        x: startPos.x + dx,
+        y: startPos.y + dy
+      });
+    }
+  }, [initialDistance, initialScale, isDragging, startPos, startDragPos, smoothZoomTo]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    setInitialDistance(null);
+    
+    // Double tap detection
+    if (e.touches.length === 0 && touchStartRef.current) {
+      const touchEnd = e.changedTouches[0];
+      const start = touchStartRef.current;
+      const dist = Math.hypot(touchEnd.clientX - start.x, touchEnd.clientY - start.y);
+      const duration = Date.now() - start.time;
+      
+      if (dist < 10 && duration < 300) {
+        // Double tap detected
+        if (scale > 1.1) {
+          smoothZoomTo(1);
+        } else {
+          const rect = containerRef.current?.getBoundingClientRect();
+          if (rect) {
+            smoothZoomTo(2, {
+              x: touchEnd.clientX - rect.left,
+              y: touchEnd.clientY - rect.top
+            });
+          }
+        }
       }
     }
-  };
-
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
     
-    // Calculate center position relative to image
-    const centerX = (rect.width / 2 - clickX) * scale;
-    const centerY = (rect.height / 2 - clickY) * scale;
-    
-    if (scale === 1) {
-      zoomIn(2);
-      setPosition({
-        x: position.x + centerX,
-        y: position.y + centerY
-      });
-    } else {
-      resetZoom();
-      setPosition({ x: 0, y: 0 });
-    }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (scale <= 1) return;
-    setIsDragging(true);
-    setStartPos({
-      x: e.touches[0].clientX - position.x,
-      y: e.touches[0].clientY - position.y
-    });
-  };
+    setIsDragging(false);
+  }, [scale, smoothZoomTo]);
   
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || scale <= 1) return;
-    setPosition({
-      x: e.touches[0].clientX - startPos.x,
-      y: e.touches[0].clientY - startPos.y
-    });
-  };
+  // Wheel handler with smooth zoom
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    // e.preventDefault();
+    
+    if (!containerRef.current) return;
 
-  useEffect(() => {
-    if(scale == 1) {
-      resetZoom();
+    // Get mouse position relative to container
+    const rect = containerRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Calculate zoom direction and amount
+    const zoomSpeed = 0.01;
+    const delta = -e.deltaY * zoomSpeed;
+    const newScale = Math.min(Math.max(lastScale.current * (1 + delta), 1), 3);
+
+    // Smooth zoom to the new scale with mouse position as focus point
+    smoothZoomTo(newScale, { x: mouseX, y: mouseY });
+  },[smoothZoomTo]);
+
+  // Double click handler
+  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!containerRef.current) return;
+
+    if (lastScale.current > 1.1) {
+      smoothZoomTo(1);
+    } else {
+      const rect = containerRef.current.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      smoothZoomTo(2, { x: clickX, y: clickY });
     }
-  },[scale])
+  }, [smoothZoomTo]);
+
+  // Clean up animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -163,10 +328,14 @@ export function ImagePreview({
       {/* Preview Modal */}
       {isPreviewOpen && createPortal(
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 overflow-y-auto"
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
           onClick={closePreview}
         >
-          <div className="fixed inset-0 flex items-center justify-center overflow-hidden">
+          <div 
+            ref={containerRef}
+            className="fixed inset-0 flex items-center justify-center overflow-hidden touch-none"
+            onWheel={handleWheel}
+          >
             <div className="relative w-full h-full flex items-center justify-center">
               {/* Zoom Controls */}
               <div className="absolute top-4 right-4 flex gap-2 z-10">
@@ -215,16 +384,18 @@ export function ImagePreview({
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
-                onWheel={handleWheel}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
-                onTouchEnd={handleMouseUp}
+                onTouchEnd={handleTouchEnd}
                 onDoubleClick={handleDoubleClick}
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                  transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
+                  transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
                   cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in',
                   transformOrigin: 'center center',
+                  touchAction: 'none',
+                  willChange: 'transform', // Hint to browser for optimization
+                  backfaceVisibility: 'hidden', // Prevent flickering in some browsers
                 }}
               >
                 <img
