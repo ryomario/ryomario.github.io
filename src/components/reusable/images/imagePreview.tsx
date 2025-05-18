@@ -359,12 +359,16 @@ export function ImagePreview({
                 <button
                   onClick={reset}
                   className={`bg-transparent p-2 rounded-full transition ${
-                    (transform.scale === defaultScale)
+                    (transform.scale == defaultScale
+                      && transform.translation.x == defaultTranslation.x
+                      && transform.translation.y == defaultTranslation.y)
                     ? 'text-gray-500'
                     : 'text-white hover:bg-white/20'
                   }`}
                   aria-label="Reset zoom"
-                  disabled={transform.scale === defaultScale}
+                  disabled={transform.scale == defaultScale
+                    && transform.translation.x == defaultTranslation.x
+                    && transform.translation.y == defaultTranslation.y}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M4 10a6 6 0 1112 0 6 6 0 01-12 0zm6-4a4 4 0 100 8 4 4 0 000-8z" clipRule="evenodd" />
