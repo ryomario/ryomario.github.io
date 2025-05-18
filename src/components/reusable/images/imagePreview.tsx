@@ -1,154 +1,306 @@
-import { useEffect, useRef, useState } from 'react';
+import makePassiveEventOption from '@/utils/makePassiveEventOption';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+
+type Transform = {
+  scale: number;
+  translation: { x: number; y: number };
+};
 
 type ImagePreviewProps = {
   src: string;
   alt: string;
-  thumbnailClass?: string;
   previewClass?: string;
+  thumbnailClass?: string;
+  onInteraction?: (transform: Transform) => void;
+
+  defaultScale?: number;
+  defaultTranslation?: { x: number; y: number };
+  maxScale?: number;
+  minScale?: number;
+  disableZoom?: boolean;
+  disablePan?: boolean;
+  showControls?: boolean;
 };
 
 export function ImagePreview({
   src,
   alt,
   thumbnailClass = 'w-24 h-24 object-cover rounded-md cursor-pointer',
-  previewClass = 'max-w-[90vw] max-h-[90vh] object-contain m-auto'
+  previewClass = 'max-w-[90vw] max-h-[90vh] object-contain m-auto',
+  onInteraction,
+  defaultScale = 1,
+  defaultTranslation = { x: 0, y: 0 },
+  minScale = 0.1,
+  maxScale = 5,
+  disableZoom = false,
+  disablePan = false,
+  showControls = false,
 }: ImagePreviewProps) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const imageRef = useRef<HTMLImageElement>(null);
-
+  
   const openPreview = () => setIsPreviewOpen(true);
   const closePreview = () => setIsPreviewOpen(false);
 
-  useEffect(() => {
-    const handleScroll = (e: TouchEvent) => {
-      if (isPreviewOpen) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }
-    };
+  const [transform, setTransform] = useState<Transform>({
+    scale: defaultScale,
+    translation: defaultTranslation,
+  });
+  const [isPanning, setIsPanning] = useState(false);
+  const [startPan, setStartPan] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    if (isPreviewOpen) {
-      // Disable scroll
-      document.body.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
+  const initialDistance = useRef<number>(null);
+  
+  // Update transform and call callback
+  const updateTransform = useCallback(
+    (newTransform: Transform) => {
+      setTransform(newTransform);
+      if (onInteraction) {
+        onInteraction(newTransform);
+      }
+    },
+    [setTransform, onInteraction]
+  );
+  
+  // Handle zoom controls
+  const zoomIn = useCallback(() => {
+    if (disableZoom) return;
+    const newScale = Math.min(maxScale, transform.scale * 1.2);
+    updateTransform({
+      ...transform,
+      scale: newScale,
+    });
+  }, [disableZoom, maxScale, transform, updateTransform]);
+
+  const zoomOut = useCallback(() => {
+    if (disableZoom) return;
+    const newScale = Math.max(minScale, transform.scale * 0.8);
+    updateTransform({
+      ...transform,
+      scale: newScale,
+    });
+  }, [disableZoom, minScale, transform, updateTransform]);
+
+  const reset = useCallback(() => {
+    if(
+      transform.scale == defaultScale
+      && transform.translation.x == defaultTranslation.x
+      && transform.translation.y == defaultTranslation.y
+    ) return;
+    updateTransform({
+      scale: defaultScale,
+      translation: defaultTranslation,
+    });
+  }, [defaultScale, defaultTranslation, transform, updateTransform]);
+
+  // Handle wheel event for zooming
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      if (disableZoom) return;
+      e.preventDefault();
+
+      const container = containerRef.current;
+      if (!container) return;
+
+      // Get mouse position relative to container
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // Calculate the position relative to the transformed content
+      const contentX = (mouseX - transform.translation.x) / transform.scale;
+      const contentY = (mouseY - transform.translation.y) / transform.scale;
+
+      // Calculate new scale
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      let newScale = transform.scale * delta;
+
+      // Apply scale constraints
+      newScale = Math.max(minScale, Math.min(maxScale, newScale));
+
+      // Calculate new translation to keep the content under the mouse stable
+      const newTranslation = {
+        x: mouseX - contentX * newScale,
+        y: mouseY - contentY * newScale,
+      };
+
+      updateTransform({
+        scale: newScale,
+        translation: newTranslation,
+      });
+    },
+    [transform, disableZoom, minScale, maxScale, updateTransform]
+  );
+
+  // Handle mouse down for panning
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (disablePan) return;
+      if (e.button !== 0) return; // Only left mouse button
+
+      setIsPanning(true);
+      setStartPan({
+        x: e.clientX - transform.translation.x,
+        y: e.clientY - transform.translation.y,
+      });
+
+      // Prevent text selection during pan
+      e.preventDefault();
+    },
+    [disablePan, transform.translation.x, transform.translation.y]
+  );
+
+  // Handle mouse move for panning
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isPanning || disablePan) return;
+
+      const newTranslation = {
+        x: e.clientX - startPan.x,
+        y: e.clientY - startPan.y,
+      };
+
+      updateTransform({
+        ...transform,
+        translation: newTranslation,
+      });
+    },
+    [isPanning, disablePan, startPan.x, startPan.y, transform, updateTransform]
+  );
+
+  // Handle mouse up for panning
+  const handleMouseUp = useCallback(() => {
+    setIsPanning(false);
+  }, []);
+  
+  // Touch gesture handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      // Pinch zoom start
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      initialDistance.current = Math.hypot(
+        touch1.clientX - touch2.clientX,
+        touch1.clientY - touch2.clientY
+      );
+      setIsPanning(false);
+    } else if (e.touches.length === 1) {
+      // Single touch drag
+      const touch = e.touches[0];
+
+      setIsPanning(true);
+      setStartPan({
+        x: touch.clientX - transform.translation.x,
+        y: touch.clientY - transform.translation.y,
+      });
       
-      // Add touch event listeners for mobile
-      document.addEventListener('touchmove', handleScroll, { passive: false });
-    } else {
-      // Re-enable scroll
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-      document.body.style.position = '';
-      
-      // Remove event listeners
-      document.removeEventListener('touchmove', handleScroll);
     }
+  }, [disablePan, transform]);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    e.preventDefault();
+    
+    if (e.touches.length === 2 && initialDistance.current !== null && !disableZoom) {
+      
+      const container = containerRef.current;
+      if (!container) return;
+
+      // Pinch zoom
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const currentDistance = Math.hypot(
+        touch1.clientX - touch2.clientX,
+        touch1.clientY - touch2.clientY
+      );
+      
+      // Calculate new scale
+      const delta = (currentDistance / initialDistance.current) * 1.5;
+      let newScale = transform.scale * delta;
+      
+      // Apply scale constraints
+      newScale = Math.max(minScale, Math.min(maxScale, newScale));
+      
+      const midX = (touch1.clientX + touch2.clientX) / 2;
+      const midY = (touch1.clientY + touch2.clientY) / 2;
+      
+      // Calculate the position relative to the transformed content
+      const contentX = (midX - transform.translation.x) / transform.scale;
+      const contentY = (midY - transform.translation.y) / transform.scale;
+      
+      // Calculate new translation to keep the content under the mouse stable
+      const newTranslation = {
+        x: midX - contentX * newScale,
+        y: midY - contentY * newScale,
+      };
+
+      updateTransform({
+        scale: newScale,
+        translation: newTranslation,
+      });
+    } else if (isPanning && !disablePan && e.touches.length === 1) {
+      // Single touch drag
+      const touch = e.touches[0];
+      
+      const newTranslation = {
+        x: touch.clientX - startPan.x,
+        y: touch.clientY - startPan.y,
+      };
+
+      updateTransform({
+        ...transform,
+        translation: newTranslation,
+      });
+    }
+  }, [isPanning, disablePan, startPan.x, startPan.y, transform, updateTransform]);
+
+  const handleTouchEnd = useCallback((e: TouchEvent) => {
+    initialDistance.current = null;
+    
+    setIsPanning(false);
+  }, []);
+
+  // Handle double click to reset
+  const handleDoubleClick = useCallback(() => {
+    updateTransform({
+      scale: defaultScale,
+      translation: defaultTranslation,
+    });
+  }, [defaultScale, defaultTranslation, updateTransform]);
+
+  // Add event listeners
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+  
+    const passiveOption = makePassiveEventOption(false);
+
+    container.addEventListener('wheel', handleWheel, passiveOption);
+
+    window.addEventListener('mousemove', handleMouseMove, passiveOption);
+    window.addEventListener('mouseup', handleMouseUp, passiveOption);
+    window.addEventListener('touchmove', handleTouchMove, passiveOption);
+    window.addEventListener('touchend', handleTouchEnd, passiveOption);
 
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-      document.body.style.position = '';
-      document.removeEventListener('touchmove', handleScroll);
+      container.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
     };
-  },[isPreviewOpen])
+  }, [handleWheel, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
-  const zoomIn = (x = 1) => {
-    setScale(prev => Math.min(prev + (0.25 * x), 3)); // Limit max zoom to 3x
-  };
-
-  const zoomOut = () => {
-    setScale(prev => Math.max(prev - 0.25, 1)); // Don't go below 1x
-  };
-
-  const resetZoom = () => {
-    setScale(1);
-    setPosition({ x: 0, y: 0 });
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (scale <= 1) return;
-    setIsDragging(true);
-    setStartPos({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
-    });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || scale <= 1) return;
-    setPosition({
-      x: e.clientX - startPos.x,
-      y: e.clientY - startPos.y
-    });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    if (e.ctrlKey) {
-      e.preventDefault();
-      if (e.deltaY < 0) {
-        zoomIn();
-      } else {
-        zoomOut();
-      }
-    }
-  };
-
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
-    
-    // Calculate center position relative to image
-    const centerX = (rect.width / 2 - clickX) * scale;
-    const centerY = (rect.height / 2 - clickY) * scale;
-    
-    if (scale === 1) {
-      zoomIn(2);
-      setPosition({
-        x: position.x + centerX,
-        y: position.y + centerY
-      });
-    } else {
-      resetZoom();
-      setPosition({ x: 0, y: 0 });
-    }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (scale <= 1) return;
-    setIsDragging(true);
-    setStartPos({
-      x: e.touches[0].clientX - position.x,
-      y: e.touches[0].clientY - position.y
-    });
-  };
-  
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || scale <= 1) return;
-    setPosition({
-      x: e.touches[0].clientX - startPos.x,
-      y: e.touches[0].clientY - startPos.y
-    });
-  };
-
+  // Effect to prevent scroll when modal is open
   useEffect(() => {
-    if(scale == 1) {
-      resetZoom();
+    if (isPreviewOpen) {
+      document.body.style.overflow = 'hidden';
+      reset();
+      return () => {
+        document.body.style.overflow = '';
+      };
     }
-  },[scale])
+  }, [isPreviewOpen]);
 
   return (
     <>
@@ -163,35 +315,60 @@ export function ImagePreview({
       {/* Preview Modal */}
       {isPreviewOpen && createPortal(
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 overflow-y-auto"
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"
           onClick={closePreview}
         >
-          <div className="fixed inset-0 flex items-center justify-center overflow-hidden">
-            <div className="relative w-full h-full flex items-center justify-center">
-              {/* Zoom Controls */}
-              <div className="absolute top-4 right-4 flex gap-2 z-10">
+          <div
+            ref={containerRef}
+            className="relative w-full h-full flex items-center justify-center overflow-hidden touch-none select-none"
+          >
+            {/* Zoom Controls */}
+            {showControls && (
+              <div
+                className="absolute top-4 right-4 flex gap-2 z-10 bg-black/50 rounded-full p-1"
+                onClick={e => e.stopPropagation()}
+              >
                 <button
-                  onClick={(e) => { e.stopPropagation(); zoomIn(); }}
-                  className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
+                  onClick={zoomIn}
+                  className={`bg-transparent p-2 rounded-full transition ${
+                    (disableZoom || transform.scale >= maxScale)
+                    ? 'text-gray-500'
+                    : 'text-white hover:bg-white/20'
+                  }`}
                   aria-label="Zoom in"
+                  disabled={disableZoom || transform.scale >= maxScale}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
                   </svg>
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); zoomOut(); }}
-                  className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
+                  onClick={zoomOut}
+                  className={`bg-transparent p-2 rounded-full transition ${
+                    (disableZoom || transform.scale <= minScale)
+                    ? 'text-gray-500'
+                    : 'text-white hover:bg-white/20'
+                  }`}
                   aria-label="Zoom out"
+                  disabled={disableZoom || transform.scale <= minScale}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
                   </svg>
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); resetZoom(); }}
-                  className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
+                  onClick={reset}
+                  className={`bg-transparent p-2 rounded-full transition ${
+                    (transform.scale == defaultScale
+                      && transform.translation.x == defaultTranslation.x
+                      && transform.translation.y == defaultTranslation.y)
+                    ? 'text-gray-500'
+                    : 'text-white hover:bg-white/20'
+                  }`}
                   aria-label="Reset zoom"
+                  disabled={transform.scale == defaultScale
+                    && transform.translation.x == defaultTranslation.x
+                    && transform.translation.y == defaultTranslation.y}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M4 10a6 6 0 1112 0 6 6 0 01-12 0zm6-4a4 4 0 100 8 4 4 0 000-8z" clipRule="evenodd" />
@@ -199,7 +376,7 @@ export function ImagePreview({
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); closePreview(); }}
-                  className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
+                  className="bg-transparent text-white p-2 rounded-full hover:bg-white/20 transition"
                   aria-label="Close preview"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -207,38 +384,34 @@ export function ImagePreview({
                   </svg>
                 </button>
               </div>
-              
-              {/* Zoomable Image */}
-              <div 
-                className="overflow-hidden max-w-full max-h-full"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onWheel={handleWheel}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleMouseUp}
-                onDoubleClick={handleDoubleClick}
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-                  cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in',
-                  transformOrigin: 'center center',
-                }}
-              >
-                <img
-                  ref={imageRef}
-                  src={src}
-                  alt={alt}
-                  className={previewClass}
-                  onDragStart={(e) => e.preventDefault()}
-                />
-              </div>
+            )}
+            
+            {/* Zoomable Image Container */}
+            <div 
+              className="overflow-hidden max-w-full max-h-full"
+              onMouseDown={handleMouseDown}
+              onDoubleClick={handleDoubleClick}
+              onTouchStart={handleTouchStart}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                transform: `translate(${transform.translation.x}px, ${transform.translation.y}px) scale(${transform.scale})`,
+                transformOrigin: '0 0',
+                cursor: isPanning ? 'grabbing' : 'grab',
+                touchAction: 'none',
+                willChange: 'transform',
+              }}
+            >
+              <img
+                src={src}
+                alt={alt}
+                className={previewClass}
+                onDragStart={(e) => e.preventDefault()}
+              />
             </div>
           </div>
-        </div>
-      , document.body)}
+        </div>,
+        document.body
+      )}
     </>
   );
 }
