@@ -1,319 +1,306 @@
+import makePassiveEventOption from '@/utils/makePassiveEventOption';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+
+type Transform = {
+  scale: number;
+  translation: { x: number; y: number };
+};
 
 type ImagePreviewProps = {
   src: string;
   alt: string;
-  thumbnailClass?: string;
   previewClass?: string;
+  thumbnailClass?: string;
+  onInteraction?: (transform: Transform) => void;
+
+  defaultScale?: number;
+  defaultTranslation?: { x: number; y: number };
+  maxScale?: number;
+  minScale?: number;
+  disableZoom?: boolean;
+  disablePan?: boolean;
+  showControls?: boolean;
 };
 
 export function ImagePreview({
   src,
   alt,
   thumbnailClass = 'w-24 h-24 object-cover rounded-md cursor-pointer',
-  previewClass = 'max-w-[90vw] max-h-[90vh] object-contain m-auto'
+  previewClass = 'max-w-[90vw] max-h-[90vh] object-contain m-auto',
+  onInteraction,
+  defaultScale = 1,
+  defaultTranslation = { x: 0, y: 0 },
+  minScale = 0.1,
+  maxScale = 5,
+  disableZoom = false,
+  disablePan = false,
+  showControls = false,
 }: ImagePreviewProps) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const [startDragPos, setStartDragPos] = useState({ x: 0, y: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const lastScale = useRef(1);
-  const lastPosition = useRef({ x: 0, y: 0 });
-  const targetScale = useRef(1);
-  const targetPosition = useRef({ x: 0, y: 0 });
-  const animationRef = useRef<number>(null);
   
-  // Add new state for pinch zoom
-  const [initialDistance, setInitialDistance] = useState<number | null>(null);
-  const [initialScale, setInitialScale] = useState(1);
-  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
-
   const openPreview = () => setIsPreviewOpen(true);
   const closePreview = () => setIsPreviewOpen(false);
 
-  useEffect(() => {
-    const handleScroll = (e: Event) => {
-      if (isPreviewOpen) {
-        e.preventDefault();
+  const [transform, setTransform] = useState<Transform>({
+    scale: defaultScale,
+    translation: defaultTranslation,
+  });
+  const [isPanning, setIsPanning] = useState(false);
+  const [startPan, setStartPan] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const initialDistance = useRef<number>(null);
+  
+  // Update transform and call callback
+  const updateTransform = useCallback(
+    (newTransform: Transform) => {
+      setTransform(newTransform);
+      if (onInteraction) {
+        onInteraction(newTransform);
       }
-    };
+    },
+    [setTransform, onInteraction]
+  );
+  
+  // Handle zoom controls
+  const zoomIn = useCallback(() => {
+    if (disableZoom) return;
+    const newScale = Math.min(maxScale, transform.scale * 1.2);
+    updateTransform({
+      ...transform,
+      scale: newScale,
+    });
+  }, [disableZoom, maxScale, transform, updateTransform]);
 
-    if (isPreviewOpen) {
-      resetZoom();
-      document.body.style.overflow = 'hidden';
-      document.addEventListener('wheel', handleScroll, { passive: false });
-      document.addEventListener('touchmove', handleScroll, { passive: false });
-    }
+  const zoomOut = useCallback(() => {
+    if (disableZoom) return;
+    const newScale = Math.max(minScale, transform.scale * 0.8);
+    updateTransform({
+      ...transform,
+      scale: newScale,
+    });
+  }, [disableZoom, minScale, transform, updateTransform]);
 
-    return () => {
-      document.body.style.overflow = '';
-      document.removeEventListener('wheel', handleScroll);
-      document.removeEventListener('touchmove', handleScroll);
-    };
-  }, [isPreviewOpen]);
+  const reset = useCallback(() => {
+    if(
+      transform.scale == defaultScale
+      && transform.translation.x == defaultTranslation.x
+      && transform.translation.y == defaultTranslation.y
+    ) return;
+    updateTransform({
+      scale: defaultScale,
+      translation: defaultTranslation,
+    });
+  }, [defaultScale, defaultTranslation, transform, updateTransform]);
 
+  // Handle wheel event for zooming
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      if (disableZoom) return;
+      e.preventDefault();
 
-  // Smooth zoom transition function
-  const smoothZoomTo = useCallback((newScale: number, focusPoint?: { x: number; y: number }) => {
-    if (!containerRef.current || !imageRef.current) return;
+      const container = containerRef.current;
+      if (!container) return;
 
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const imgRect = imageRef.current.getBoundingClientRect();
+      // Get mouse position relative to container
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-    // Calculate the container center
-    const containerCenter = {
-      x: containerRect.width / 2,
-      y: containerRect.height / 2
-    };
+      // Calculate the position relative to the transformed content
+      const contentX = (mouseX - transform.translation.x) / transform.scale;
+      const contentY = (mouseY - transform.translation.y) / transform.scale;
 
-    // Use provided focus point or default to center
-    const focus = focusPoint || containerCenter;
+      // Calculate new scale
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      let newScale = transform.scale * delta;
 
-    // Calculate current mouse position in image coordinates
-    const currentImgX = (focus.x - containerCenter.x) / lastScale.current - lastPosition.current.x;
-    const currentImgY = (focus.y - containerCenter.y) / lastScale.current - lastPosition.current.y;
+      // Apply scale constraints
+      newScale = Math.max(minScale, Math.min(maxScale, newScale));
 
-    // Calculate new position to keep the focus point stable
-    const newX = (focus.x - containerCenter.x) / newScale - currentImgX;
-    const newY = (focus.y - containerCenter.y) / newScale - currentImgY;
-
-    // Set targets for smooth animation
-    targetScale.current = newScale;
-    targetPosition.current = { x: -newX, y: -newY };
-
-    // Start animation if not already running
-    if (!animationRef.current) {
-      const animate = () => {
-        // Calculate interpolated values (ease-out effect)
-        const scaleDiff = targetScale.current - lastScale.current;
-        const posDiffX = targetPosition.current.x - lastPosition.current.x;
-        const posDiffY = targetPosition.current.y - lastPosition.current.y;
-
-        // Apply 20% of the difference each frame for smoothness
-        const newScaleVal = lastScale.current + scaleDiff * 0.2;
-        const newXVal = lastPosition.current.x + posDiffX * 0.2;
-        const newYVal = lastPosition.current.y + posDiffY * 0.2;
-
-        // Update state
-        setScale(newScaleVal);
-        setPosition({ x: newXVal, y: newYVal });
-
-        // Update refs with latest values
-        lastScale.current = newScaleVal;
-        lastPosition.current = { x: newXVal, y: newYVal };
-
-        // Continue animation if we haven't reached the target
-        if (Math.abs(newScaleVal - targetScale.current) > 0.001 ||
-            Math.abs(newXVal - targetPosition.current.x) > 0.1 ||
-            Math.abs(newYVal - targetPosition.current.y) > 0.1) {
-          animationRef.current = requestAnimationFrame(animate);
-        } else {
-          // Final update to ensure we reach exact target
-          setScale(targetScale.current);
-          setPosition(targetPosition.current);
-          lastScale.current = targetScale.current;
-          lastPosition.current = targetPosition.current;
-          animationRef.current = null;
-        }
+      // Calculate new translation to keep the content under the mouse stable
+      const newTranslation = {
+        x: mouseX - contentX * newScale,
+        y: mouseY - contentY * newScale,
       };
 
-      animationRef.current = requestAnimationFrame(animate);
-    }
+      updateTransform({
+        scale: newScale,
+        translation: newTranslation,
+      });
+    },
+    [transform, disableZoom, minScale, maxScale, updateTransform]
+  );
+
+  // Handle mouse down for panning
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (disablePan) return;
+      if (e.button !== 0) return; // Only left mouse button
+
+      setIsPanning(true);
+      setStartPan({
+        x: e.clientX - transform.translation.x,
+        y: e.clientY - transform.translation.y,
+      });
+
+      // Prevent text selection during pan
+      e.preventDefault();
+    },
+    [disablePan, transform.translation.x, transform.translation.y]
+  );
+
+  // Handle mouse move for panning
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isPanning || disablePan) return;
+
+      const newTranslation = {
+        x: e.clientX - startPan.x,
+        y: e.clientY - startPan.y,
+      };
+
+      updateTransform({
+        ...transform,
+        translation: newTranslation,
+      });
+    },
+    [isPanning, disablePan, startPan.x, startPan.y, transform, updateTransform]
+  );
+
+  // Handle mouse up for panning
+  const handleMouseUp = useCallback(() => {
+    setIsPanning(false);
   }, []);
-
-  const zoomIn = (factor = 1) => {
-    setScale(prev => {
-      const newScale = Math.min(prev + (0.25 * factor), 3)
-      lastScale.current = newScale
-      return newScale
-    });
-  };
-
-  const zoomOut = () => {
-    setScale(prev => {
-      const newScale = Math.max(prev - 0.25, 1);
-      if (newScale === 1) {
-        setPosition({ x: 0, y: 0 });
-      }
-      lastScale.current = newScale
-      return newScale;
-    });
-  };
   
-  const resetZoom = useCallback(() => {
-    setScale(1);
-    setPosition({ x: 0, y: 0 });
-    lastScale.current = 1;
-  }, []);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (scale <= 1) return;
-    e.preventDefault();
-    setIsDragging(true);
-    setStartPos(position);
-    setStartDragPos({ x: e.clientX, y: e.clientY });
-    document.body.style.cursor = 'grabbing';
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || scale <= 1) return;
-    
-    const dx = e.clientX - startDragPos.x;
-    const dy = e.clientY - startDragPos.y;
-    
-    setPosition({
-      x: startPos.x + dx,
-      y: startPos.y + dy
-    });
-  };
-
-  const handleMouseUp = () => {
-    if (isDragging) {
-      setIsDragging(false);
-      document.body.style.cursor = '';
-    }
-  };
-
-  // Pinch zoom handlers
+  // Touch gesture handlers
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (e.touches.length === 2) {
-      // Calculate initial distance between two fingers
-      const dist = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
+      // Pinch zoom start
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      initialDistance.current = Math.hypot(
+        touch1.clientX - touch2.clientX,
+        touch1.clientY - touch2.clientY
       );
-      setInitialDistance(dist);
-      setInitialScale(scale);
-      setIsDragging(false);
-    } else if (e.touches.length === 1 && scale > 1) {
-      // Single touch for dragging
+      setIsPanning(false);
+    } else if (e.touches.length === 1) {
+      // Single touch drag
       const touch = e.touches[0];
-      setStartPos(position);
-      setStartDragPos({ x: touch.clientX, y: touch.clientY });
-      setIsDragging(true);
+
+      setIsPanning(true);
+      setStartPan({
+        x: touch.clientX - transform.translation.x,
+        y: touch.clientY - transform.translation.y,
+      });
       
-      // Store touch start for double tap detection
-      touchStartRef.current = {
-        x: touch.clientX,
-        y: touch.clientY,
-        time: Date.now()
-      };
     }
-  }, [scale, position]);
-  
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+  }, [disablePan, transform]);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
     e.preventDefault();
     
-    if (e.touches.length === 2 && initialDistance !== null) {
-      // Calculate current distance between fingers
+    if (e.touches.length === 2 && initialDistance.current !== null && !disableZoom) {
+      
+      const container = containerRef.current;
+      if (!container) return;
+
+      // Pinch zoom
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
       const currentDistance = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
+        touch1.clientX - touch2.clientX,
+        touch1.clientY - touch2.clientY
       );
       
-      // Calculate new scale based on pinch distance
-      const newScale = Math.min(Math.max(
-        initialScale * (currentDistance / initialDistance),
-        1
-      ), 3);
+      // Calculate new scale
+      const delta = (currentDistance / initialDistance.current) * 1.5;
+      let newScale = transform.scale * delta;
       
-      // Calculate midpoint between fingers for zoom center
-      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      // Apply scale constraints
+      newScale = Math.max(minScale, Math.min(maxScale, newScale));
       
-      // Apply smooth zoom to the midpoint
-      smoothZoomTo(newScale, { x: midX, y: midY });
-    } else if (isDragging && e.touches.length === 1) {
-      // Single finger drag
+      const midX = (touch1.clientX + touch2.clientX) / 2;
+      const midY = (touch1.clientY + touch2.clientY) / 2;
+      
+      // Calculate the position relative to the transformed content
+      const contentX = (midX - transform.translation.x) / transform.scale;
+      const contentY = (midY - transform.translation.y) / transform.scale;
+      
+      // Calculate new translation to keep the content under the mouse stable
+      const newTranslation = {
+        x: midX - contentX * newScale,
+        y: midY - contentY * newScale,
+      };
+
+      updateTransform({
+        scale: newScale,
+        translation: newTranslation,
+      });
+    } else if (isPanning && !disablePan && e.touches.length === 1) {
+      // Single touch drag
       const touch = e.touches[0];
-      const dx = touch.clientX - startDragPos.x;
-      const dy = touch.clientY - startDragPos.y;
       
-      setPosition({
-        x: startPos.x + dx,
-        y: startPos.y + dy
+      const newTranslation = {
+        x: touch.clientX - startPan.x,
+        y: touch.clientY - startPan.y,
+      };
+
+      updateTransform({
+        ...transform,
+        translation: newTranslation,
       });
     }
-  }, [initialDistance, initialScale, isDragging, startPos, startDragPos, smoothZoomTo]);
+  }, [isPanning, disablePan, startPan.x, startPan.y, transform, updateTransform]);
 
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    setInitialDistance(null);
+  const handleTouchEnd = useCallback((e: TouchEvent) => {
+    initialDistance.current = null;
     
-    // Double tap detection
-    if (e.touches.length === 0 && touchStartRef.current) {
-      const touchEnd = e.changedTouches[0];
-      const start = touchStartRef.current;
-      const dist = Math.hypot(touchEnd.clientX - start.x, touchEnd.clientY - start.y);
-      const duration = Date.now() - start.time;
-      
-      if (dist < 10 && duration < 300) {
-        // Double tap detected
-        if (scale > 1.1) {
-          smoothZoomTo(1);
-        } else {
-          const rect = containerRef.current?.getBoundingClientRect();
-          if (rect) {
-            smoothZoomTo(2, {
-              x: touchEnd.clientX - rect.left,
-              y: touchEnd.clientY - rect.top
-            });
-          }
-        }
-      }
-    }
-    
-    setIsDragging(false);
-  }, [scale, smoothZoomTo]);
-  
-  // Wheel handler with smooth zoom
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    // e.preventDefault();
-    
-    if (!containerRef.current) return;
-
-    // Get mouse position relative to container
-    const rect = containerRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    // Calculate zoom direction and amount
-    const zoomSpeed = 0.01;
-    const delta = -e.deltaY * zoomSpeed;
-    const newScale = Math.min(Math.max(lastScale.current * (1 + delta), 1), 3);
-
-    // Smooth zoom to the new scale with mouse position as focus point
-    smoothZoomTo(newScale, { x: mouseX, y: mouseY });
-  },[smoothZoomTo]);
-
-  // Double click handler
-  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    if (!containerRef.current) return;
-
-    if (lastScale.current > 1.1) {
-      smoothZoomTo(1);
-    } else {
-      const rect = containerRef.current.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
-      smoothZoomTo(2, { x: clickX, y: clickY });
-    }
-  }, [smoothZoomTo]);
-
-  // Clean up animation frame on unmount
-  useEffect(() => {
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
+    setIsPanning(false);
   }, []);
+
+  // Handle double click to reset
+  const handleDoubleClick = useCallback(() => {
+    updateTransform({
+      scale: defaultScale,
+      translation: defaultTranslation,
+    });
+  }, [defaultScale, defaultTranslation, updateTransform]);
+
+  // Add event listeners
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+  
+    const passiveOption = makePassiveEventOption(false);
+
+    container.addEventListener('wheel', handleWheel, passiveOption);
+
+    window.addEventListener('mousemove', handleMouseMove, passiveOption);
+    window.addEventListener('mouseup', handleMouseUp, passiveOption);
+    window.addEventListener('touchmove', handleTouchMove, passiveOption);
+    window.addEventListener('touchend', handleTouchEnd, passiveOption);
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [handleWheel, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+
+  // Effect to prevent scroll when modal is open
+  useEffect(() => {
+    if (isPreviewOpen) {
+      document.body.style.overflow = 'hidden';
+      reset();
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [isPreviewOpen]);
 
   return (
     <>
@@ -328,39 +315,56 @@ export function ImagePreview({
       {/* Preview Modal */}
       {isPreviewOpen && createPortal(
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"
           onClick={closePreview}
         >
-          <div 
+          <div
             ref={containerRef}
-            className="fixed inset-0 flex items-center justify-center overflow-hidden touch-none"
-            onWheel={handleWheel}
+            className="relative w-full h-full flex items-center justify-center overflow-hidden touch-none select-none"
           >
-            <div className="relative w-full h-full flex items-center justify-center">
-              {/* Zoom Controls */}
-              <div className="absolute top-4 right-4 flex gap-2 z-10">
+            {/* Zoom Controls */}
+            {showControls && (
+              <div
+                className="absolute top-4 right-4 flex gap-2 z-10 bg-black/50 rounded-full p-1"
+                onClick={e => e.stopPropagation()}
+              >
                 <button
-                  onClick={(e) => { e.stopPropagation(); zoomIn(); }}
-                  className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
+                  onClick={zoomIn}
+                  className={`bg-transparent p-2 rounded-full transition ${
+                    (disableZoom || transform.scale >= maxScale)
+                    ? 'text-gray-500'
+                    : 'text-white hover:bg-white/20'
+                  }`}
                   aria-label="Zoom in"
+                  disabled={disableZoom || transform.scale >= maxScale}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
                   </svg>
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); zoomOut(); }}
-                  className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
+                  onClick={zoomOut}
+                  className={`bg-transparent p-2 rounded-full transition ${
+                    (disableZoom || transform.scale <= minScale)
+                    ? 'text-gray-500'
+                    : 'text-white hover:bg-white/20'
+                  }`}
                   aria-label="Zoom out"
+                  disabled={disableZoom || transform.scale <= minScale}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
                   </svg>
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); resetZoom(); }}
-                  className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
+                  onClick={reset}
+                  className={`bg-transparent p-2 rounded-full transition ${
+                    (transform.scale === defaultScale)
+                    ? 'text-gray-500'
+                    : 'text-white hover:bg-white/20'
+                  }`}
                   aria-label="Reset zoom"
+                  disabled={transform.scale === defaultScale}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M4 10a6 6 0 1112 0 6 6 0 01-12 0zm6-4a4 4 0 100 8 4 4 0 000-8z" clipRule="evenodd" />
@@ -368,7 +372,7 @@ export function ImagePreview({
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); closePreview(); }}
-                  className="bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
+                  className="bg-transparent text-white p-2 rounded-full hover:bg-white/20 transition"
                   aria-label="Close preview"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -376,40 +380,34 @@ export function ImagePreview({
                   </svg>
                 </button>
               </div>
-              
-              {/* Zoomable Image */}
-              <div 
-                className="overflow-hidden max-w-full max-h-full"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                onDoubleClick={handleDoubleClick}
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-                  cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in',
-                  transformOrigin: 'center center',
-                  touchAction: 'none',
-                  willChange: 'transform', // Hint to browser for optimization
-                  backfaceVisibility: 'hidden', // Prevent flickering in some browsers
-                }}
-              >
-                <img
-                  ref={imageRef}
-                  src={src}
-                  alt={alt}
-                  className={previewClass}
-                  onDragStart={(e) => e.preventDefault()}
-                />
-              </div>
+            )}
+            
+            {/* Zoomable Image Container */}
+            <div 
+              className="overflow-hidden max-w-full max-h-full"
+              onMouseDown={handleMouseDown}
+              onDoubleClick={handleDoubleClick}
+              onTouchStart={handleTouchStart}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                transform: `translate(${transform.translation.x}px, ${transform.translation.y}px) scale(${transform.scale})`,
+                transformOrigin: '0 0',
+                cursor: isPanning ? 'grabbing' : 'grab',
+                touchAction: 'none',
+                willChange: 'transform',
+              }}
+            >
+              <img
+                src={src}
+                alt={alt}
+                className={previewClass}
+                onDragStart={(e) => e.preventDefault()}
+              />
             </div>
           </div>
-        </div>
-      , document.body)}
+        </div>,
+        document.body
+      )}
     </>
   );
 }
