@@ -7,6 +7,13 @@ type Transform = {
   translation: { x: number; y: number };
 };
 
+type TranslationBounds = {
+  xMin?: number;
+  xMax?: number;
+  yMin?: number;
+  yMax?: number;
+};
+
 type ImagePreviewProps = {
   src: string;
   alt: string;
@@ -21,6 +28,8 @@ type ImagePreviewProps = {
   disableZoom?: boolean;
   disablePan?: boolean;
   showControls?: boolean;
+
+  translationBounds?: TranslationBounds;
 };
 
 export function ImagePreview({
@@ -36,6 +45,7 @@ export function ImagePreview({
   disableZoom = false,
   disablePan = false,
   showControls = false,
+  translationBounds = {},
 }: ImagePreviewProps) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
@@ -49,6 +59,7 @@ export function ImagePreview({
   const [isPanning, setIsPanning] = useState(false);
   const [startPan, setStartPan] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const imgContainerRef = useRef<HTMLDivElement>(null);
 
   const initialDistance = useRef<number>(null);
   
@@ -135,7 +146,7 @@ export function ImagePreview({
 
   // Handle mouse down for panning
   const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       if (disablePan) return;
       if (e.button !== 0) return; // Only left mouse button
 
@@ -175,7 +186,7 @@ export function ImagePreview({
   }, []);
   
   // Touch gesture handlers
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+  const handleTouchStart = useCallback((e: TouchEvent) => {
     if (e.touches.length === 2) {
       // Pinch zoom start
       const touch1 = e.touches[0];
@@ -271,23 +282,42 @@ export function ImagePreview({
   // Add event listeners
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    const imgContainer = imgContainerRef.current;
+    if (!container || !imgContainer) return;
   
     const passiveOption = makePassiveEventOption(false);
 
     container.addEventListener('wheel', handleWheel, passiveOption);
 
+    /*
+      Setup events for the gesture lifecycle: start, move, end touch
+    */
+
+    // start gesture
+    imgContainer.addEventListener('touchstart', handleTouchStart, passiveOption);
+    imgContainer.addEventListener('mousedown', handleMouseDown, passiveOption);
+
+    // move gesture
     window.addEventListener('mousemove', handleMouseMove, passiveOption);
-    window.addEventListener('mouseup', handleMouseUp, passiveOption);
     window.addEventListener('touchmove', handleTouchMove, passiveOption);
-    window.addEventListener('touchend', handleTouchEnd, passiveOption);
+    
+    // end gesture
+    const touchAndMouseEndOptions: AddEventListenerOptions = { capture: true, ...(typeof passiveOption !== 'boolean' && passiveOption) };
+    window.addEventListener('mouseup', handleMouseUp, touchAndMouseEndOptions);
+    window.addEventListener('touchend', handleTouchEnd, touchAndMouseEndOptions);
 
     return () => {
       container.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+
+      // Remove touch events
+      imgContainer.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
+
+      // Remove mouse events
+      imgContainer.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [handleWheel, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
@@ -388,10 +418,9 @@ export function ImagePreview({
             
             {/* Zoomable Image Container */}
             <div 
+              ref={imgContainerRef}
               className="overflow-hidden max-w-full max-h-full"
-              onMouseDown={handleMouseDown}
               onDoubleClick={handleDoubleClick}
-              onTouchStart={handleTouchStart}
               onClick={(e) => e.stopPropagation()}
               style={{
                 transform: `translate(${transform.translation.x}px, ${transform.translation.y}px) scale(${transform.scale})`,
