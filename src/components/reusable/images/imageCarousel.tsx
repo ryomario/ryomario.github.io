@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ImagePreview } from './imagePreview';
+import { ImagePreview } from './imagePreview2';
 
 interface Image {
   src: string;
@@ -124,7 +124,6 @@ export function ImageCarousel({
                 minScale={0.5}
                 maxScale={3}
                 showControls
-                // loading="lazy"
               />
             </div>
           ))}
