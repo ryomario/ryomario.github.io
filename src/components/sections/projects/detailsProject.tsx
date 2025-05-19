@@ -78,8 +78,8 @@ export function ProjectDetailsSection({
             src: p.preview_url,
             alt: `Preview of ${project.project_title} ${p.preview_url}`
           }))}
-          // autoPlay
-          // autoPlayInterval={3000}
+          autoPlay
+          autoPlayInterval={5000}
         />
       </div>
 

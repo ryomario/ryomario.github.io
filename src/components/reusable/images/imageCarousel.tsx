@@ -59,7 +59,7 @@ export function ImageCarousel({
       setTimeout(() => {
         setTransitionEnabled(true);
         setCurrentIndex(0);
-      }, 0);
+      }, 100);
     } else {
       setCurrentIndex(prev => prev + 1);
     }
@@ -67,11 +67,13 @@ export function ImageCarousel({
 
   // Touch event handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent): void => {
+    if(!e.currentTarget.contains(e.target as Node)) return;
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
   };
 
   const handleTouchMove = (e: React.TouchEvent): void => {
+    if(!e.currentTarget.contains(e.target as Node)) return;
     setTouchEnd(e.targetTouches[0].clientX);
   };
 
