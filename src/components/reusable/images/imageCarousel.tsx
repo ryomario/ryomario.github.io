@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ImagePreview } from './imagePreview2';
+import { ImagePreview } from './imagePreview';
 
 interface Image {
   src: string;
@@ -121,9 +121,6 @@ export function ImageCarousel({
                 src={image.src}
                 alt={image.alt || `Slide ${index + 1}`}
                 thumbnailClass="max-w-full max-h-full object-contain cursor-pointer"
-                minScale={0.5}
-                maxScale={3}
-                showControls
               />
             </div>
           ))}
