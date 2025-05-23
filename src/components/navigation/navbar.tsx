@@ -28,9 +28,9 @@ export function Navbar() {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Ryomario</span>
-            <Image
+            <img
               className="dark:invert transition duration-300 max-[360px]:hidden"
-              src="/logo.svg"
+              src="/icon.svg"
               alt="Ryomario logo"
               height={35}
               width={35}
