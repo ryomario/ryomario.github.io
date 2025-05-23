@@ -5,6 +5,7 @@ import { prisma } from "../prisma"
 import RepoProjects from "./RepoProjects"
 import { join } from "path"
 import { writeFile, rm } from "fs/promises"
+import sharp from 'sharp'
 
 export const getAll = RepoProjects.getAll
 export const getOne = RepoProjects.getOne
@@ -219,8 +220,13 @@ export async function uploadImagePreview(file?: File) {
 
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
+  
+  // Convert to WebP
+  const webpBuffer = await sharp(buffer)
+    .webp({ quality: 100 })
+    .toBuffer();
 
-  const filename = `${Date.now()}_project_preview_${file.name}`
+  const filename = `${Date.now()}_project_preview.webp`
 
   const path = join(process.cwd(), "public/images", filename);
   await writeFile(path, buffer);
