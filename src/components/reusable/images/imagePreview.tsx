@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ImageInteraction } from './imageInteraction';
-import Image from 'next/image';
 
 type ImagePreviewProps = {
   src: string;
