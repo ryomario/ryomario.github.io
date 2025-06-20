@@ -5,6 +5,9 @@ import { useInputProjectHook } from "../hooks/inputProjectHooks"
 import { InputImages } from "./inputs/inputImage/inputImages"
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import { useState } from "react"
+import { Locale } from "@/i18n/routing"
+import { LanguageSwitcherRadioInput } from "@/components/reusable/inputs/languageSwitcherRadioInput"
 
 type Props = {
   project?: IProject
@@ -15,6 +18,8 @@ export function FormInputProject({
   project,
   onSaved,
 }: Props) {
+  const [lang, setLang] = useState<Locale>('en')
+
   const {
     onSave,
     errors,
@@ -36,6 +41,13 @@ export function FormInputProject({
 
   return (
     <div>
+      <div className="mb-3 w-full flex justify-end p-1">
+        <LanguageSwitcherRadioInput
+          lang={lang}
+          disabled={isSaving}
+          onChange={setLang}
+        />
+      </div>
       <div className="mb-3 w-full lg:w-2/3">
         <label htmlFor="project-title"
           className={[

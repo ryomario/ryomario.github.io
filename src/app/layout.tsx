@@ -1,5 +1,6 @@
 import {ReactNode} from 'react';
 import "./globals.css";
+import "flag-icons";
 
 type Props = {
   children: ReactNode;
