@@ -129,6 +129,7 @@ export function ViewLogin() {
             type="submit"
             fullWidth
             variant="contained"
+            color="primary"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Logging in' : 'Log in with password'}
