@@ -3,6 +3,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Tooltip from '@mui/material/Tooltip';
 import Link from 'next/link';
 
 type SidebarItemProps = {
@@ -40,37 +41,39 @@ export function SidebarItem({
         }),
       }}
     >
-      <ListItemButton
-        selected={active}
-        onClick={onClick}
-        sx={{
-          minHeight: 48,
-          px: 2.5,
-          justifyContent: miniSidebar ? 'center' : 'initial',
-        }}
-      >
-        <ListItemIcon
+      <Tooltip title={miniSidebar ? text : null} placement="right" arrow>
+        <ListItemButton
+          selected={active}
+          onClick={onClick}
           sx={{
-            minWidth: 0,
-            justifyContent: 'center',
-            mr: 'auto',
-            color: 'inherit',
+            minHeight: 48,
+            px: 2.5,
+            justifyContent: miniSidebar ? 'center' : 'initial',
           }}
         >
-          {icon}
-        </ListItemIcon>
-        <ListItemText
-          primary={text} 
-          sx={{
-            ml: miniSidebar ? 0 : 3,
-            opacity: miniSidebar ? 0 : 1,
-            transition: (theme) => theme.transitions.create(['opacity','margin-left'], {
-              duration: theme.transitions.duration.enteringScreen,
-              easing: theme.transitions.easing.sharp,
-            }),
-          }}
-        />
-      </ListItemButton>
+          <ListItemIcon
+            sx={{
+              minWidth: 0,
+              justifyContent: 'center',
+              mr: 'auto',
+              color: 'inherit',
+            }}
+          >
+            {icon}
+          </ListItemIcon>
+          <ListItemText
+            primary={text} 
+            sx={{
+              ml: miniSidebar ? 0 : 3,
+              opacity: miniSidebar ? 0 : 1,
+              transition: (theme) => theme.transitions.create(['opacity','margin-left'], {
+                duration: theme.transitions.duration.enteringScreen,
+                easing: theme.transitions.easing.sharp,
+              }),
+            }}
+          />
+        </ListItemButton>
+      </Tooltip>
     </ListItem>
   )
 }
