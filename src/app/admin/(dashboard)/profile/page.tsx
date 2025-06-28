@@ -1,5 +1,5 @@
-import Typography from "@mui/material/Typography";
+import { ViewProfile } from "@/components/admin/profile/ViewProfile";
 
 export default async function Page() {
-  return <Typography>Profile</Typography>
+  return <ViewProfile/>
 }

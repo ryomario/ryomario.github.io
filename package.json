@@ -22,6 +22,7 @@
     "@react-pdf/renderer": "^4.2.2",
     "@react-pdf/types": "^2.8.0",
     "flag-icons": "^7.3.2",
+    "framer-motion": "^12.19.2",
     "globby": "^14.1.0",
     "next": "15.1.6",
     "next-intl": "^3.26.3",
@@ -29,7 +30,8 @@
     "react": "^19.0.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-dropzone": "^14.3.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
