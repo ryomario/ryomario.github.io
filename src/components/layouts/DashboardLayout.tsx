@@ -34,14 +34,16 @@ export function DashboardLayout({
     >
       {/** @slot HEADER **/}
       <TopbarLayout/>
-      
-      {/** @slot Sidebar  */}
-      <SidebarLayout data={slotProps?.nav?.data}/>
 
-      {/** @slot Main */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-        {children}
+      <Box sx={{ display: 'flex', flexGrow: 1 }}>
+        {/** @slot Sidebar  */}
+        <SidebarLayout data={slotProps?.nav?.data}/>
+
+        {/** @slot Main */}
+        <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
+          <Toolbar />
+          {children}
+        </Box>
       </Box>
     </LayoutRoot>
   );

@@ -17,7 +17,7 @@ html {
 
 body,
 #root,
-#root_layout {
+#root__layout {
   display: flex;
   flex: 1 1 auto;
   min-height: 100%;
