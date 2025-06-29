@@ -38,18 +38,18 @@ const MuiButton: Components<Theme>['MuiButton'] = {
         })),
         inheritColor: {
           ...(ownerState.color === 'inherit' && !ownerState.disabled && {
-            color: theme.vars?.palette.common.white,
-            backgroundColor: theme.vars?.palette.grey[800],
+            color: theme.palette.common.white,
+            backgroundColor: theme.palette.grey[800],
             '&:hover': {
               boxShadow: createShadowColor(theme.palette.common.black, 0.16),
-              backgroundColor: theme.vars?.palette.grey[700],
+              backgroundColor: theme.palette.grey[700],
             },
             ...theme.applyStyles('dark', {
-              color: theme.vars?.palette.grey[800],
-              backgroundColor: theme.vars?.palette.common.white,
+              color: theme.palette.grey[800],
+              backgroundColor: theme.palette.common.white,
               '&:hover': {
                 boxShadow: createShadowColor(theme.palette.grey[500], 0.16),
-                backgroundColor: theme.vars?.palette.grey[400],
+                backgroundColor: theme.palette.grey[400],
               },
             }),
           })
@@ -62,7 +62,7 @@ const MuiButton: Components<Theme>['MuiButton'] = {
         inheritColor: {
           ...(ownerState.color === 'inherit' && !ownerState.disabled && {
             '&:hover': {
-              backgroundColor: theme.vars?.palette.action.hover,
+              backgroundColor: theme.palette.action.hover,
             },
           })
         },
