@@ -17,3 +17,9 @@ export type UploadProps = DropzoneOptions & {
   onRemoveAll?: () => void;
   onRemove?: (file: File | string) => void;
 }
+
+export interface ExtendFile extends File {
+  path?: string;
+  preview?: string;
+  lastModifiedDate?: Date;
+}

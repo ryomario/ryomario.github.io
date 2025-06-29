@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Typography from "@mui/material/Typography";
+import { RejectionFiles } from "./RejectionFiles";
 
 export function UploadAvatar({
   sx,
@@ -41,7 +42,7 @@ export function UploadAvatar({
     if(!hasFile) {
       return null;
     }
-    return <Image alt="Avatar" src={preview} sx={{ width: 1, height: 1,borderRadius: '100%' }}/>
+    return <Image alt="Avatar" src={preview} sx={{ width: 1, height: 1, borderRadius: '100%' }}/>
   };
 
   const renderPlaceholder = () => (
@@ -112,7 +113,7 @@ export function UploadAvatar({
           cursor: 'pointer',
           overflow: 'hidden',
           borderRadius: '50%',
-          border: `1px dashed ${theme.palette.grey[500]}`,
+          border: `1px dashed ${alpha(theme.palette.grey[500], 0.2)}`,
           ...(isDragActive && { opacity: 0.72 }),
           ...(disabled && { opacity: 0.48, pointerEvents: 'none' }),
           ...(hasError && { borderColor: 'error.main' }),
@@ -132,10 +133,6 @@ export function UploadAvatar({
     {!!helperText && helperText}
 
     {/** @TODO display file errors */}
-    {!!fileRejections.length && (
-      <ul>
-        {fileRejections.map((r, i) => <li key={`errors-${i}`}>{r.file.name} Errors: {r.errors.map((error, j) => <div key={`errors-${i}-${j}`}>{error.message}</div>)}</li>)}
-      </ul>
-    )}
+    {!!fileRejections.length && <RejectionFiles files={fileRejections}/>}
   </>
 }
