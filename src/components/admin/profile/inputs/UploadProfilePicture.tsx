@@ -2,9 +2,9 @@ import { FileUploadType } from "@/types/IFileUpload";
 import Box, { BoxProps } from "@mui/material/Box";
 import React, { useState } from "react";
 import { UploadAvatar } from "../../inputs/file/UploadAvatar";
-import { HelperText } from "../../inputs/HelperText";
 import { convertFilesize, formatFilesize } from "@/lib/file";
 import Typography from "@mui/material/Typography";
+import { HelperText } from "@/components/formHook";
 
 const MAX_UPLOAD_SIZE = convertFilesize(3,'b','Mb'); // 3 Mb in bytes
 

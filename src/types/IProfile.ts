@@ -1,3 +1,5 @@
+import { FileUploadType } from "./IFileUpload"
+
 export interface IProfile {
   name: string
   hireable: boolean
@@ -9,4 +11,16 @@ export interface IProfile {
     codepen: string
   }
   lastUpdated: Date
+}
+
+export interface IProfileForm {
+  profile_picture: FileUploadType;
+  hireable: boolean;
+
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+
+  headline: string;
 }

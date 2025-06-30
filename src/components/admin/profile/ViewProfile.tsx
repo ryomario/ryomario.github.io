@@ -4,41 +4,60 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
-import { UploadProfilePicture } from "./inputs/UploadProfilePicture";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import { Form, RHFField } from "@/components/formHook";
+import { useForm } from "react-hook-form";
+import { IProfileForm } from "@/types/IProfile";
 
-export function ViewProfile() {
+type Props = {
+  defaultValues: IProfileForm;
+}
+
+export function ViewProfile({ defaultValues }: Props) {
+  const methods = useForm<IProfileForm>({
+    defaultValues,
+  });
+
+  const {
+    watch,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const hireable = watch('hireable');
+
+  const onSubmit = handleSubmit((values) => {
+    console.log(values)
+  });
+
   return (
-    <form>
+    <Form methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             <Chip
               variant="filled"
               size="small"
-              label="Hireable"
-              color="success"
+              label={hireable ? "Hireable" : "Not Hireable"}
+              color={
+                hireable ? 'info' : 'warning'
+              }
               sx={{ position: 'absolute', top: 24, right: 24 }}
             />
-            <Box sx={{ mb: 5 }}>
-              <UploadProfilePicture />
-            </Box>
+            <RHFField.UploadAvatar
+              name="profile_picture"
+              rules={{ required: { value: true, message: 'Please select your profile picture!' },  }}
+              slotProps={{
+                wrapper: { mb: 5 },
+              }}
+            />
 
-            <FormControlLabel
+            <RHFField.Switch
+              name="hireable"
               labelPlacement="start"
-              control={
-                <Switch
-                  // checked={true}
-                  // onChange={(event) => {
-                  //   console.log(event.target.checked);
-                  // }}
-                />
-              }
               label={
                 <>
                   <Typography variant="subtitle2" sx={{ mb: 0.5 }}>Hireable</Typography>
@@ -66,20 +85,66 @@ export function ViewProfile() {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
               }}
             >
-              <TextField fullWidth type="text" label="Full name" required/>
-              <TextField fullWidth type="email" label="Email address" required/>
-              <TextField fullWidth type="text" label="Headline" defaultValue="Web developer" required/>
-              <TextField fullWidth type="text" label="Current Residence" helperText="Please input a country or city." required/>
-              <TextField fullWidth type="text" label="Phone" helperText="The active number as your contact." required/>
-              <TextField fullWidth type="text" label="Intro" multiline minRows={3} maxRows={10}/>
+              <RHFField.TextField
+                name="name"
+                type="text"
+                label="Full name"
+                rules={{ required: { value: true, message: 'Don\'t you have a name?' },  }}
+              />
+              <RHFField.TextField
+                name="email"
+                type="email"
+                label="Email address"
+                rules={{
+                  required: { value: true, message: 'Don\'t you even have an Email Address?' },
+                  pattern: { value: /^\S+@\S+$/i, message: 'Your Email Address is not valid!' },
+                }}
+              />
+              <RHFField.TextField
+                name="phone"
+                type="tel"
+                label="Phone"
+                helperText="The active number as your contact."
+                rules={{
+                  required: { value: true, message: 'Don\'t forget your phone number!' },
+                }}
+              />
+              <RHFField.TextField
+                name="address"
+                type="text"
+                label="Current Residence"
+                helperText="Please input a country or city."
+                rules={{
+                  required: { value: true, message: 'Don\'t forget your home!' },
+                }}
+              />
             </Box>
+            <RHFField.TextField
+              name="headline"
+              type="text"
+              label="Headline"
+              rules={{
+                required: { value: true, message: 'Please input your headline!' },
+              }}
+              sx={{ mt: 3 }}
+            />
+            <RHFField.TextField
+              name="intro"
+              type="text"
+              label="Intro"
+              multiline minRows={3} maxRows={10}
+              rules={{
+                required: { value: true, message: 'Please introduce yourself!' },
+              }}
+              sx={{ mt: 3 }}
+            />
 
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
-              <Button type="submit" variant="contained" loading={false}>Save changes</Button>
+              <Button type="submit" variant="contained" color="success" loading={isSubmitting}>Save changes</Button>
             </Stack>
           </Card>
         </Grid>
       </Grid>
-    </form>
+    </Form>
   )
 }
