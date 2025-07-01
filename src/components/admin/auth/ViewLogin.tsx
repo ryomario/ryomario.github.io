@@ -17,6 +17,7 @@ import { loginWithPassword } from "@/utils/auth";
 import { useAuthContext } from "@/auth/AuthProvider";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { SplashScreen } from "@/components/loadingScreen/SplashScreen";
+import { AdminRoute } from "@/types/EnumAdminRoute";
 
 type FormValuesType = {
   password: string;
@@ -55,7 +56,7 @@ export function ViewLogin() {
       await loginWithPassword(values.password);
       await checkUserSession?.();
 
-      router.replace(searchParams.get('returnTo') ?? '/admin/dashboard');
+      router.replace(searchParams.get('returnTo') ?? AdminRoute.DASHBOARD);
     } catch (error: any) {
       const message = error.message || error || 'Unknown error';
       setError('password', { type: 'validate', message, }, { shouldFocus: true });
@@ -67,7 +68,7 @@ export function ViewLogin() {
   }
 
   if(authenticated) {
-    return redirect(searchParams.get('returnTo') ?? '/admin/dashboard');
+    return redirect(searchParams.get('returnTo') ?? AdminRoute.DASHBOARD);
   }
 
   return <>

@@ -3,7 +3,12 @@ import { IProfile } from "@/types/IProfile";
 export const EMPTY_PROFILE_DATA: IProfile = {
   name: '',
   hireable: false,
-  downloadCV: '',
+  profile_picture: '',
+  address: '',
+  email: '',
+  headline: '',
+  intro: '',
+  phone: '',
   socialLinks: {
     website: '',
     github: '',

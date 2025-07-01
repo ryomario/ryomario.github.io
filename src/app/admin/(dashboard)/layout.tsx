@@ -10,17 +10,29 @@ import PersonIcon from '@mui/icons-material/Person';
 import WorkIcon from '@mui/icons-material/Work';
 import SchoolIcon from '@mui/icons-material/School';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import { AdminRoute } from "@/types/EnumAdminRoute";
+import { Metadata } from "next";
+import { ProfileDataProvider } from "@/contexts/profileDataContext";
+import RepoProfileData from "@/db/repositories/RepoProfileData";
+
+export const metadata: Metadata = {
+  title: "Dashboard Admin - Web Portofolio",
+};
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const profileData = await RepoProfileData.getAll(true)
+  
   return (
     <AuthGuard>
-      <DashboardLayout slotProps={{ nav: { data: navData }}}>
-        {children}
-      </DashboardLayout>
+      <ProfileDataProvider data={profileData}>
+        <DashboardLayout slotProps={{ nav: { data: navData }}}>
+          {children}
+        </DashboardLayout>
+      </ProfileDataProvider>
     </AuthGuard>
   );
 }
@@ -32,7 +44,7 @@ const navData: IDashboardNavData = [
       {
         icon: <DashboardIcon/>,
         title: 'Dashboard',
-        path: '/admin/dashboard',
+        path: AdminRoute.DASHBOARD,
       }
     ],
   },
@@ -42,12 +54,12 @@ const navData: IDashboardNavData = [
       {
         icon: <PersonPinRoundedIcon/>,
         title: 'CV',
-        path: '/admin/cv',
+        path: AdminRoute.CV,
       },
       {
         icon: <FilterFramesRoundedIcon/>,
         title: 'Portofolio',
-        path: '/admin/portofolio',
+        path:  AdminRoute.PORTOFOLIO,
       }
     ],
   },
@@ -57,22 +69,22 @@ const navData: IDashboardNavData = [
       {
         icon: <PersonIcon/>,
         title: 'Profile',
-        path: '/admin/profile',
+        path:  AdminRoute.PROFILE,
       },
       {
         icon: <WorkIcon/>,
         title: 'Work Experience',
-        path: '/admin/work',
+        path:  AdminRoute.WORK,
       },
       {
         icon: <SchoolIcon/>,
         title: 'Education',
-        path: '/admin/education',
+        path:  AdminRoute.EDUCATION,
       },
       {
         icon: <WorkspacePremiumIcon/>,
         title: 'License',
-        path: '/admin/license',
+        path:  AdminRoute.LICENSE,
       }
     ],
   },

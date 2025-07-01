@@ -27,8 +27,13 @@ async function getAll(force_return = false) {
     const lastUpdated = force_return ? fallback_value.lastUpdated?.toISOString() : undefined
     const profileData: IProfile = {
       name: await getOne('name', force_return ? fallback_value.name : undefined),
+      profile_picture: await getOne('profile_picture', force_return ? fallback_value.profile_picture : undefined),
+      email: await getOne('email', force_return ? fallback_value.email : undefined),
+      address: await getOne('address', force_return ? fallback_value.address : undefined),
+      headline: await getOne('headline', force_return ? fallback_value.headline : undefined),
+      phone: await getOne('phone', force_return ? fallback_value.phone : undefined),
+      intro: await getOne('intro', force_return ? fallback_value.intro : undefined),
       hireable: (await getOne('hireable', hireable)) == 'true',
-      downloadCV: await getOne('downloadCV', force_return ? fallback_value.downloadCV : undefined),
       socialLinks: {
         codepen: await getOne('socialLinks.codepen', force_return ? fallback_value.socialLinks.codepen : undefined),
         github: await getOne('socialLinks.github', force_return ? fallback_value.socialLinks.github : undefined),

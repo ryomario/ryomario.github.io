@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthContext } from "./AuthProvider";
 import { usePathname, useRouter } from "next/navigation";
 import { SplashScreen } from "@/components/loadingScreen/SplashScreen";
+import { AdminRoute } from "@/types/EnumAdminRoute";
 
 export function AuthGuard({ children }: React.PropsWithChildren) {
   const router = useRouter();
@@ -24,7 +25,7 @@ export function AuthGuard({ children }: React.PropsWithChildren) {
     }
 
     if(!authenticated) {
-      const redirectPth = createRedirectPath('/admin/login');
+      const redirectPth = createRedirectPath(AdminRoute.LOGIN);
       router.replace(redirectPth);
       return;
     }

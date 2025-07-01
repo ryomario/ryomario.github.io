@@ -1,16 +1,24 @@
 import { FileUploadType } from "./IFileUpload"
 
 export interface IProfile {
-  name: string
-  hireable: boolean
-  downloadCV: string
+  profile_picture: string;
+  hireable: boolean;
+
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  
+  headline: string;
+  intro: string;
+  
   socialLinks: {
-    website: string
-    github: string
-    linkedin: string
-    codepen: string
+    website: string;
+    github: string;
+    linkedin: string;
+    codepen: string;
   }
-  lastUpdated: Date
+  lastUpdated: Date;
 }
 
 export interface IProfileForm {
@@ -23,4 +31,5 @@ export interface IProfileForm {
   address: string;
 
   headline: string;
+  intro: string;
 }

@@ -12,26 +12,45 @@ import { Form, RHFField } from "@/components/formHook";
 import { useForm } from "react-hook-form";
 import { IProfileForm } from "@/types/IProfile";
 
-type Props = {
-  defaultValues: IProfileForm;
-}
+import * as RepoProfileData_server from "@/db/repositories/RepoProfileData.server"
+import { useProfileData, useUpdateProfileData } from "@/contexts/profileDataContext";
+import { EMPTY_PROFILE_DATA } from "@/factories/profileDataFactory";
+import { useEffect } from "react";
 
-export function ViewProfile({ defaultValues }: Props) {
+export function ViewProfile() {
+  const profileData = useProfileData()
+  const updateProfileData = useUpdateProfileData()
+
   const methods = useForm<IProfileForm>({
-    defaultValues,
+    defaultValues: EMPTY_PROFILE_DATA,
   });
 
   const {
     watch,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
+    reset,
   } = methods;
 
   const hireable = watch('hireable');
 
-  const onSubmit = handleSubmit((values) => {
-    console.log(values)
+  const onSubmit = handleSubmit(async (values) => {
+    try {
+      await RepoProfileData_server.updateProfileData(values);
+      
+      updateProfileData(await RepoProfileData_server.getAll());
+    } catch (error) {
+      console.log('submit error',error);
+    }
   });
+
+  useEffect(() => {
+    if(profileData) {
+      reset({
+        ...profileData,
+      });
+    }
+  },[profileData]);
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
@@ -140,7 +159,7 @@ export function ViewProfile({ defaultValues }: Props) {
             />
 
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
-              <Button type="submit" variant="contained" color="success" loading={isSubmitting}>Save changes</Button>
+              <Button type="submit" variant="contained" color="success" loading={isSubmitting} disabled={!isDirty}>Save changes</Button>
             </Stack>
           </Card>
         </Grid>
