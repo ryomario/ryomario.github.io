@@ -29,7 +29,7 @@ export function RHFUploadAvatar({
         const onDrop = (acceptedFiles: File[]) => {
           const value = acceptedFiles[0];
 
-          setValue(name, value, { shouldValidate: true });
+          setValue(name, value, { shouldValidate: true, shouldDirty: true });
         }
 
         return (

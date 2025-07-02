@@ -6,6 +6,8 @@ export enum AdminRoute {
   PORTOFOLIO = '/admin/portofolio',
   
   PROFILE = '/admin/profile',
+  PROFILE_SOCIALS = '/admin/profile/socials',
+
   WORK = '/admin/work',
   EDUCATION = '/admin/education',
   LICENSE = '/admin/license',}

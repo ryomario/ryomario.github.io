@@ -7,7 +7,6 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import { Form, RHFField } from "@/components/formHook";
 import { useForm } from "react-hook-form";
 import { IProfileForm } from "@/types/IProfile";
@@ -16,6 +15,7 @@ import * as RepoProfileData_server from "@/db/repositories/RepoProfileData.serve
 import { useProfileData, useUpdateProfileData } from "@/contexts/profileDataContext";
 import { EMPTY_PROFILE_DATA } from "@/factories/profileDataFactory";
 import { useEffect } from "react";
+import { LoadingScreen } from "@/components/loadingScreen/LoadingScreen";
 
 export function ViewProfile() {
   const profileData = useProfileData()
@@ -28,7 +28,7 @@ export function ViewProfile() {
   const {
     watch,
     handleSubmit,
-    formState: { isSubmitting, isDirty },
+    formState: { isSubmitting, isDirty, isReady },
     reset,
   } = methods;
 
@@ -38,7 +38,7 @@ export function ViewProfile() {
     try {
       await RepoProfileData_server.updateProfileData(values);
       
-      updateProfileData(await RepoProfileData_server.getAll());
+      updateProfileData(await RepoProfileData_server.getAll(true));
     } catch (error) {
       console.log('submit error',error);
     }
@@ -51,6 +51,10 @@ export function ViewProfile() {
       });
     }
   },[profileData]);
+
+  if(!isReady) {
+    return <LoadingScreen/>;
+  }
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>

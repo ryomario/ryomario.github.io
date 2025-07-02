@@ -12,12 +12,7 @@ export interface IProfile {
   headline: string;
   intro: string;
   
-  socialLinks: {
-    website: string;
-    github: string;
-    linkedin: string;
-    codepen: string;
-  }
+  socialLinks: IProfileSocialLinks;
   lastUpdated: Date;
 }
 
@@ -32,4 +27,11 @@ export interface IProfileForm {
 
   headline: string;
   intro: string;
+}
+
+export interface IProfileSocialLinks {
+  website: string;
+  github: string;
+  linkedin: string;
+  codepen: string;
 }
