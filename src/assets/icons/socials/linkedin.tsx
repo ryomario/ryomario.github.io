@@ -18,19 +18,11 @@ export const LinkedinIcon = forwardRef<SVGSVGElement, SvgIconProps>((props, ref)
         { color: '#0a66c2' },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
-      viewBox="0 0 24 24"
-      strokeWidth={2}
-      stroke="currentColor" 
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox="0 0 50 50"
     >
-      {/* letter i */}
-      <rect fill="none" x="2" y="9" width="4" height="12"></rect>
-      {/* dot of letter i */}
-      <circle fill="none" cx="4" cy="4" r="2"></circle>
-
-      {/* letter n */}
-      <path fill="none" d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+      <path
+        d="M41,4H9C6.24,4,4,6.24,4,9v32c0,2.76,2.24,5,5,5h32c2.76,0,5-2.24,5-5V9C46,6.24,43.76,4,41,4z M17,20v19h-6V20H17z M11,14.47c0-1.4,1.2-2.47,3-2.47s2.93,1.07,3,2.47c0,1.4-1.12,2.53-3,2.53C12.2,17,11,15.87,11,14.47z M39,39h-6c0,0,0-9.26,0-10 c0-2-1-4-3.5-4.04h-0.08C27,24.96,26,27.02,26,29c0,0.91,0,10,0,10h-6V20h6v2.56c0,0,1.93-2.56,5.81-2.56 c3.97,0,7.19,2.73,7.19,8.26V39z"
+      />
     </SvgIcon>
   );
 });

@@ -9,6 +9,7 @@ import Tab from "@mui/material/Tab";
 
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ShareIcon from '@mui/icons-material/Share';
+import BadgeIcon from '@mui/icons-material/Badge';
 
 import RouterLink from "next/link";
 
@@ -42,6 +43,13 @@ export function ProfileLayout({ children }: React.PropsWithChildren) {
           icon={<ShareIcon/>}
           value={AdminRoute.PROFILE_SOCIALS}
           href={AdminRoute.PROFILE_SOCIALS}
+        />
+        <Tab
+          LinkComponent={RouterLink}
+          label="Professional Background"
+          icon={<BadgeIcon/>}
+          value={AdminRoute.PROFILE_PROFESSIONAL}
+          href={AdminRoute.PROFILE_PROFESSIONAL}
         />
       </Tabs>
 

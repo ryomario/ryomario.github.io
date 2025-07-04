@@ -1,12 +1,15 @@
 "use server"
 
-import { IProfileForm, IProfileSocialLinks } from "@/types/IProfile"
+import { IProfileForm, IProfileProfessional, IProfileSocialLinks } from "@/types/IProfile"
 import { prisma } from "@/db/prisma"
 import { deleteFile, uploadImage } from "@/utils/file.server";
 import RepoProfileData from "@/db/repositories/RepoProfileData"
+import { parseJSON, toJSON } from "@/lib/json";
+import { cookies } from "next/headers";
 
 export const getAll = RepoProfileData.getAll
 export const getOne = RepoProfileData.getOne
+export const getJSONData = RepoProfileData.getJSONData
 
 export async function updateProfileData(data: IProfileForm) {
   let profile_picture: string = ''
@@ -104,6 +107,45 @@ export async function updateProfileSocialLinks(data: IProfileSocialLinks) {
     else if(error.message) message = error.message
 
     console.log('updateProfileSocialLinks error', message)
+
+    throw Error(message)
+  }
+}
+
+export async function updateProfileProfessional(data: IProfileProfessional) {
+  try {
+    const values = [
+      ['professional.languages', toJSON(data.languages)],
+      ['professional.job_industry', toJSON(data.job_industry)],
+      ['professional.professions', toJSON(data.professions)],
+      ['professional.skills', toJSON(data.skills)],
+      ['professional.last_education', data.last_education],
+      ['professional.managed_people', data.managed_people],
+      ['professional.status', data.status],
+      ['professional.year_of_experience', data.year_of_experience],
+      ['professional.relevant_career_year_of_experience', data.relevant_career_year_of_experience],
+      ['lastUpdated', new Date().toISOString()],
+    ]
+
+    const query = `
+      INSERT INTO profile_data(data_name, data_value)
+      VALUES ${values.map(([data_name, data_value]) => `('${data_name}', '${data_value}')`).join(', ')}
+      ON CONFLICT(data_name)
+      DO UPDATE SET
+        data_value = excluded.data_value
+      WHERE excluded.data_name = profile_data.data_name;
+    `
+    const changes = await prisma.$executeRawUnsafe(query)
+
+    if(changes <= 0) throw Error(`No changes`)
+
+    return true
+  } catch(error: any) {
+    let message = 'unknown'
+    if(typeof error == 'string') message = error
+    else if(error.message) message = error.message
+
+    console.log('updateProfileProfessional error', message)
 
     throw Error(message)
   }

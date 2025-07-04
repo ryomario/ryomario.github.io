@@ -14,6 +14,19 @@ export function toJSON<T>(data: T): string {
   return json;
 }
 
+export function parseJSON_safe<T>(json?: string|null, callback?: T): T | undefined {
+  if(!json || (typeof json !== 'string') || json.trim() == '') {
+    return callback;
+  }
+
+  try {
+    const data: T = JSON.parse(json);
+
+    return data;
+  } catch(error) {
+    return callback;
+  }
+}
 export function toJSON_safe<T>(data: T, callback = ''): string {
   try {
     return toJSON(data);
