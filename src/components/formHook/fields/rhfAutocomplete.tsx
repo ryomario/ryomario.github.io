@@ -1,6 +1,5 @@
 import { parseJSON_safe, toJSON_safe } from "@/lib/json";
 import Autocomplete, { AutocompleteProps } from "@mui/material/Autocomplete";
-import Chip from "@mui/material/Chip";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FieldValues, RegisterOptions, useFormContext } from "react-hook-form";
@@ -44,7 +43,23 @@ export function RHFAutocomplete({
 
   const value = watch(name);
 
-  const [selected, setSelected] = useState<AutocompleteOptionType|AutocompleteOptionType[]|null>(transformValue(value));
+  const [selected, setSelected] = useState<AutocompleteOptionType|AutocompleteOptionType[]|null|undefined>(null);
+
+  useEffect(() => {
+    setSelected(oldSelected => {
+      const transformedValue = transformValue(value);
+      if(Array.isArray(transformedValue) && (Array.isArray(oldSelected) || !oldSelected)) {
+        if(transformedValue.length != oldSelected?.length) {
+          return transformedValue;
+        }
+      } else if(!Array.isArray(transformedValue) && (!Array.isArray(oldSelected) || !oldSelected)){
+        if(transformedValue?.key != oldSelected?.key) {
+          return transformedValue;
+        }
+      }
+      return oldSelected;
+    })
+  },[value]);
 
   const { textField, ...restSlotProps } = slotProps ?? {};
 
@@ -64,6 +79,7 @@ export function RHFAutocomplete({
         return oldOptions;
       }
 
+      option.isNew = false;
       const newOptions = [...oldOptions, {...option, isNew: false}];
 
       sessionStorage.setItem(optionsKey, toJSON_safe(newOptions, '[]'));
@@ -82,28 +98,33 @@ export function RHFAutocomplete({
           {...field}
           id={`rhf-autocomplete-${name}`}
           options={options}
-          value={selected}
+          value={selected ?? ''}
           onChange={(event, newValue) => {
-            setSelected(newValue);
-            setValue(name, transformValueOnChange(newValue), { shouldValidate: true, shouldDirty: true });
             if(Array.isArray(newValue)) {
               newValue.forEach(v => addOption(v));
             } else {
               addOption(newValue);
             }
+
+            setSelected(newValue);
+            setValue(name, transformValueOnChange(newValue), { shouldValidate: true, shouldDirty: true });
           }}
-          isOptionEqualToValue={(option, value) => option.key == value.key}
+          isOptionEqualToValue={(option, value) => option?.key == value?.key}
+          getOptionKey={(option) => {
+            if(Array.isArray(option)) return '';
+            return option.key ?? option ?? '';
+          }}
           getOptionLabel={(option) => {
             if(Array.isArray(option)) return '';
-            return option.isNew ? `Add "${option.label}"` : option.label
+            return option?.isNew ? `Add "${option?.label}"` : option?.label ?? ''
           }}
           filterOptions={(options, params) => {
             const filtered = options.filter((option) =>
-              (option.key || option).toLowerCase().includes(params.inputValue.toLowerCase())
+              (option.key || option).toLowerCase().includes(params.inputValue?.toLowerCase())
             );
             
             if (params.inputValue !== '' && !options.some(option => 
-              (option.key || option).toLowerCase() === params.inputValue.toLowerCase()
+              (option.key || option).toLowerCase() === params.inputValue?.toLowerCase()
             )) {
               filtered.push({
                 key: params.inputValue,
@@ -114,13 +135,6 @@ export function RHFAutocomplete({
 
             return filtered;
           }}
-          renderValue={(value, getItemProps) => Array.isArray(value) ? value.map((option, index) => (
-            <Chip
-              label={option.key}
-              {...getItemProps({ index })}
-              key={option.key}
-            />
-          )) : value.key}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -147,7 +161,8 @@ export function RHFAutocomplete({
   );
 }
 
-const transformValue = (value: string|string[]): AutocompleteOptionType|AutocompleteOptionType[] => {
+const transformValue = (value: string|string[]): AutocompleteOptionType|AutocompleteOptionType[]|undefined => {
+  if(typeof value === 'undefined' || value == null) return value;
   if(typeof value === 'string') {
     return {
       key: value,
@@ -167,5 +182,5 @@ const transformValueOnChange = (value: AutocompleteOptionType|AutocompleteOption
     return '';
   }
 
-  return value.key ?? value;
+  return value?.key ?? value;
 }

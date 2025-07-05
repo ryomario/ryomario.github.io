@@ -3,22 +3,23 @@
 import { Form, RHFField } from "@/components/formHook";
 import { useProfileData, useUpdateProfileData } from "@/contexts/profileDataContext";
 import { EMPTY_PROFILE_DATA } from "@/factories/profileDataFactory";
-import { IProfileProfessional, IProfileSocialLinks } from "@/types/IProfile";
+import { IProfileProfessional } from "@/types/IProfile";
 import { useForm } from "react-hook-form";
 
-import * as RepoProfileData_server from "@/db/repositories/RepoProfileData.server"
-import { useCallback, useEffect, useState } from "react";
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+
+import { useEffect } from "react";
 import Card from "@mui/material/Card";
-import InputAdornment from "@mui/material/InputAdornment";
-import { CodepenIcon } from "@/assets/icons/socials/codepen";
-import { GithubIcon } from "@/assets/icons/socials/githubIcon";
-import { LinkedinIcon } from "@/assets/icons/socials/linkedin";
-import { SocialWebsiteIcon } from "@/assets/icons/socials/websiteIcon";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import ToggleButton from "@mui/material/ToggleButton";
 import { createFilterOptions } from "@mui/material/useAutocomplete";
-import { getUniqueArrayByKey } from "@/lib/array";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+
+import * as RepoProfileData_server from "@/db/repositories/RepoProfileData.server"
 
 type AutocompleteOptionType = {
   value: string;
@@ -42,16 +43,44 @@ export function ViewProfileProfessional() {
     handleSubmit,
     formState: { isSubmitting, isDirty },
     reset,
-    watch,
+    setError,
   } = methods;
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      console.log(values);
+      let error = false;
 
-      // await RepoProfileData_server.updateProfileProfessional(values);
+      if(Array.isArray(values.languages)) {
+        let emptyLangs = true;
+        values.languages.forEach((lang, index) => {
+          if(lang.name && lang.level) {
+            emptyLangs = false;
+          }
+          if(lang.name && !lang.level) {
+            setError(`languages.${index}.level`, {
+              type: 'required',
+              message: 'Choose your proficiency',
+            });
+            error = true;
+          }
+        });
+
+        if(emptyLangs) {
+          setError('languages', {
+            type: 'required',
+            message: 'Are you a human? At least there is body language',
+          });
+          error = true;
+        }
+      }
       
-      // updateProfileData(await RepoProfileData_server.getAll(true));
+      if(error) {
+        return;
+      }
+
+      await RepoProfileData_server.updateProfileProfessional(values);
+      
+      updateProfileData(await RepoProfileData_server.getAll(true));
     } catch (error) {
       console.log('submit error',error);
     }
@@ -80,6 +109,7 @@ export function ViewProfileProfessional() {
           label="What is your current employment status?"
           color="primary"
           size="small"
+          sx={{ flexWrap: 'wrap' }}
           enforceValue
           rules={{ required: { value: true, message: 'Please choose one!' } }}
         >
@@ -119,6 +149,7 @@ export function ViewProfileProfessional() {
           label="How many years of work experience do you have?"
           color="primary"
           size="small"
+          sx={{ flexWrap: 'wrap' }}
           enforceValue
           rules={{ required: { value: true, message: 'Please choose one!' } }}
         >
@@ -143,6 +174,7 @@ export function ViewProfileProfessional() {
           helperText="For example, if you are changing your career from an enginer (with 4 years of experience) to a designer (without any relevant experience), please select “<1” year of work experience."
           color="primary"
           size="small"
+          sx={{ flexWrap: 'wrap' }}
           enforceValue
           rules={{ required: { value: true, message: 'Please choose one!' } }}
         >
@@ -166,6 +198,7 @@ export function ViewProfileProfessional() {
           label="What is the max number of people whom you’d managed in the previous roles?"
           color="primary"
           size="small"
+          sx={{ flexWrap: 'wrap' }}
           enforceValue
         >
           {
@@ -191,23 +224,79 @@ export function ViewProfileProfessional() {
           rules={{ required: { value: true, message: 'Just type "breathe"!' } }}
         />
 
+        <RHFField.Select
+          name="last_education"
+          label="Your highest level of education"
+          fullWidth
+        >
+          {[
+            { value: 'less_high_school', label: 'Less than high school' },
+            { value: 'high_school', label: 'High school' },
+            { value: 'associate', label: 'Associate' },
+            { value: 'bachelor', label: 'Bachelor' },
+            { value: 'master', label: 'Master' },
+            { value: 'doctoral', label: 'Doctoral' },
+          ].map(({ value, label }) => (
+            <MenuItem key={value} value={value}>{label}</MenuItem>
+          ))}
+        </RHFField.Select>
+
+        <RHFField.Array
+          name="languages"
+          label="Languages"
+          defaultValue={[
+            { name: '', level: '' } as any,
+          ]}
+          rules={{ minLength: { value: 1, message: 'Are you a human?' } }}
+          renderInput={({ field, index, remove, append }) => (
+            <Stack
+              key={field.id}
+              direction="row"
+              spacing={2}
+              mb={2}
+            >
+              <RHFField.Autocomplete
+                placeholder="Language"
+                name={`languages.${index}.name`}
+                optionsKey="professional.languages.name"
+                defaultOptions={['Indonesian (Bahasa Indonesia)', 'English (English)']}
+                fullWidth
+              />
+              <Box display="flex" gap={2} alignItems="flex-start">
+                <RHFField.Select
+                  name={`languages.${index}.level`}
+                  displayEmpty
+                  placeholder="Proficiency"
+                  sx={{ minWidth: 200 }}
+                >
+                  <MenuItem value="" disabled>
+                    <em>Proficiency</em>
+                  </MenuItem>
+                  {[
+                    { value: '1', label: 'Beginner' },
+                    { value: '2', label: 'Intermediate' },
+                    { value: '3', label: 'Fluent' },
+                    { value: '4', label: 'Professional' },
+                    { value: '5', label: 'Native or Bilingual' },
+                  ].map(({ value, label }) => (
+                    <MenuItem key={value} value={value}>{label}</MenuItem>
+                  ))}
+                </RHFField.Select>
+                <IconButton sx={{ mt: 1 }} onClick={() => remove(index)}>
+                  <DeleteIcon/>
+                </IconButton>
+                <IconButton sx={{ mt: 1 }} onClick={() => append({ name: '', level: '' })}>
+                  <AddIcon/>
+                </IconButton>
+              </Box>
+            </Stack>
+          )}
+        />
+
         <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
           <Button type="submit" variant="contained" color="success" loading={isSubmitting} disabled={!isDirty}>Save changes</Button>
         </Stack>
       </Card>
     </Form>
   );
-}
-
-const getProfessionOption = (option: any) => {
-  // Value selected with enter, right from the input
-  if (typeof option === 'string') {
-    return option;
-  }
-  // Add "xxx" option created dynamically
-  if (option.inputValue) {
-    return option.inputValue;
-  }
-  // Regular option
-  return option.value;
 }
