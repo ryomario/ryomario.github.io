@@ -1,13 +1,15 @@
 'use client';
 
-import { styled, SxProps, Theme } from "@mui/material/styles";
+import { styled, SxProps, Theme, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
-import React, {  } from "react";
+import React, { useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import { IDashboardNavData } from "@/types/ILayout";
 import { SidebarLayout } from "./sidebar/SidebarLayout";
 import { TopbarLayout } from "./header/TopbarLayout";
+import { useSettingsContext } from "@/settings/settingsProvider";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 
 export type DashboardLayoutProps = React.ComponentProps<'div'> & {
@@ -26,6 +28,13 @@ export function DashboardLayout({
   slotProps,
   ...rest
 }: DashboardLayoutProps) {
+  const settings = useSettingsContext();
+  const theme = useTheme();
+  const smUp = useMediaQuery(theme.breakpoints.up('sm'));
+
+  useEffect(() => {
+    settings.setState({ miniSidebar: !smUp });
+  },[smUp]);
   return (
     <LayoutRoot
       id="root__layout"
