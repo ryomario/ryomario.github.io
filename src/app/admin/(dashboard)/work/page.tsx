@@ -1,5 +1,5 @@
-import Typography from "@mui/material/Typography";
+import { ViewWorkList } from "@/sections/admin/work/ViewWorkList";
 
 export default async function Page() {
-  return <Typography>Work</Typography>
+  return <ViewWorkList />
 }
