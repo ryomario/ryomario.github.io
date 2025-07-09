@@ -35,3 +35,15 @@ export function date2localeString(date?: Date|number|string, showTime = false, l
     })
   })
 }
+
+export function getMonthName(monthIndex: number, shortName = false, locale: Locale = 'en'): string {
+  monthIndex = Number(monthIndex);
+  if(Number.isNaN(monthIndex)) return '';
+
+  const date = new Date();
+  date.setMonth(monthIndex);
+
+  const dateLocale = locale == 'en' ? 'en-US' : 'id-ID'
+
+  return date.toLocaleString(dateLocale, { month: shortName ? 'short' : 'long' });
+}
