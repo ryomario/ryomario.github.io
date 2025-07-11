@@ -47,3 +47,7 @@ export function getMonthName(monthIndex: number, shortName = false, locale: Loca
 
   return date.toLocaleString(dateLocale, { month: shortName ? 'short' : 'long' });
 }
+
+export function getAllMonthsName(shortName = false, locale: Locale = 'en') {
+  return Array.from({ length: 12 }, (_, i) => getMonthName(i, shortName, locale));
+}

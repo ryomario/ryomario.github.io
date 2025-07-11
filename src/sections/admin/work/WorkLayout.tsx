@@ -28,6 +28,7 @@ export function WorkLayout({ children }: React.PropsWithChildren) {
   return (
     <>
       <CustomBreadCrumbs
+        backHref={currPage != 'List' ? AdminRoute.WORK : undefined}
         heading={`${currPage} Work Experience`}
         links={[
           { name: 'Dashboard', href: AdminRoute.DASHBOARD },

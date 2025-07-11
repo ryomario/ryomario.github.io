@@ -19,6 +19,7 @@ export interface IWorkExperience {
   description: string;
   startDate_month: number;
   startDate_year: number;
-  endDate_month?: number;
-  endDate_year?: number;
+  endDate_month?: number | null;
+  endDate_year?: number | null;
+  hidden?: boolean;
 }

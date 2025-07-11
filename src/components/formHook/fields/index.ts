@@ -1,5 +1,6 @@
 import { RHFArray } from "./rhfArray";
 import { RHFAutocomplete } from "./rhfAutocomplete";
+import { RHFCheckbox } from "./rhfCheckbox";
 import { RHFSelect } from "./rhfSelect";
 import { RHFSwitch } from "./rhfSwitch";
 import { RHFTextField } from "./rhfTextField";
@@ -14,4 +15,5 @@ export const RHFField = {
   Autocomplete: RHFAutocomplete,
   Select: RHFSelect,
   Array: RHFArray,
+  Checkbox: RHFCheckbox,
 }
