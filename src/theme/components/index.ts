@@ -1,6 +1,7 @@
 import { button } from './button'
 import { card } from './card'
 import { dialog } from './dialog'
+import { popover } from './popover'
 import { tabs } from './tabs'
 
 export const components = {
@@ -8,4 +9,5 @@ export const components = {
   ...dialog,
   ...button,
   ...tabs,
+  ...popover,
 }
