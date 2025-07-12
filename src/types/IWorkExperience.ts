@@ -1,3 +1,5 @@
+import { Work } from "@/generated/prisma";
+
 export enum WorkEmploymentType {
   FULL_TIME,
   PART_TIME,
@@ -8,18 +10,9 @@ export enum WorkEmploymentType {
   FREELANCE,
 } 
 
-export interface IWorkExperience {
-  id: number;
+export type IWorkExperience = Omit<Work, 'logo'|'employmentType'|'location'|'skills'> & {
   logo?: string | File | null;
-  companyName: string;
-  jobTitle: string;
   employmentType: WorkEmploymentType;
   location: string[];
   skills: string[];
-  description: string;
-  startDate_month: number;
-  startDate_year: number;
-  endDate_month?: number | null;
-  endDate_year?: number | null;
-  hidden?: boolean;
 }

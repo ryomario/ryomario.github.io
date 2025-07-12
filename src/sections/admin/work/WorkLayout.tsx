@@ -13,13 +13,18 @@ import RouterLink from "next/link";
 
 export function WorkLayout({ children }: React.PropsWithChildren) {
   const pathname = usePathname();
+  const currPath = removeTrailingSlash(pathname);
 
-  const currPage = {
-    [AdminRoute.WORK]: 'List',
-    [AdminRoute.WORK_ADD]: 'Create',
-    [AdminRoute.WORK_EDIT]: 'Update',
-    [AdminRoute.WORK_VIEW]: 'Details',
-  }[removeTrailingSlash(pathname)];
+  let currPage = '';
+  if(currPath.startsWith(AdminRoute.WORK_VIEW)) {
+    currPage = 'Details';
+  } else if(currPath.startsWith(AdminRoute.WORK_EDIT)) {
+    currPage = 'Update';
+  } else if(currPath.startsWith(AdminRoute.WORK_ADD)) {
+    currPage = 'Create';
+  } else if(currPath.startsWith(AdminRoute.WORK)) {
+    currPage = 'List';
+  }
 
   if(!currPage) {
     return notFound();

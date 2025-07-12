@@ -1,4 +1,5 @@
 import { Form, RHFField } from "@/components/formHook";
+import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
 import { getAllMonthsName } from "@/lib/date";
 import { IWorkExperience, WorkEmploymentType } from "@/types/IWorkExperience"
 import { Logger } from "@/utils/logger";
@@ -45,8 +46,6 @@ export function AdminWorkForm({
 
   const {
     handleSubmit,
-    reset,
-    control,
     formState: { isSubmitting },
     watch,
     setValue,
@@ -66,7 +65,10 @@ export function AdminWorkForm({
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      console.log('submit', values);
+      const result = await RepoWorksServer.saveOrUpdate(values);
+      if(!result) {
+        throw new Error('Internal error');
+      }
 
       if(afterSubmit) {
         afterSubmit();

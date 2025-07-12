@@ -2,8 +2,12 @@ import { IWorkExperience } from "@/types/IWorkExperience"
 import Box from "@mui/material/Box";
 import Pagination, { paginationClasses } from "@mui/material/Pagination";
 import { AdminWorkItem } from "./adminWorkItem";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Logger } from "@/utils/logger";
+import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
+import { LoadingScreen } from "@/components/loadingScreen/LoadingScreen";
+import { useRouter } from "next/navigation";
+import { AdminRoute } from "@/types/EnumAdminRoute";
 
 type Props = {
   data: IWorkExperience[];
@@ -18,9 +22,29 @@ export function AdminWorkList({
   getRedirectPathDetails,
   getRedirectPathEdit,
 }: Props) {
-  const handleDelete = useCallback((id: number) => {
-    Logger.debug(id,'DELETE');
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDelete = useCallback(async (id: number) => {
+    try {
+      setIsLoading(true);
+      const result = await RepoWorksServer.remove(id);
+      if(!result) {
+        throw new Error('Internal error');
+      }
+
+      router.refresh();
+      Logger.debug(id,'DELETE');
+    } catch (error: any) {
+      Logger.error(error,'DELETE Error');
+    } finally {
+      setIsLoading(false);
+    }
   },[]);
+
+  if(isLoading) {
+    return <LoadingScreen />;
+  }
 
   return <>
     <Box
