@@ -160,6 +160,7 @@ export function AdminWorkForm({
             defaultOptions={['PHP', 'JavaScript', 'NodeJS', 'SQL', 'HTML/CSS']}
             fullWidth
             multiple
+            disableCloseOnSelect
             rules={{ required: { value: true, message: 'What, "blind salary"!' } }}
           />
         </Stack>

@@ -10,7 +10,8 @@ async function getAll() {
       }
     })
     if(!works) throw Error(`any works not found`)
-  
+      
+    Logger.info(`"${works.length}" data loaded!`, 'works getAll')
     return works
   } catch(error: any) {
     let message = 'unknown'
@@ -36,6 +37,7 @@ async function getOne(id: number) {
     })
     if(!work) throw Error(`work with id "${id}" not found`)
   
+    Logger.info(`data with id "${work.id}" loaded!`, 'works getOne')
     return work
   } catch(error: any) {
     let message = 'unknown'
