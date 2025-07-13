@@ -16,3 +16,7 @@ export type IWorkExperience = Omit<Work, 'logo'|'employmentType'|'location'|'ski
   location: string[];
   skills: string[];
 }
+
+export type IWorkExperienceFilter = {
+  q?: string;
+}

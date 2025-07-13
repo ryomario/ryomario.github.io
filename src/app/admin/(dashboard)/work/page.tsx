@@ -6,5 +6,5 @@ export default async function Page() {
   const dataDb = await RepoWorks.getAll();
   const data = dataDb.map(dbWorkTransform);
   
-  return <ViewWorkList data={data} />
+  return <ViewWorkList data={data} />;
 }

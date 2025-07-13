@@ -7,7 +7,6 @@ import { Logger } from "@/utils/logger";
 import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
 import { LoadingScreen } from "@/components/loadingScreen/LoadingScreen";
 import { useRouter } from "next/navigation";
-import { AdminRoute } from "@/types/EnumAdminRoute";
 
 type Props = {
   data: IWorkExperience[];

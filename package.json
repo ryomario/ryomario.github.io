@@ -21,6 +21,7 @@
     "@prisma/client": "6.7.0",
     "@react-pdf/renderer": "^4.2.2",
     "@react-pdf/types": "^2.8.0",
+    "autosuggest-highlight": "^3.3.4",
     "flag-icons": "^7.3.2",
     "framer-motion": "^12.19.2",
     "globby": "^14.1.0",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/autosuggest-highlight": "^3.2.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dnd": "^3.0.2",

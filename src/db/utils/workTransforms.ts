@@ -13,3 +13,11 @@ export function dbWorkTransform(data: WorkSelectedFields): IWorkExperience {
     skills: data.skills.map(({ skillName }) => skillName),
   };
 }
+
+export function dbWorkSkillsTransform(data: Skill[]): IWorkExperience['skills'] {
+  return data.map(({ skillName }) => skillName);
+}
+
+export function dbWorkLocatoinsTransform(data: WorkLocation[]): IWorkExperience['location'] {
+  return data.map(({ address }) => address);
+}

@@ -3,7 +3,7 @@
 import { Logger } from "@/utils/logger"
 import { prisma } from "../prisma"
 import RepoWorks from "./RepoWorks"
-import { IWorkExperience } from "@/types/IWorkExperience"
+import { IWorkExperience, IWorkExperienceFilter } from "@/types/IWorkExperience"
 import { deleteFile, uploadImage } from "@/utils/file.server"
 
 export const getAll = RepoWorks.getAll;
@@ -209,5 +209,33 @@ export async function remove(id: number) {
     Logger.error(message, 'work remove error');
 
     return false;
+  }
+}
+
+export async function getAllByFilter(filter: IWorkExperienceFilter) {
+  try {
+    const works = await prisma.work.findMany({
+      include: {
+        location: true,
+        skills: true,
+      },
+      where: {
+        jobTitle: {
+          contains: filter.q,
+        }
+      }
+    })
+    if(!works) throw Error(`any works not found`)
+      
+    Logger.info(`"${works.length}" data loaded!`, 'works getAllByFilter')
+    return works
+  } catch(error: any) {
+    let message = 'unknown'
+    if(typeof error == 'string') message = error
+    else if(error.message) message = error.message
+
+    Logger.error(message, 'works getAllByFilter error')
+
+    throw new Error(message);
   }
 }
