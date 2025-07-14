@@ -1,7 +1,7 @@
 import { Form, RHFField } from "@/components/formHook";
 import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
 import { getAllMonthsName } from "@/lib/date";
-import { IWorkExperience, WorkEmploymentType } from "@/types/IWorkExperience"
+import { getWorkEmploymentLabel, IWorkExperience, WorkEmploymentType } from "@/types/IWorkExperience"
 import { Logger } from "@/utils/logger";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -138,16 +138,8 @@ export function AdminWorkForm({
             fullWidth
             rules={{ required: { value: true, message: 'Are you a fictional human?' } }}
           >
-            {[
-              { value: WorkEmploymentType.CONTRACT, label: 'Contract' },
-              { value: WorkEmploymentType.FREELANCE, label: 'Freelance' },
-              { value: WorkEmploymentType.FULL_TIME, label: 'Full-time' },
-              { value: WorkEmploymentType.INTERNSHIP, label: 'Internship' },
-              { value: WorkEmploymentType.PART_TIME, label: 'Part-time' },
-              { value: WorkEmploymentType.TEMPORARY, label: 'Temporary' },
-              { value: WorkEmploymentType.VOLUNTEER, label: 'Volunteer' },
-            ].map(({ value, label }) => (
-              <MenuItem key={value} value={value}>{label}</MenuItem>
+            {Object.values(WorkEmploymentType).filter(v => typeof v === 'number').map((value) => (
+              <MenuItem key={value} value={value}>{getWorkEmploymentLabel(value)}</MenuItem>
             ))}
           </RHFField.Select>
         </Stack>

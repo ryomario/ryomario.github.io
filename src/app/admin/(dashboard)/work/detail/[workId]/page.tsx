@@ -1,6 +1,6 @@
 import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
 import { dbWorkTransform } from "@/db/utils/workTransforms";
-import { ViewWorkUpdate } from "@/sections/admin/work/ViewWorkUpdate";
+import { ViewWorkDetails } from "@/sections/admin/work/ViewWorkDetails";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
@@ -27,6 +27,5 @@ export default async function Page({ params }: Readonly<{
 
   const values = dbWorkTransform(data);
 
-  /* TODO - view details */
-  return <ViewWorkUpdate values={values}/>;
+  return <ViewWorkDetails data={values}/>;
 }
