@@ -23,6 +23,20 @@ export async function checkIsLoggedIn(shouldReturn = false) {
       throw Error('unauthorized');
     }
 
+    let maxLoggedIn = Number(process.env.NEXT_PUBLIC_ADMIN_MAX_LOGIN_TIME ?? '10800');
+
+    if(isNaN(maxLoggedIn)) {
+      maxLoggedIn = 10800;
+    }
+
+    data.exp = (Date.now() / 1000) + maxLoggedIn;
+
+    sessionStorage.setItem(AUTH_STORAGE_KEY, btoa(toJSON(data)));
+
+    sessionExpired(data.exp);
+
+    Logger.info('authorized','checkIsLoggedIn');
+
     return true;
   } catch (error: any) {
     sessionStorage.removeItem(AUTH_STORAGE_KEY);
@@ -66,11 +80,16 @@ export async function logout() {
   }
 }
 
+let sessionExpiredHandler: NodeJS.Timeout | undefined;
 export function sessionExpired(exp: number) {
   const currentTime = Date.now();
   const timeLeft = (exp * 1000) - currentTime;
 
-  setTimeout(() => {
+  clearTimeout(sessionExpiredHandler);
+  
+  Logger.info('Session set!');
+  sessionExpiredHandler = setTimeout(() => {
+    sessionExpiredHandler = undefined;
     Logger.warning('Session Expired!');
 
     alert('Session Expired!');

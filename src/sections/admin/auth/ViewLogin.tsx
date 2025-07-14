@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Visibility from '@mui/icons-material/Visibility';
@@ -18,6 +18,7 @@ import { useAuthContext } from "@/auth/AuthProvider";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { SplashScreen } from "@/components/loadingScreen/SplashScreen";
 import { AdminRoute } from "@/types/EnumAdminRoute";
+import { Logger } from "@/utils/logger";
 
 type FormValuesType = {
   password: string;
@@ -27,6 +28,8 @@ export function ViewLogin() {
   const { checkUserSession, authenticated, authenticating } = useAuthContext();
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const [formSubmit, setFormSubmit] = useState(false);
 
   const {
     handleSubmit,
@@ -53,22 +56,30 @@ export function ViewLogin() {
 
   const onSubmit = handleSubmit(async (values: FormValuesType) => {
     try {
+      setFormSubmit(true);
       await loginWithPassword(values.password);
       await checkUserSession?.();
-
+      
       router.replace(searchParams.get('returnTo') ?? AdminRoute.DASHBOARD);
     } catch (error: any) {
       const message = error.message || error || 'Unknown error';
       setError('password', { type: 'validate', message, }, { shouldFocus: true });
+      setFormSubmit(false);
     }
   });
+
+  useEffect(() => {
+    if(!authenticating && authenticated && !formSubmit) {
+      router.replace(searchParams.get('returnTo') ?? AdminRoute.DASHBOARD);
+    }
+  },[authenticated, formSubmit]);
 
   if(authenticating) {
     return <SplashScreen/>;
   }
 
   if(authenticated) {
-    return redirect(searchParams.get('returnTo') ?? AdminRoute.DASHBOARD);
+    return null;
   }
 
   return <>
