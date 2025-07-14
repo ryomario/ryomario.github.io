@@ -91,10 +91,10 @@ export function AdminWorkSearch({ redirectPath }: Props) {
         />
       )}
       renderOption={(props, work, { inputValue }) => {
-        const matches_title = match(work.jobTitle, inputValue);
+        const matches_title = match(work.jobTitle, inputValue, { insideWords: true, findAllOccurrences: true });
         const parts_title = parse(work.jobTitle, matches_title);
 
-        const matches_company = match(work.companyName, inputValue);
+        const matches_company = match(work.companyName, inputValue, { insideWords: true, findAllOccurrences: true });
         const parts_company = parse(work.companyName, matches_company);
 
         // console.log('WORK', work)
