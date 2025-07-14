@@ -220,9 +220,18 @@ export async function getAllByFilter(filter: IWorkExperienceFilter) {
         skills: true,
       },
       where: {
-        jobTitle: {
-          contains: filter.q,
-        }
+        OR: [
+          {
+            jobTitle: {
+              contains: filter.q,
+            }
+          },
+          {
+            companyName: {
+              contains: filter.q,
+            }
+          }
+        ],
       }
     })
     if(!works) throw Error(`any works not found`)

@@ -58,12 +58,14 @@ export function AdminWorkSearch({ redirectPath }: Props) {
       popupIcon={null}
       loading={loading}
       options={options}
+      // disable built-in filter
+      filterOptions={(options) => options}
       value={selectedItem}
       onChange={(_event, newValue) => handleChange(newValue)}
       onInputChange={(_event, newValue) => setQuery(newValue)}
       getOptionLabel={(option) => option.jobTitle}
       noOptionsText={<AdminSearchNotFound query={debouncedQuery}/>}
-      isOptionEqualToValue={(option, value) => option.id == value.id}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{ paper: { sx: paperStyles } }}
       sx={{
         width: { xs: 1, sm: 260 },
@@ -89,8 +91,13 @@ export function AdminWorkSearch({ redirectPath }: Props) {
         />
       )}
       renderOption={(props, work, { inputValue }) => {
-        const matches = match(work.jobTitle, inputValue);
-        const parts = parse(work.jobTitle, matches);
+        const matches_title = match(work.jobTitle, inputValue);
+        const parts_title = parse(work.jobTitle, matches_title);
+
+        const matches_company = match(work.companyName, inputValue);
+        const parts_company = parse(work.companyName, matches_company);
+
+        // console.log('WORK', work)
 
         return (
           <li {...props} key={`search-option-${work.id}`}>
@@ -101,13 +108,27 @@ export function AdminWorkSearch({ redirectPath }: Props) {
               color="inherit"
               underline="none"
             >
-              {parts.map((part, index) => (
+              {parts_title.map((part, index) => (
                 <Typography
                   key={index}
                   component="span"
                   color={part.highlight ? 'primary' : 'textPrimary'}
                   sx={{
                     typography: 'body2',
+                    fontWeight: part.highlight ? 'fontWeightSemiBold' : 'fontWeightMedium',
+                  }}
+                >
+                  {part.text}
+                </Typography>
+              ))}
+              <br />
+              {parts_company.map((part, index) => (
+                <Typography
+                  key={index}
+                  component="span"
+                  color={part.highlight ? 'primary' : 'textDisabled'}
+                  sx={{
+                    typography: 'caption',
                     fontWeight: part.highlight ? 'fontWeightSemiBold' : 'fontWeightMedium',
                   }}
                 >
