@@ -1,5 +1,5 @@
 import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
-import { dbWorkTransform } from "@/db/utils/workTransforms";
+import { dbWorkLocatoinsTransform, dbWorkSkillsTransform, dbWorkTransform } from "@/db/utils/workTransforms";
 import { ViewWorkUpdate } from "@/sections/admin/work/ViewWorkUpdate";
 import { notFound } from "next/navigation";
 
@@ -24,8 +24,16 @@ export default async function Page({ params }: Readonly<{
   if(!data) {
     return notFound();
   }
-
+  
+  const dataDbSkills = await RepoWorksServer.getAllSkills();
+  const dataDbLocations = await RepoWorksServer.getAllWorkLocations();
   const values = dbWorkTransform(data);
 
-  return <ViewWorkUpdate values={values}/>;
+  return (
+    <ViewWorkUpdate
+      values={values}
+      refLocations={dbWorkLocatoinsTransform(dataDbLocations)}
+      refSkills={dbWorkSkillsTransform(dataDbSkills)}
+    />
+  );
 }

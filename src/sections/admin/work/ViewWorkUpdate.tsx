@@ -7,10 +7,12 @@ import { useRouter } from "next/navigation";
 
 type Props = {
   values: IWorkExperience;
+  refSkills: IWorkExperience['skills'];
+  refLocations: IWorkExperience['location'];
 }
 
-export function ViewWorkUpdate({ values }: Props) {
+export function ViewWorkUpdate({ values, refLocations, refSkills }: Props) {
   const router = useRouter();
   
-  return <AdminWorkForm values={values} afterSubmit={() => router.push(AdminRoute.WORK)}/>;
+  return <AdminWorkForm values={values} refLocations={refLocations} refSkills={refSkills} afterSubmit={() => router.push(AdminRoute.WORK)}/>;
 }

@@ -19,11 +19,15 @@ import { useForm } from "react-hook-form";
 type Props = {
   values?: IWorkExperience;
   afterSubmit?: () => void;
+  refSkills?: IWorkExperience['skills'];
+  refLocations?: IWorkExperience['location'];
 }
 
 export function AdminWorkForm({
   values,
   afterSubmit,
+  refSkills = ['Jawa Tengah, Indonesia'],
+  refLocations = ['PHP', 'JavaScript', 'NodeJS', 'SQL', 'HTML/CSS'],
 }: Props) {
   const methods = useForm<IWorkExperience>({
     mode: 'all',
@@ -109,7 +113,7 @@ export function AdminWorkForm({
           <RHFField.Autocomplete
             name="location"
             optionsKey="workExperience.location"
-            defaultOptions={['Jawa Tengah, Indonesia']}
+            defaultOptions={refLocations}
             fullWidth
             multiple
             rules={{ required: { value: true, message: 'Are you a fictional human?' } }}
@@ -149,7 +153,7 @@ export function AdminWorkForm({
           <RHFField.Autocomplete
             name="skills"
             optionsKey="professional.skills"
-            defaultOptions={['PHP', 'JavaScript', 'NodeJS', 'SQL', 'HTML/CSS']}
+            defaultOptions={refSkills}
             fullWidth
             multiple
             disableCloseOnSelect
