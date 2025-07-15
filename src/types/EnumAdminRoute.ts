@@ -4,7 +4,7 @@ export enum AdminRoute {
 
   CV = '/admin/cv',
   PORTOFOLIO = '/admin/portofolio',
-  
+
   PROFILE = '/admin/profile',
   PROFILE_SOCIALS = '/admin/profile/socials',
   PROFILE_PROFESSIONAL = '/admin/profile/professional',
@@ -15,4 +15,9 @@ export enum AdminRoute {
   WORK_VIEW = '/admin/work/detail',
 
   EDUCATION = '/admin/education',
-  LICENSE = '/admin/license',}
+  EDUCATION_ADD = '/admin/education/create',
+  EDUCATION_EDIT = '/admin/education/update',
+  EDUCATION_VIEW = '/admin/education/detail',
+
+  LICENSE = '/admin/license',
+}
