@@ -20,4 +20,6 @@ export enum AdminRoute {
   EDUCATION_VIEW = '/admin/education/detail',
 
   LICENSE = '/admin/license',
+  LICENSE_ADD = '/admin/license/create',
+  LICENSE_EDIT = '/admin/license/update',
 }

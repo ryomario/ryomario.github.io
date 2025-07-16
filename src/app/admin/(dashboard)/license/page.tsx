@@ -1,5 +1,5 @@
-import Typography from "@mui/material/Typography";
+import { ViewLicenseList } from "@/sections/admin/license/ViewLicenseList";
 
 export default async function Page() {
-  return <Typography>License</Typography>
+  return <ViewLicenseList />;
 }
