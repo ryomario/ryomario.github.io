@@ -8,4 +8,4 @@ export type ILicenseFilter = {
   q?: string;
 }
 
-export type ILicenseSortableProperties = 'name' | 'issueDate' | 'expirationDate';
+export type ILicenseSortableProperties = 'name' | 'hidden' | 'issueDate' | 'expirationDate';

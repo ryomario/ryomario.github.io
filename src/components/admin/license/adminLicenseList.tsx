@@ -146,6 +146,9 @@ export function AdminLicenseList({
                     <TableCell width={150}>
                       <Skeleton variant="text" />
                     </TableCell>
+                    <TableCell width={150}>
+                      <Skeleton variant="text" />
+                    </TableCell>
                     <TableCell width={200}>
                       <Skeleton variant="text" />
                     </TableCell>
@@ -238,6 +241,7 @@ function LicenseTableHead({
     <TableHead>
       <TableRow>
         {renderHeaderCell({ id: 'name', sortBy: 'name', label: 'Name' })}
+        {renderHeaderCell({ id: 'hidden', sortBy: 'hidden', label: 'Status', align: 'center' })}
         {renderHeaderCell({ id: 'startDate_year', sortBy: 'issueDate', label: 'Issue Date' })}
         {renderHeaderCell({ id: 'endDate_year', sortBy: 'expirationDate', label: 'Expiration Date' })}
         <TableCell width={1}></TableCell>

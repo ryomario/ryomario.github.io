@@ -9,6 +9,8 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PublicIcon from '@mui/icons-material/Public';
+import PublicOffIcon from '@mui/icons-material/PublicOff';
 
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
@@ -23,6 +25,7 @@ import { CustomPopover } from "../custom/popover/popover";
 import { usePopover } from "../custom/popover/hooks";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
+import Chip from "@mui/material/Chip";
 
 type Props = {
   data: IWorkExperience;
@@ -172,6 +175,7 @@ export function AdminWorkItem({
             alignItems: 'center',
             color: 'primary.main',
             typography: 'caption',
+            mb: 1,
           }}
         >
           <DateRangeRoundedIcon sx={{ fontSize: '1.5em' }}/>
@@ -179,6 +183,8 @@ export function AdminWorkItem({
           {' - '}
           {(data.endDate_month && data.endDate_year) ? `${getMonthName(data.endDate_month, true)} ${data.endDate_year}` : 'Present'}
         </Box>
+
+        <Chip size="small" color={data.hidden ? 'default' : 'primary'} icon={data.hidden ? <PublicOffIcon/> : <PublicIcon/>} label={data.hidden ? "Not published" : "Published"}/>
       </Box>
 
       {(!!data.location.length || !!data.description) && renderBotSide()}

@@ -210,7 +210,9 @@ export async function getAllByFilter(filter: ILicenseFilter, offset = 0, limit =
           }, {
             endDate_month: order,
           }
-        ]) : undefined
+        ]) : orderBy == 'hidden' ? ({
+          hidden: order,
+        }) : undefined
       ),
     })
     if(!licenses) throw Error(`any licenses not found`)

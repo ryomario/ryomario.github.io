@@ -5,6 +5,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import PublicIcon from '@mui/icons-material/Public';
+import PublicOffIcon from '@mui/icons-material/PublicOff';
 
 import RouterLink from "next/link";
 import { CustomPopover } from "../custom/popover/popover";
@@ -20,6 +22,7 @@ import { fileData } from "@/lib/file";
 import ListItemText from "@mui/material/ListItemText";
 import Link from "@mui/material/Link";
 import { getMonthName } from "@/lib/date";
+import Chip from "@mui/material/Chip";
 
 type Props = {
   data: ILicense;
@@ -112,9 +115,12 @@ export function AdminLicenseItem({
             />
           </Box>
         </TableCell>
-        <TableCell>{`${getMonthName(data.startDate_month, true)} ${data.startDate_year}`}</TableCell>
-        <TableCell>{(data.endDate_month && data.endDate_year) ? `${getMonthName(data.endDate_month, true)} ${data.endDate_year}` : 'No Expiration Date'}</TableCell>
-        <TableCell>
+        <TableCell align="center" width={150}>
+          <Chip size="small" color={data.hidden ? 'default' : 'primary'} icon={data.hidden ? <PublicOffIcon/> : <PublicIcon/>} label={data.hidden ? "Not published" : "Published"}/>
+        </TableCell>
+        <TableCell width={150}>{`${getMonthName(data.startDate_month, true)} ${data.startDate_year}`}</TableCell>
+        <TableCell width={200}>{(data.endDate_month && data.endDate_year) ? `${getMonthName(data.endDate_month, true)} ${data.endDate_year}` : 'No Expiration Date'}</TableCell>
+        <TableCell width={80}>
           <IconButton onClick={menuActions.onOpen}>
             <MoreVertIcon />
           </IconButton>

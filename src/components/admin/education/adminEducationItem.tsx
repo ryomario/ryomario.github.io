@@ -8,6 +8,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SchoolIcon from '@mui/icons-material/School';
+import PublicIcon from '@mui/icons-material/Public';
+import PublicOffIcon from '@mui/icons-material/PublicOff';
 
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
@@ -22,6 +24,7 @@ import { usePopover } from "../custom/popover/hooks";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
 import { IEducation } from "@/types/IEducation";
+import Chip from "@mui/material/Chip";
 
 type Props = {
   data: IEducation;
@@ -171,11 +174,14 @@ export function AdminEducationItem({
             alignItems: 'center',
             color: 'primary.main',
             typography: 'caption',
+            mb: 1,
           }}
         >
           <DateRangeRoundedIcon sx={{ fontSize: '1.5em' }}/>
           {`${data.startYear} - ${data.endYear}`}
         </Box>
+
+        <Chip size="small" color={data.hidden ? 'default' : 'primary'} icon={data.hidden ? <PublicOffIcon/> : <PublicIcon/>} label={data.hidden ? "Not published" : "Published"}/>
       </Box>
 
       {(!!data.majors.length || !!data.description) && renderBotSide()}
