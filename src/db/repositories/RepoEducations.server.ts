@@ -5,6 +5,7 @@ import RepoEducations from "./RepoEducations";
 import { IEducation, IEducationFilter } from "@/types/IEducation";
 import { deleteFile, uploadImage } from "@/utils/file.server";
 import { prisma } from "../prisma";
+import { getErrorMessage } from "@/utils/errorMessage";
 
 export const getAll = RepoEducations.getAll;
 export const getOne = RepoEducations.getOne;
@@ -245,6 +246,20 @@ export async function getAllByFilter(filter: IEducationFilter) {
     else if(error.message) message = error.message
 
     Logger.error(message, 'educations getAllByFilter error')
+
+    throw new Error(message);
+  }
+}
+
+export async function getCountAll() {
+  try {
+    const educations = await prisma.education.count()
+      
+    Logger.info(`"${educations}" educations counted!`, 'educations getCountAll')
+    return educations
+  } catch(error) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'educations getCountAll error')
 
     throw new Error(message);
   }

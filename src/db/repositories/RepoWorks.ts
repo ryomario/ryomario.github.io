@@ -1,26 +1,32 @@
 import { Logger } from "@/utils/logger"
 import { prisma } from "../prisma"
+import { getErrorMessage } from "@/utils/errorMessage";
 
-async function getAll() {
+async function getAll(offset = 0, limit = 0) {
   try {
     const works = await prisma.work.findMany({
+      skip: offset,
+      take: limit > 0 ? limit : undefined,
+      orderBy: [
+        { endDate_year: { sort: 'desc', nulls: "first"} },
+        { endDate_month: { sort: 'desc', nulls: "first"} },
+        { startDate_month: 'desc' },
+        { startDate_year: 'desc' },
+      ],
       include: {
         location: true,
         skills: true,
-      }
-    })
-    if(!works) throw Error(`any works not found`)
+      },
+    });
+    if(!works) throw new Error('works not found');
       
-    Logger.info(`"${works.length}" data loaded!`, 'works getAll')
+    Logger.info(`"${works.length}" works loaded!`, 'works server getAll')
     return works
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
-
+  } catch(error) {
+    const message = getErrorMessage(error);
     Logger.error(message, 'works getAll error')
 
-    return []
+    throw new Error(message);
   }
 }
 

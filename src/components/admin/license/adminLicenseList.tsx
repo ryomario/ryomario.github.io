@@ -85,7 +85,7 @@ export function AdminLicenseList({
       }
 
       Logger.debug(id, 'DELETE license');
-      refresh();
+      refresh(true);
     } catch (error: any) {
       Logger.error(error, 'DELETE license');
     } finally {
@@ -94,7 +94,7 @@ export function AdminLicenseList({
   }, [refresh]);
 
   useEffect(() => {
-    refresh();
+    refresh(true);
   }, [searchQuery]);
 
   if (isDeleting) {

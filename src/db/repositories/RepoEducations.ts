@@ -1,9 +1,16 @@
 import { Logger } from "@/utils/logger"
 import { prisma } from "../prisma"
+import { getErrorMessage } from "@/utils/errorMessage"
 
-async function getAll() {
+async function getAll(offset = 0, limit = 0) {
   try {
     const educations = await prisma.education.findMany({
+      skip: offset,
+      take: limit > 0 ? limit : undefined,
+      orderBy: [
+        { endYear: 'desc' },
+        { startYear: 'desc' },
+      ],
       include: {
         majors: true,
       }
@@ -12,14 +19,11 @@ async function getAll() {
       
     Logger.info(`"${educations.length}" data loaded!`, 'educations getAll')
     return educations
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
-
+  } catch(error) {
+    const message = getErrorMessage(error);
     Logger.error(message, 'educations getAll error')
 
-    return []
+    throw new Error(message);
   }
 }
 

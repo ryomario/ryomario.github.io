@@ -5,6 +5,7 @@ import { prisma } from "../prisma"
 import RepoWorks from "./RepoWorks"
 import { IWorkExperience, IWorkExperienceFilter } from "@/types/IWorkExperience"
 import { deleteFile, uploadImage } from "@/utils/file.server"
+import { getErrorMessage } from "@/utils/errorMessage";
 
 export const getAll = RepoWorks.getAll;
 export const getOne = RepoWorks.getOne;
@@ -248,3 +249,18 @@ export async function getAllByFilter(filter: IWorkExperienceFilter) {
     throw new Error(message);
   }
 }
+
+export async function getCountAll() {
+  try {
+    const works = await prisma.work.count()
+      
+    Logger.info(`"${works}" works counted!`, 'works getCountAll')
+    return works
+  } catch(error) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'works getCountAll error')
+
+    throw new Error(message);
+  }
+}
+

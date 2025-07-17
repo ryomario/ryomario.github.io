@@ -16,7 +16,7 @@ interface UseTableResult<Data extends any, P extends string> {
   data: Data[],
   total: number;
   isLoading: boolean;
-  refresh: () => Promise<void>;
+  refresh: (reset?: boolean) => Promise<void>;
   order: ArrayOrder;
   orderBy: P;
   handleRequestSort: (event: React.MouseEvent<unknown>, property: P) => void;
@@ -49,23 +49,25 @@ export function useTableData<Data extends any, Order extends string>({
   const limit = pageSize;
 
   const loadData = useCallback(
-    async () => {
+    async (reset = false) => {
       try {
         setIsLoading(true);
+        const firstIdx = reset ? 0 : offset;
         if (typeof propData === 'function') {
-          const { data: loadedData, total: totalData } = await propData(offset, limit, order, orderBy);
+          const { data: loadedData, total: totalData } = await propData(firstIdx, limit, order, orderBy);
 
           setData(loadedData);
           setTotal(totalData);
         } else if (Array.isArray(propData)) {
           const totalData = propData.length;
-          const loadedData = propData.slice(offset, offset + limit);
+          const loadedData = propData.slice(firstIdx, firstIdx + limit);
 
           setData(loadedData);
           setTotal(totalData);
         } else {
           throw new Error('Data not loaded!');
         }
+        setPage(firstIdx);
       } catch (error: any) {
         Logger.error(error.message ?? error ?? 'unknown error', 'useTableData loadData');
       } finally {

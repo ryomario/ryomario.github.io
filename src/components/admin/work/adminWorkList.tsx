@@ -7,41 +7,76 @@ import { Logger } from "@/utils/logger";
 import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
 import { LoadingScreen } from "@/components/loadingScreen/LoadingScreen";
 import { useRouter } from "next/navigation";
+import { useTableData, UseTableLoadData } from "@/hooks/tableData";
+import { dbWorkTransform } from "@/db/utils/workTransforms";
+import { getErrorMessage } from "@/utils/errorMessage";
+import Skeleton from "@mui/material/Skeleton";
 
 type Props = {
-  data: IWorkExperience[];
   itemPerPage?: number;
   getRedirectPathDetails: (id: string) => string;
   getRedirectPathEdit: (id: string) => string;
 }
 
 export function AdminWorkList({
-  data,
-  itemPerPage = 8,
+  itemPerPage = 6,
   getRedirectPathDetails,
   getRedirectPathEdit,
 }: Props) {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const loadData = useCallback<UseTableLoadData<IWorkExperience, any>>(async (offset, limit) => {
+    try {
+      const countData = await RepoWorksServer.getCountAll();
+      const loadedData = await RepoWorksServer.getAll(offset, limit);
+
+      return {
+        data: loadedData.map(dbWorkTransform),
+        total: countData,
+      }
+    } catch (error) {
+      return {
+        data: [],
+        total: 0,
+      }
+    }
+  }, []);
+
+  const {
+    handlePageChange,
+    page,
+    pageSize,
+
+    data,
+    isLoading,
+    total,
+    refresh,
+  } = useTableData<IWorkExperience, any>({
+    data: loadData,
+    pageSize: itemPerPage,
+    orderBy: null,
+  });
+
+  const totalPage = !total ? 1 : Math.ceil(total / pageSize);
 
   const handleDelete = useCallback(async (id: number) => {
     try {
-      setIsLoading(true);
+      setIsDeleting(true);
       const result = await RepoWorksServer.remove(id);
-      if(!result) {
+      if (!result) {
         throw new Error('Internal error');
       }
 
-      router.refresh();
-      Logger.debug(id,'DELETE');
-    } catch (error: any) {
-      Logger.error(error,'DELETE Error');
+      refresh(true);
+      Logger.debug(id, 'DELETE');
+    } catch (error) {
+      Logger.error(getErrorMessage(error), 'Delete work Error');
     } finally {
-      setIsLoading(false);
+      setIsDeleting(false);
     }
-  },[]);
+  }, [refresh]);
 
-  if(isLoading) {
+  if (isDeleting) {
     return <LoadingScreen />;
   }
 
@@ -53,21 +88,30 @@ export function AdminWorkList({
         gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
       }}
     >
-      {data.map((item) => (
-        <AdminWorkItem
-          key={item.id}
-          data={item}
-          detailsHref={getRedirectPathDetails(`${item.id}`)}
-          editHref={getRedirectPathEdit(`${item.id}`)}
-          onDelete={() => handleDelete(item.id)}
-        />
-      ))}
+      {
+        isLoading
+          ? Array.from({ length: pageSize }).map((_, i) => (
+            <Skeleton key={i} variant="rounded" height={320} />
+          ))
+          : data.map((item) => (
+            <AdminWorkItem
+              key={item.id}
+              data={item}
+              detailsHref={getRedirectPathDetails(`${item.id}`)}
+              editHref={getRedirectPathEdit(`${item.id}`)}
+              onDelete={() => handleDelete(item.id)}
+            />
+          ))
+      }
 
-      {data.length > itemPerPage && (
+      {totalPage > 1 && (
         <Pagination
-          count={10}
+          page={page+1}
+          count={totalPage}
+          onChange={(_, newPage) => handlePageChange(null, newPage-1)}
           sx={{
-            mt: 8,
+            mt: 4,
+            gridColumn: '1 / -1',
             [`& .${paginationClasses.ul}`]: { justifyContent: 'center' },
           }}
         />
