@@ -1,14 +1,11 @@
-import { IWorkExperience } from "@/types/IWorkExperience"
 import Box from "@mui/material/Box";
-import Pagination, { paginationClasses } from "@mui/material/Pagination";
+import { paginationClasses } from "@mui/material/Pagination";
 import { useCallback, useEffect, useState } from "react";
 import { Logger } from "@/utils/logger";
 import * as RepoLicensesServer from "@/db/repositories/RepoLicenses.server";
 import { LoadingScreen } from "@/components/loadingScreen/LoadingScreen";
-import { useRouter } from "next/navigation";
 import Card from "@mui/material/Card";
 import { ILicense, ILicenseFilter, ILicenseSortableProperties } from "@/types/ILicense";
-import { usePagination } from "@/hooks/pagination";
 import TablePagination from "@mui/material/TablePagination";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
@@ -18,10 +15,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import Button from "@mui/material/Button";
-import { useTableOrder } from "@/hooks/tableOrder";
 import { AdminLicenseItem } from "./adminLicenseItem";
 import Skeleton from "@mui/material/Skeleton";
+import { useTableData, UseTableLoadData } from "@/hooks/tableData";
+import Toolbar from "@mui/material/Toolbar";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from '@mui/icons-material/Search';
+import { useDebounce } from "@/hooks/debouncedValue";
 
 type Props = {
   itemPerPage?: number;
@@ -29,47 +30,51 @@ type Props = {
 }
 
 export function AdminLicenseList({
-  itemPerPage = 10,
+  itemPerPage = 5,
   getRedirectPathEdit,
 }: Props) {
-  const [count, setCount] = useState(0);
-  const [data, setData] = useState<ILicense[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const searchQuery = useDebounce(searchInput, 300);
+
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const loadData = useCallback<UseTableLoadData<ILicense, ILicenseSortableProperties>>(async (offset, limit, order, orderBy) => {
+    try {
+      const filter: ILicenseFilter = { q: searchQuery };
+      const countData = await RepoLicensesServer.getCountByFilter(filter);
+      const loadedData = await RepoLicensesServer.getAllByFilter(filter, offset, limit, order, orderBy);
+
+      return {
+        data: loadedData,
+        total: countData,
+      }
+    } catch (error) {
+      return {
+        data: [],
+        total: 0,
+      }
+    }
+  }, [searchQuery]);
 
   const {
     handlePageChange,
     handlePageSizeChange,
     page,
-    limit,
-    offset,
     pageSize,
-  } = usePagination({
-    pageSize: itemPerPage,
-  });
-  const {
     order,
     orderBy,
     handleRequestSort,
-  } = useTableOrder<ILicenseSortableProperties>({ orderBy: 'name' });
 
+    data,
+    isLoading,
+    total,
+    refresh,
+  } = useTableData<ILicense, ILicenseSortableProperties>({
+    orderBy: 'name',
+    pageSize: itemPerPage,
+    data: loadData,
+  });
 
-  const loadData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const filter: ILicenseFilter = { q: '' };
-      const countData = await RepoLicensesServer.getCountByFilter(filter);
-      const loadedData = await RepoLicensesServer.getAllByFilter(filter, offset, limit, order, orderBy);
-
-      setCount(countData);
-      setData(loadedData);
-    } catch (error) {
-      setCount(0);
-      setData([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [offset, limit, order, orderBy, setCount, setData, setIsLoading]);
 
   const handleDelete = useCallback(async (id: number) => {
     try {
@@ -80,25 +85,47 @@ export function AdminLicenseList({
       }
 
       Logger.debug(id, 'DELETE license');
-      loadData();
+      refresh();
     } catch (error: any) {
       Logger.error(error, 'DELETE license');
     } finally {
       setIsDeleting(false);
     }
-  }, [loadData]);
+  }, [refresh]);
 
   useEffect(() => {
-    loadData();
-    console.log(page, pageSize)
-  }, [page, pageSize, order, orderBy]);
+    refresh();
+  }, [searchQuery]);
 
-  if(isDeleting) {
-    return <LoadingScreen/>;
+  if (isDeleting) {
+    return <LoadingScreen />;
   }
 
   return <>
     <Card>
+      <Toolbar
+        sx={{
+          pl: { sm: 2 },
+          pr: 1,
+          my: 2
+        }}
+      >
+        <TextField
+          sx={{ ml: 'auto' }}
+          placeholder="Search..."
+          value={searchInput}
+          onChange={(event) => setSearchInput(event.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: 'text.disabled' }} />
+                </InputAdornment>
+              ),
+            }
+          }}
+        />
+      </Toolbar>
       <TableContainer>
         <Table
           sx={{ minWidth: 500 }}
@@ -111,45 +138,44 @@ export function AdminLicenseList({
           <TableBody>
             {
               isLoading
-              ? Array.from({ length: pageSize }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell>
-                    <Skeleton variant="text"/>
-                  </TableCell>
-                  <TableCell width={150}>
-                    <Skeleton variant="text"/>
-                  </TableCell>
-                  <TableCell width={200}>
-                    <Skeleton variant="text"/>
-                  </TableCell>
-                  <TableCell width={80}>
-                    <Skeleton variant="text"/>
-                  </TableCell>
-                </TableRow>
-              ))
-              : data.map((row, i) => (
-                <AdminLicenseItem
-                  key={i}
-                  data={row}
-                  editHref={getRedirectPathEdit(`${row.id}`)}
-                  onDelete={() => handleDelete(row.id)}
-                />
-              ))
+                ? Array.from({ length: pageSize }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell width={150}>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell width={200}>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                    <TableCell width={80}>
+                      <Skeleton variant="text" />
+                    </TableCell>
+                  </TableRow>
+                ))
+                : data.map((row, i) => (
+                  <AdminLicenseItem
+                    key={i}
+                    data={row}
+                    editHref={getRedirectPathEdit(`${row.id}`)}
+                    onDelete={() => handleDelete(row.id)}
+                  />
+                ))
             }
           </TableBody>
         </Table>
       </TableContainer>
 
       <TablePagination
-        rowsPerPageOptions={[2, 5, 10, 25]}
+        rowsPerPageOptions={[5, 10, 25]}
         component="div"
         page={page}
-        count={count}
+        count={total}
         rowsPerPage={pageSize}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handlePageSizeChange}
         sx={{
-          // mt: 8,
           [`& .${paginationClasses.ul}`]: { justifyContent: 'center' },
         }}
       />
@@ -166,7 +192,7 @@ interface HeaderCellProps {
   id: keyof ILicense;
   sortBy?: ILicenseSortableProperties;
   label: string;
-  align?: 'right'|'left'|'center';
+  align?: 'right' | 'left' | 'center';
   disablePadding?: boolean;
 }
 
@@ -179,7 +205,7 @@ function LicenseTableHead({
     (property: ILicenseSortableProperties) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
-  
+
   const renderHeaderCell = ({ id, sortBy, label, align = 'left', disablePadding = false }: HeaderCellProps) => (
     <TableCell
       key={id}
@@ -189,21 +215,21 @@ function LicenseTableHead({
     >
       {
         !!sortBy
-        ? (
-          <TableSortLabel
-            active={orderBy === sortBy}
-            direction={orderBy === sortBy ? order : 'asc'}
-            onClick={createSortHandler(sortBy)}
-          >
-            {label}
-            {orderBy === sortBy ? (
-              <Box component="span" sx={{ width: 0, height: 0, visibility: 'hidden' }}>
-                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-              </Box>
-            ) : null}
-          </TableSortLabel>
-        )
-        : label
+          ? (
+            <TableSortLabel
+              active={orderBy === sortBy}
+              direction={orderBy === sortBy ? order : 'asc'}
+              onClick={createSortHandler(sortBy)}
+            >
+              {label}
+              {orderBy === sortBy ? (
+                <Box component="span" sx={{ width: 0, height: 0, visibility: 'hidden' }}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          )
+          : label
       }
     </TableCell>
   );
