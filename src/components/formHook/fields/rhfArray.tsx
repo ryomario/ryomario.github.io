@@ -7,6 +7,7 @@ import { FieldArrayWithId, FieldValues, RegisterOptions, useFieldArray, UseField
 type RenderInputParam = Omit<UseFieldArrayReturn, 'fields'> & {
   index: number;
   field: FieldArrayWithId;
+  fieldLength: number;
 }
 
 export type RHFArrayProps = BoxProps & {
@@ -36,12 +37,12 @@ export function RHFArray({
   });
 
   useEffect(() => {
-    if(defaultValue.length && !fields.length) {
+    if (defaultValue.length && !fields.length) {
       defaultValue.forEach(value => {
         arrayField.append(value);
       })
     }
-  },[fields])
+  }, [fields])
 
   const errorMessage = errors[name]?.message ?? errors[name]?.root?.message
 
@@ -51,7 +52,7 @@ export function RHFArray({
       {...rest}
     >
       {!!label && <FormLabel component="legend" sx={{ mb: 1 }} error={!!errorMessage}>{label}</FormLabel>}
-      {fields.map((field, index) => renderInput({ field, index, ...arrayField }))}
+      {fields.map((field, index) => renderInput({ field, index, fieldLength: fields.length, ...arrayField }))}
       {(errorMessage || helperText) && (
         <FormHelperText error={!!errorMessage} sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
           {errorMessage?.toString() ?? helperText}
@@ -59,17 +60,4 @@ export function RHFArray({
       )}
     </Box>
   );
-}
-
-const emptyParams: RenderInputParam = {
-  field: { id: '0' },
-  index: 0,
-  append: () => {},
-  insert: () => {},
-  move: () => {},
-  prepend: () => {},
-  remove: () => {},
-  replace: () => {},
-  swap: () => {},
-  update: () => {},
 }

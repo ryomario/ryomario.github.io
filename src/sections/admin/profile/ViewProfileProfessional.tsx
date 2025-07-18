@@ -19,7 +19,7 @@ import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 
-import * as RepoProfileData_server from "@/db/repositories/RepoProfileData.server"
+import * as RepoProfileData_server from "@/db/repositories/RepoProfileData.server";
 
 type AutocompleteOptionType = {
   value: string;
@@ -38,7 +38,7 @@ export function ViewProfileProfessional() {
   const methods = useForm<IProfileProfessional>({
     defaultValues,
   });
-  
+
   const {
     handleSubmit,
     formState: { isSubmitting, isDirty },
@@ -50,13 +50,13 @@ export function ViewProfileProfessional() {
     try {
       let error = false;
 
-      if(Array.isArray(values.languages)) {
+      if (Array.isArray(values.languages)) {
         let emptyLangs = true;
         values.languages.forEach((lang, index) => {
-          if(lang.name && lang.level) {
+          if (lang.name && lang.level) {
             emptyLangs = false;
           }
-          if(lang.name && !lang.level) {
+          if (lang.name && !lang.level) {
             setError(`languages.${index}.level`, {
               type: 'required',
               message: 'Choose your proficiency',
@@ -65,7 +65,7 @@ export function ViewProfileProfessional() {
           }
         });
 
-        if(emptyLangs) {
+        if (emptyLangs) {
           setError('languages', {
             type: 'required',
             message: 'Are you a human? At least there is body language',
@@ -73,26 +73,26 @@ export function ViewProfileProfessional() {
           error = true;
         }
       }
-      
-      if(error) {
+
+      if (error) {
         return;
       }
 
       await RepoProfileData_server.updateProfileProfessional(values);
-      
+
       updateProfileData(await RepoProfileData_server.getAll(true));
     } catch (error) {
-      console.log('submit error',error);
+      console.log('submit error', error);
     }
   }, (errors) => console.log(errors));
 
   useEffect(() => {
-    if(profileData.professional) {
+    if (profileData.professional) {
       reset({
         ...profileData.professional,
       });
     }
-  },[profileData]);
+  }, [profileData]);
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
@@ -248,7 +248,7 @@ export function ViewProfileProfessional() {
             { name: '', level: '' } as any,
           ]}
           rules={{ minLength: { value: 1, message: 'Are you a human?' } }}
-          renderInput={({ field, index, remove, append }) => (
+          renderInput={({ field, index, fieldLength, remove, append }) => (
             <Stack
               key={field.id}
               direction="row"
@@ -282,11 +282,15 @@ export function ViewProfileProfessional() {
                     <MenuItem key={value} value={value}>{label}</MenuItem>
                   ))}
                 </RHFField.Select>
-                <IconButton sx={{ mt: 1 }} onClick={() => remove(index)}>
-                  <DeleteIcon/>
-                </IconButton>
-                <IconButton sx={{ mt: 1 }} onClick={() => append({ name: '', level: '' })}>
-                  <AddIcon/>
+                {
+                  fieldLength > 1 && (
+                    <IconButton sx={{ mt: 1 }} onClick={() => remove(index)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  )
+                }
+                <IconButton sx={{ mt: 1, visibility: index == (fieldLength - 1) ? 'visible' : 'hidden' }} onClick={() => append({ name: '', level: '' })}>
+                  <AddIcon />
                 </IconButton>
               </Box>
             </Stack>
