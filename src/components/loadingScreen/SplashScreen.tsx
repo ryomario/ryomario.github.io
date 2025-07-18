@@ -3,10 +3,8 @@
 import { styled, SxProps, Theme } from "@mui/material/styles";
 import React from "react";
 
-import logo from "@/app/icon.svg";
 import Portal from "@mui/material/Portal";
-import Stack from "@mui/material/Stack";
-import LinearProgress from "@mui/material/LinearProgress";
+import { LogoSVG } from "@/assets/icons/logo";
 
 export type SplashScreenProps = React.ComponentProps<'div'> & {
   portal?: boolean;
@@ -17,10 +15,7 @@ export function SplashScreen({ portal = true, sx, ...rest }: SplashScreenProps) 
   const content = (
     <div style={{ overflow: 'hidden' }}>
       <LoadingContent sx={sx} {...rest}>
-        <Stack spacing={2}>
-          <img src={logo.src} width={100}/>
-          <LinearProgress variant="indeterminate"/>
-        </Stack>
+        <LogoSVG width={100} height={100}/>
       </LoadingContent>
     </div>
   )
