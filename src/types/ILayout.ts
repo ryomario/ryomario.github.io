@@ -7,6 +7,6 @@ export interface IDashboardNavItem {
 }
 
 export type IDashboardNavData = {
-  subheader?: string;
+  subheader?: Omit<IDashboardNavItem, 'path'>;
   items: IDashboardNavItem[];
 }[]

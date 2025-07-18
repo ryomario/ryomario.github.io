@@ -3,8 +3,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { SxProps, Theme } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import Link from 'next/link';
+import React from 'react';
 
 type SidebarItemProps = {
   href?: string;
@@ -14,6 +16,9 @@ type SidebarItemProps = {
   icon?: React.ReactNode;
   color?: 'error'|'info'|'success'|'warning',
   active?: boolean;
+  append?: React.ReactNode;
+  sx?: SxProps<Theme>;
+  depth?: number;
 }
 
 export function SidebarItem({
@@ -24,56 +29,62 @@ export function SidebarItem({
   href,
   onClick,
   active = false,
+  append,
+  sx,
+  depth = 1,
 }: SidebarItemProps) {
   return (
-    <ListItem 
-      {...(href && {
-        component: Link,
-        href,
-      })}
-      disablePadding
-      sx={{
-        display: 'block',
-        color: 'inherit',
-        ...(color && {
-          backgroundColor: (theme) => theme.palette[color].main,
-          color: (theme) => theme.palette.getContrastText(theme.palette[color].main),
-        }),
-      }}
-    >
-      <Tooltip title={miniSidebar ? text : null} placement="right" arrow>
-        <ListItemButton
-          selected={active}
-          onClick={onClick}
-          sx={{
+    <Tooltip title={miniSidebar ? text : null} placement="right" arrow>
+      <ListItemButton
+        {...(href && {
+          component: Link,
+          href,
+        })}
+        selected={active}
+        onClick={onClick}
+        sx={[
+          {
+            color: 'inherit',
+            ...(color && {
+              backgroundColor: (theme) => theme.palette[color].main,
+              color: (theme) => theme.palette.getContrastText(theme.palette[color].main),
+              '&:hover': {
+                backgroundColor: (theme) => theme.palette[color].dark,
+              },
+            }),
+          },
+          {
             minHeight: 48,
-            px: 2.5,
+            pr: 2.5,
+            pl: 2.5 * depth,
             justifyContent: miniSidebar ? 'center' : 'initial',
+          },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: 0,
+            justifyContent: 'center',
+            mr: 'auto',
+            color: 'inherit',
           }}
         >
-          <ListItemIcon
-            sx={{
-              minWidth: 0,
-              justifyContent: 'center',
-              mr: 'auto',
-              color: 'inherit',
-            }}
-          >
-            {icon}
-          </ListItemIcon>
-          <ListItemText
-            primary={text} 
-            sx={{
-              ml: miniSidebar ? 0 : 3,
-              opacity: miniSidebar ? 0 : 1,
-              transition: (theme) => theme.transitions.create(['opacity','margin-left'], {
-                duration: theme.transitions.duration.enteringScreen,
-                easing: theme.transitions.easing.sharp,
-              }),
-            }}
-          />
-        </ListItemButton>
-      </Tooltip>
-    </ListItem>
+          {icon}
+        </ListItemIcon>
+        <ListItemText
+          primary={text} 
+          sx={{
+            ml: miniSidebar ? 0 : 3,
+            opacity: miniSidebar ? 0 : 1,
+            transition: (theme) => theme.transitions.create(['opacity','margin-left'], {
+              duration: theme.transitions.duration.enteringScreen,
+              easing: theme.transitions.easing.sharp,
+            }),
+          }}
+        />
+        {append}
+      </ListItemButton>
+    </Tooltip>
   )
 }

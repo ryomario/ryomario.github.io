@@ -10,6 +10,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import WorkIcon from '@mui/icons-material/Work';
 import SchoolIcon from '@mui/icons-material/School';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import StorageIcon from '@mui/icons-material/Storage';
+import ExtensionIcon from '@mui/icons-material/Extension';
+
 import { AdminRoute } from "@/types/EnumAdminRoute";
 import { Metadata } from "next";
 import { ProfileDataProvider } from "@/contexts/profileDataContext";
@@ -39,7 +42,6 @@ export default async function RootLayout({
 
 const navData: IDashboardNavData = [
   {
-    subheader: '',
     items: [
       {
         icon: <DashboardIcon/>,
@@ -49,7 +51,10 @@ const navData: IDashboardNavData = [
     ],
   },
   {
-    subheader: 'Templates',
+    subheader: {
+      icon: <ExtensionIcon/>,
+      title: 'Templates',
+    },
     items: [
       {
         icon: <PersonPinRoundedIcon/>,
@@ -64,7 +69,10 @@ const navData: IDashboardNavData = [
     ],
   },
   {
-    subheader: 'User data',
+    subheader: {
+      icon: <StorageIcon/>,
+      title: 'User data',
+    },
     items: [
       {
         icon: <PersonIcon/>,

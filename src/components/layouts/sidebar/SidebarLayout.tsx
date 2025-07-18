@@ -20,6 +20,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
+import { SidebarItems } from "./SidebarItems";
 
 const sidebarWidth = 240;
 
@@ -34,8 +35,6 @@ export function SidebarLayout({
 
   const miniSidebar = useMemo(() => settings.state.miniSidebar, [settings.state.miniSidebar]);
   
-  const pathname = usePathname();
-
   const { checkUserSession } = useAuthContext();
 
   const [confirmLogoutDialog, setConfirmLogoutDialog] = useState(false);
@@ -60,47 +59,35 @@ export function SidebarLayout({
     }
   }
 
-  const isActive = (href: string) => pathname.startsWith(href);
-
-
   return (
     <Drawer
       open={!miniSidebar}
       variant="permanent"
     >
       <Toolbar />
-      <Box sx={{ flexGrow: 1 }}>
-        {data.map((list, i) => <React.Fragment key={`${list.subheader}-${i}`}>
-          {i > 0 && <Divider />}
-          <List
-            subheader={
-              list.subheader ? (
-                <ListSubheader component="div" sx={{
-                  display: miniSidebar ? 'none' : 'block',
-                }}>
-                  {list.subheader}
-                </ListSubheader>
-              ) : undefined
-            }
-          >{list.items.map((item, j) => (
-            <SidebarItem
-              key={`${list.subheader}-${i}-${item.title}-${j}`}
-              text={item.title}
-              icon={item.icon}
-              href={item.path}
-              miniSidebar={miniSidebar}
-              active={item.path ? isActive(item.path) : false}
-            />
-          ))}</List>
-        </React.Fragment>)}
+      <Box
+        sx={{
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
+        }}
+      >
+        <Box sx={{ flexGrow: 1, mb: 6 }}>
+          <List disablePadding>
+            {data.map((list, i) => <SidebarItems data={list} miniSidebar={miniSidebar} key={`${list.subheader?.title}-${i}`}/>)}
+          </List>
+        </Box>
+        <SidebarItem
+          text="Logout"
+          icon={<LogoutIcon/>}
+          miniSidebar={miniSidebar}
+          color="error"
+          onClick={() => setConfirmLogoutDialog(true)}
+          sx={{ flexGrow: 0 }}
+        />
       </Box>
-      <SidebarItem
-        text="Logout"
-        icon={<LogoutIcon/>}
-        miniSidebar={miniSidebar}
-        color="error"
-        onClick={() => setConfirmLogoutDialog(true)}
-      />
       
       {/** @slot dialog confirm logout */}
       <Dialog
