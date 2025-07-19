@@ -10,6 +10,8 @@ import { SidebarLayout } from "./sidebar/SidebarLayout";
 import { TopbarLayout } from "./header/TopbarLayout";
 import { useSettingsContext } from "@/settings/settingsProvider";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 
 export type DashboardLayoutProps = React.ComponentProps<'div'> & {
@@ -36,25 +38,27 @@ export function DashboardLayout({
     settings.setState({ miniSidebar: !smUp });
   },[smUp]);
   return (
-    <LayoutRoot
-      id="root__layout"
-      sx={sx}
-      {...rest}
-    >
-      {/** @slot HEADER **/}
-      <TopbarLayout/>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LayoutRoot
+        id="root__layout"
+        sx={sx}
+        {...rest}
+      >
+        {/** @slot HEADER **/}
+        <TopbarLayout/>
 
-      <Box sx={{ display: 'flex', flexGrow: 1 }}>
-        {/** @slot Sidebar  */}
-        <SidebarLayout data={slotProps?.nav?.data}/>
+        <Box sx={{ display: 'flex', flexGrow: 1 }}>
+          {/** @slot Sidebar  */}
+          <SidebarLayout data={slotProps?.nav?.data}/>
 
-        {/** @slot Main */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
-          <Toolbar />
-          {children}
+          {/** @slot Main */}
+          <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
+            <Toolbar />
+            {children}
+          </Box>
         </Box>
-      </Box>
-    </LayoutRoot>
+      </LayoutRoot>
+    </LocalizationProvider>
   );
 }
 
