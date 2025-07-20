@@ -31,7 +31,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  if(process.env.NODE_ENV == 'production') {
+  if (process.env.NODE_ENV == 'production') {
     return notFound();
   }
 
@@ -42,7 +42,7 @@ export default async function RootLayout({
           <SettingsProvider>
             <AppRouterCacheProvider options={{ key: 'css' }}>
               <ThemeProvider>
-                <NextTopLoader showSpinner={false}/>
+                <NextTopLoader showSpinner={false} />
                 {children}
               </ThemeProvider>
             </AppRouterCacheProvider>

@@ -22,4 +22,9 @@ export enum AdminRoute {
   LICENSE = '/admin/license',
   LICENSE_ADD = '/admin/license/create',
   LICENSE_EDIT = '/admin/license/update',
+
+  PROJECT = '/admin/project',
+  PROJECT_ADD = '/admin/project/create',
+  PROJECT_EDIT = '/admin/project/update',
+  PROJECT_VIEW = '/admin/project/detail',
 }

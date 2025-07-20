@@ -6,11 +6,12 @@ import { RHFSelect } from "./rhfSelect";
 import { RHFSwitch } from "./rhfSwitch";
 import { RHFTextField } from "./rhfTextField";
 import { RHFToggleButtonGroup } from "./rhfToggleButtonGroup";
-import { RHFUploadAvatar } from "./rhfUpload";
+import { RHFUploadAvatar, RHFUploadFile } from "./rhfUpload";
 
 export const RHFField = {
   Switch: RHFSwitch,
   UploadAvatar: RHFUploadAvatar,
+  UploadFile: RHFUploadFile,
   TextField: RHFTextField,
   ToggleButtonGroup: RHFToggleButtonGroup,
   Autocomplete: RHFAutocomplete,

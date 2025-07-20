@@ -3,39 +3,44 @@
 import { IProject } from "@/types/IProject"
 import { prisma } from "../prisma"
 import RepoProjects from "./RepoProjects"
-import { join } from "path"
-import { writeFile, rm } from "fs/promises"
-import sharp from 'sharp'
+import { Logger } from "@/utils/logger"
+import { getErrorMessage } from "@/utils/errorMessage"
+import { deleteFile, uploadImage } from "@/utils/file.server"
+import { ProjectPreview } from "@/generated/prisma"
 
 export const getAll = RepoProjects.getAll
 export const getOne = RepoProjects.getOne
 export const getAllTags = RepoProjects.getAllTags
-export const getAllTechs = RepoProjects.getAllTechs
 
-export async function save(data: Omit<IProject,'project_id'>) {
+export async function saveOrUpdate(data: Omit<IProject, 'id'> & { id?: IProject['id'] }) {
+  const { id, ...values } = data;
+  if (typeof id === 'undefined' || id === null) {
+    return await save(values);
+  } else {
+    return await update(id, values);
+  }
+}
+
+export async function save(data: Omit<IProject, 'id'>): Promise<IProject> {
   try {
-    const project = await prisma.projects.create({
+    const previews = await uploadImagePreviews(data.previews);
+
+    const project = await prisma.project.create({
       data: {
-        project_title: data.project_title,
-        project_desc: data.project_desc,
-        project_preview: {
+        title: data.title,
+        desc: data.desc,
+        previews: {
           createMany: {
-            data: data.project_preview.map((preview, idx) => ({
-              preview_url: preview.preview_url,
-              order: idx,
+            data: previews.map((url, order) => ({
+              url,
+              order,
             })),
           },
         },
-        project_tags: {
-          connectOrCreate: data.project_tags.map(({ tag_name }) => ({
+        tags: {
+          connectOrCreate: data.tags.map((tag_name) => ({
             where: { tag_name },
             create: { tag_name },
-          }))
-        },
-        project_tech: {
-          connectOrCreate: data.project_tech.map(({ tech_name }) => ({
-            where: { tech_name },
-            create: { tech_name },
           }))
         },
         createdAt: data.createdAt,
@@ -45,58 +50,55 @@ export async function save(data: Omit<IProject,'project_id'>) {
         link_demo: data.link_demo ?? null,
       },
       include: {
-        project_tags: true,
-        project_tech: true,
+        tags: true,
+        previews: true,
       }
-    })
-    if(!project) throw Error(`project not saved`)
-  
-    return project
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+    });
+    if (!project) throw Error(`project not saved`);
 
-    console.log('projects save error', message)
+    return {
+      ...project,
+      previews: project.previews.map(({ url }) => url),
+      tags: project.tags.map(({ tag_name }) => tag_name),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'project save error');
 
-    return false
+    throw new Error(message);
   }
 }
 
-export async function update(project_id: IProject['project_id'], data: Omit<IProject,'project_id'>) {
+export async function update(id: number, data: Omit<IProject, 'id'>): Promise<IProject> {
+  const unusedPreviews: ProjectPreview['id'][] = [];
   try {
-    const old_project = await getOne(project_id)
-    if(old_project?.project_preview && old_project?.project_preview.length > 0) {
-      for(const preview of old_project.project_preview) {
-        if(data.project_preview.findIndex(p => p.preview_url == preview.preview_url) == -1) {
-          // delete old image
-          await removeProjectPreview(preview.preview_id)
+    const previews = await uploadImagePreviews(data.previews);
+
+    const old_project = await getOne(id);
+    if (old_project.previews.length > 0) {
+      for (const preview of old_project.previews) {
+        if (previews.findIndex(url => url == preview.url) == -1) {
+          // will be deleted after update success
+          unusedPreviews.push(preview.id);
         }
       }
     }
-    const project = await prisma.projects.update({
+    const project = await prisma.project.update({
       data: {
-        project_title: data.project_title,
-        project_desc: data.project_desc,
-        project_preview: {
-          upsert: data.project_preview.map(({preview_url}, idx) => ({
-            update: { order: idx },
-            create: { preview_url, order: idx },
-            where: { preview_url },
+        title: data.title,
+        desc: data.desc,
+        previews: {
+          upsert: previews.map((url, order) => ({
+            update: { order },
+            create: { url, order },
+            where: { url },
           })),
         },
-        project_tags: {
+        tags: {
           set: [],
-          connectOrCreate: data.project_tags.map(({ tag_name }) => ({
+          connectOrCreate: data.tags.map((tag_name) => ({
             where: { tag_name },
             create: { tag_name },
-          }))
-        },
-        project_tech: {
-          set: [],
-          connectOrCreate: data.project_tech.map(({ tech_name }) => ({
-            where: { tech_name },
-            create: { tech_name },
           }))
         },
         published: data.published,
@@ -105,139 +107,142 @@ export async function update(project_id: IProject['project_id'], data: Omit<IPro
         link_demo: data.link_demo ?? null,
       },
       include: {
-        project_tags: true,
-        project_tech: true,
+        tags: true,
+        previews: true,
       },
       where: {
-        project_id,
+        id,
       }
-    })
-    if(!project) throw Error(`project not updated`)
-  
-    return project
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+    });
+    if (!project) throw Error(`project not updated`);
 
-    console.log('projects update error', message)
+    // remove project previews
+    for (const previewId of unusedPreviews) {
+      try {
+        await removeProjectPreview(previewId);
+      } catch (error) {
+        const message = getErrorMessage(error);
+        Logger.error(message, 'project update error > removeProjectPreview');
+      }
+    }
 
-    return false
+    return {
+      ...project,
+      previews: project.previews.map(({ url }) => url),
+      tags: project.tags.map(({ tag_name }) => tag_name),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'project update error');
+
+    throw new Error(message);
   }
 }
 
-export async function remove(project_id: IProject['project_id']) {
+export async function remove(id: IProject['id']): Promise<IProject> {
   try {
-    const project = await prisma.projects.delete({
+    const project = await prisma.project.delete({
       where: {
-        project_id,
+        id,
       },
       include: {
-        project_tags: true,
-        project_tech: true,
-        project_preview: true,
+        tags: true,
+        previews: true,
       }
-    })
-    if(!project) throw Error(`project not removed`)
-    
+    });
+    if (!project) throw Error(`project with id "${id}" not removed`);
+
     try {
-      if(project.project_preview && project.project_preview.length > 0) {
-        for(const preview of project.project_preview) {
+      if (project.previews.length > 0) {
+        for (const preview of project.previews) {
           // delete old image
-          await removeProjectPreview(preview.preview_id)
+          await removeProjectPreview(preview.id);
         }
       }
-    } catch(error: any) {
-      let message = 'unknown'
-      if(typeof error == 'string') message = error
-      else if(error.message) message = error.message
-  
-      console.log('projects remove deleteFileUploadImagePreview error', message)
+    } catch (error: any) {
+      const message = getErrorMessage(error);
+      Logger.error(message, 'project remove error > removeProjectPreview');
     }
-  
-    return project
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
 
-    console.log('projects remove error', message)
+    return {
+      ...project,
+      previews: project.previews.map(({ url }) => url),
+      tags: project.tags.map(({ tag_name }) => tag_name),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'project remove error');
 
-    return false
+    throw new Error(message);
   }
 }
 
 export async function removeProjectPreview(preview_id: number) {
   try {
-    const preview = await prisma.project_previews.delete({
+    const preview = await prisma.projectPreview.delete({
       where: {
-        preview_id,
+        id: preview_id,
       },
-    })
-    if(!preview) throw Error(`preview not removed`)
-    
+    });
+    if (!preview) throw Error(`preview not removed`);
+
     try {
-      if(preview.preview_url) {
-        await deleteFileUploadImagePreview(preview.preview_url)
+      if (preview.url) {
+        await deleteFile(preview.url);
       }
-    } catch(error: any) {
-      let message = 'unknown'
-      if(typeof error == 'string') message = error
-      else if(error.message) message = error.message
-  
-      console.log('projects preview remove removeProjectPreview error', message)
+    } catch (error) {
+      const message = getErrorMessage(error);
+      Logger.error(message, 'projects removeProjectPreview error deleteFile');
     }
-  
-    return preview
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
 
-    console.log('project preview remove error', message)
+    return preview;
+  } catch (error) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'projects removeProjectPreview error');
 
-    return false
+    throw new Error(message);
   }
 }
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png"];
+async function uploadImagePreviews(previews: IProject['previews']): Promise<ProjectPreview['url'][]> {
+  const uploadedUrls: {
+    url: ProjectPreview['url'];
+    newUpload: boolean;
+  }[] = [];
 
-export async function uploadImagePreview(file?: File) {
-  if (!file) {
-    throw new Error("No file uploaded");
+  try {
+    if (!previews.length) {
+      throw Error('At least add an image preview');
+    }
+
+    for (const image of previews) {
+      let image_url: string;
+      let uploaded = false;
+      if (image instanceof File) {
+        const upload = await uploadImage(image, `project_previews/${Date.now()}`);
+        image_url = upload.path;
+        uploaded = true;
+      } else {
+        image_url = image;
+      }
+      uploadedUrls.push({ url: image_url, newUpload: uploaded });
+    }
+
+    return uploadedUrls.map(({ url }) => url);
+  } catch (error) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'projects uploadImagePreviews error');
+
+    for (const { newUpload, url } of uploadedUrls) {
+      if (newUpload) {
+        try {
+          await deleteFile(url);
+        } catch (error) {
+          Logger.error(getErrorMessage(error), 'projects uploadImagePreviews error > delete file');
+        }
+      }
+    }
+
+    throw new Error(message);
   }
-
-  // Validate file type
-  if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-    throw new Error("File type not allowed");
-  }
-
-  // Validate file size
-  if (file.size > MAX_FILE_SIZE) {
-    throw new Error("File too large (max 5MB)");
-  }
-
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  
-  // Convert to WebP
-  const webpBuffer = await sharp(buffer)
-    .webp({ quality: 100 })
-    .toBuffer();
-
-  const filename = `${Date.now()}_project_preview.webp`
-
-  const path = join(process.cwd(), "public/images", filename);
-  await writeFile(path, buffer);
-  
-  return { 
-    success: true,
-    path: `/images/${filename}`,
-  };
-}
-
-export async function deleteFileUploadImagePreview(url_path: string) {
-  const path = join(process.cwd(), "public", url_path);
-  await rm(path)
 }

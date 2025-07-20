@@ -1,89 +1,70 @@
+import { Logger } from "@/utils/logger"
 import { prisma } from "../prisma"
+import { getErrorMessage } from "@/utils/errorMessage"
+import { IProject } from "@/types/IProject";
 
-async function getAll() {
+async function getAll(offset = 0, limit = 0) {
   try {
-    const projects = await prisma.projects.findMany({
+    const projects = await prisma.project.findMany({
+      skip: offset,
+      take: limit > 0 ? limit : undefined,
+      orderBy: [
+        { updatedAt: 'desc' },
+      ],
       include: {
-        project_tags: true,
-        project_tech: true,
-        project_preview: {
+        tags: true,
+        previews: {
           orderBy: { order: 'asc' },
         },
-      }
-    })
-    if(!projects) throw Error(`projects not found`)
-  
-    return projects
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+      },
+    });
+    if (!projects) throw Error(`projects not found`);
 
-    console.log('projects getAll error', message)
+    Logger.info(`"${projects.length}" projects loaded!`, 'projects getAll');
+    return projects;
+  } catch (error) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'projects getAll error');
 
-    return []
+    throw new Error(message);
   }
 }
 
 async function getOne(id: number) {
   try {
-    const project = await prisma.projects.findFirst({
+    const project = await prisma.project.findFirst({
       where: {
-        project_id: id,
+        id,
       },
       include: {
-        project_tags: true,
-        project_tech: true,
-        project_preview: {
+        tags: true,
+        previews: {
           orderBy: { order: 'asc' },
         },
-      }
-    })
-    if(!project) throw Error(`project with id "${id}" not found`)
-  
-    return project
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+      },
+    });
+    if (!project) throw Error(`project with id "${id}" not found`);
 
-    console.log('project getOne error', message)
+    return project;
+  } catch (error: any) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'project getOne error');
 
-    return null
+    throw new Error(message);
   }
 }
 
-async function getAllTags() {
+async function getAllTags(): Promise<IProject['tags']> {
   try {
-    const project_tags = await prisma.project_tags.findMany()
-    if(!project_tags) throw Error(`project_tags not found`)
-  
-    return project_tags
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+    const project_tags = await prisma.projectTag.findMany();
+    if (!project_tags) throw Error(`projectTag not found`);
 
-    console.log('project_tags getAllTags error', message)
+    return project_tags.map(({ tag_name }) => tag_name);
+  } catch (error: any) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'project getAllTags error');
 
-    return []
-  }
-}
-
-async function getAllTechs() {
-  try {
-    const project_techs = await prisma.project_tech.findMany()
-    if(!project_techs) throw Error(`project_techs not found`)
-  
-    return project_techs
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
-
-    console.log('project_techs getAllTechs error', message)
-
-    return []
+    throw new Error(message);
   }
 }
 
@@ -91,5 +72,4 @@ export default {
   getAll,
   getOne,
   getAllTags,
-  getAllTechs,
 }
