@@ -1,27 +1,20 @@
 import { Form, RHFField } from "@/components/formHook";
 import * as RepoProjectsServer from "@/db/repositories/RepoProjects.server";
-import { getAllMonthsName } from "@/lib/date";
 import { IProject } from "@/types/IProject";
-import { getWorkEmploymentLabel, WorkEmploymentType } from "@/types/IWorkExperience";
 import { Logger } from "@/utils/logger";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { DatePicker } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
-import { useCallback, useMemo } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
 
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import InputAdornment from "@mui/material/InputAdornment";
 import { isValidURL } from "@/lib/url";
+import { getErrorMessage } from "@/utils/errorMessage";
 
 type Props = {
   values?: IProject;
@@ -48,39 +41,45 @@ export function AdminProjectForm({
       updatedAt: new Date(),
     },
     values,
-    resolver: (values, context, options) => {
+    resolver: (values, _context, _options) => {
       const errors: FieldErrors<IProject> = {};
 
-      /*TODO - Validate data */
-      if(!values.title.trim()) {
+      if (!values.title.trim()) {
         errors.title = {
           type: 'required',
           message: 'Project Title is required!',
         };
       }
 
-      if(!values.createdAt || (values.createdAt instanceof Date && isNaN(values.createdAt.getTime()))) {
+      if (!values.createdAt || (values.createdAt instanceof Date && isNaN(values.createdAt.getTime()))) {
         errors.createdAt = {
           type: 'required',
           message: 'Date Created is required!',
         };
       }
 
-      if(!values.tags.length) {
+      if (!values.tags.length) {
         errors.tags = {
           type: 'required',
           message: 'Choose at least one tag',
         };
       }
 
-      if(values.link_repo && !isValidURL(values.link_repo)) {
+      if (!values.previews.length) {
+        errors.previews = {
+          type: 'required',
+          message: 'Upload at least one preview',
+        };
+      }
+
+      if (values.link_repo && !isValidURL(values.link_repo)) {
         errors.link_repo = {
           type: 'value',
           message: 'Not valid URL',
         };
       }
 
-      if(values.link_demo && !isValidURL(values.link_demo)) {
+      if (values.link_demo && !isValidURL(values.link_demo)) {
         errors.link_demo = {
           type: 'value',
           message: 'Not valid URL',
@@ -105,25 +104,24 @@ export function AdminProjectForm({
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      // const result = await RepoProjectsServer.saveOrUpdate(values);
-      // if(!result) {
-      //   throw new Error('Internal error');
-      // }
-      console.log(values);
+      const result = await RepoProjectsServer.saveOrUpdate(values);
+      if (!result) {
+        throw new Error('Internal error');
+      }
 
-      // if(afterSubmit) {
-      //   afterSubmit();
-      // }
+      if (afterSubmit) {
+        afterSubmit();
+      }
     } catch (error) {
-      Logger.debug(error,'Submit admin project');
+      Logger.error(getErrorMessage(error), 'Submit admin project');
     }
   });
 
   const renderDetails = () => (
     <Card>
-      <CardHeader title="Details" subheader="Title, short description, date created..." sx={{ mb: 3 }}/>
+      <CardHeader title="Details" subheader="Title, short description, date created..." sx={{ mb: 3 }} />
 
-      <Divider/>
+      <Divider />
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Stack spacing={1}>
@@ -133,17 +131,17 @@ export function AdminProjectForm({
 
         <Stack spacing={1}>
           <Typography variant="subtitle2">Description</Typography>
-          <RHFField.TextField name="description" placeholder="Explain about the project or your contribution if this is a team project" multiline rows={3} />
+          <RHFField.TextField name="desc" placeholder="Explain about the project or your contribution if this is a team project" multiline rows={3} />
         </Stack>
 
         <Stack spacing={1} direction="row">
           <Stack spacing={1} flexGrow={1}>
             <Typography variant="subtitle2">Date Created *</Typography>
-            <RHFField.DatePicker name="createdAt" format="DD MMMM YYYY"/>
+            <RHFField.DatePicker name="createdAt" format="DD MMMM YYYY" />
           </Stack>
           <Stack spacing={1} flexGrow={1}>
             <Typography variant="subtitle2">Last Updated *</Typography>
-            <RHFField.DatePicker name="updatedAt" format="DD MMMM YYYY"/>
+            <RHFField.DatePicker name="updatedAt" format="DD MMMM YYYY" />
           </Stack>
         </Stack>
       </Stack>
@@ -152,9 +150,9 @@ export function AdminProjectForm({
 
   const renderProperties = () => (
     <Card>
-      <CardHeader title="Properties" subheader="Other attributes and informations..." sx={{ mb: 3 }}/>
+      <CardHeader title="Properties" subheader="Other attributes and informations..." sx={{ mb: 3 }} />
 
-      <Divider/>
+      <Divider />
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Stack spacing={1}>
@@ -177,7 +175,7 @@ export function AdminProjectForm({
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <InsertLinkIcon/>
+                  <InsertLinkIcon />
                 </InputAdornment>
               ),
             }
@@ -192,7 +190,7 @@ export function AdminProjectForm({
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <InsertLinkIcon/>
+                  <InsertLinkIcon />
                 </InputAdornment>
               ),
             }
@@ -204,9 +202,9 @@ export function AdminProjectForm({
 
   const renderPreviews = () => (
     <Card>
-      <CardHeader title="Previews" subheader="Project previews, captured from demo project..." sx={{ mb: 3 }}/>
+      <CardHeader title="Previews" subheader="Project previews, captured from demo project..." sx={{ mb: 3 }} />
 
-      <Divider/>
+      <Divider />
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <RHFField.UploadFile
@@ -222,7 +220,6 @@ export function AdminProjectForm({
           onRemoveAll={() => setValue('previews', [], { shouldValidate: true, shouldDirty: true })}
           onReordered={(newFiles) => setValue('previews', newFiles, { shouldValidate: true, shouldDirty: true })}
           thumbnail
-          // onUpload={() => console.info('ON UPLOAD')}
         />
       </Stack>
     </Card>

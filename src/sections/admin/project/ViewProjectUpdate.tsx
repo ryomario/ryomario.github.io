@@ -6,11 +6,12 @@ import { IProject } from "@/types/IProject";
 import { useRouter } from "next/navigation";
 
 type Props = {
+  values: IProject;
   refTags: IProject['tags'];
 }
 
-export function ViewProjectCreate({ refTags }: Props) {
+export function ViewProjectUpdate({ values, refTags }: Props) {
   const router = useRouter();
 
-  return <AdminProjectForm refTags={refTags.length ? refTags : undefined} afterSubmit={() => router.push(AdminRoute.PROJECT)} />;
+  return <AdminProjectForm values={values} refTags={refTags} afterSubmit={() => router.push(AdminRoute.PROJECT)} />;
 }

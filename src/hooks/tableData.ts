@@ -67,7 +67,9 @@ export function useTableData<Data extends any, Order extends string>({
         } else {
           throw new Error('Data not loaded!');
         }
-        setPage(firstIdx);
+        if (reset) {
+          setPage(0);
+        }
       } catch (error: any) {
         Logger.error(error.message ?? error ?? 'unknown error', 'useTableData loadData');
       } finally {

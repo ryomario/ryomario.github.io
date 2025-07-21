@@ -1,16 +1,14 @@
-import { IWorkExperience } from "@/types/IWorkExperience"
 import Box from "@mui/material/Box";
 import Pagination, { paginationClasses } from "@mui/material/Pagination";
-import { AdminWorkItem } from "./adminWorkItem";
+import { AdminProjectItem } from "./adminProjectItem";
 import { useCallback, useState } from "react";
 import { Logger } from "@/utils/logger";
-import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
+import * as RepoProjectsServer from "@/db/repositories/RepoProjects.server";
 import { LoadingScreen } from "@/components/loadingScreen/LoadingScreen";
-import { useRouter } from "next/navigation";
 import { useTableData, UseTableLoadData } from "@/hooks/tableData";
-import { dbWorkTransform } from "@/db/utils/workTransforms";
 import { getErrorMessage } from "@/utils/errorMessage";
 import Skeleton from "@mui/material/Skeleton";
+import { IProject } from "@/types/IProject";
 
 type Props = {
   itemPerPage?: number;
@@ -18,20 +16,20 @@ type Props = {
   getRedirectPathEdit: (id: string) => string;
 }
 
-export function AdminWorkList({
+export function AdminProjectList({
   itemPerPage = 6,
   getRedirectPathDetails,
   getRedirectPathEdit,
 }: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const loadData = useCallback<UseTableLoadData<IWorkExperience, any>>(async (offset, limit) => {
+  const loadData = useCallback<UseTableLoadData<IProject, any>>(async (offset, limit) => {
     try {
-      const countData = await RepoWorksServer.getCountAll();
-      const loadedData = await RepoWorksServer.getAll(offset, limit);
+      const countData = await RepoProjectsServer.getCountAll();
+      const loadedData = await RepoProjectsServer.getAll(offset, limit);
 
       return {
-        data: loadedData.map(dbWorkTransform),
+        data: loadedData,
         total: countData,
       }
     } catch (error) {
@@ -51,7 +49,7 @@ export function AdminWorkList({
     isLoading,
     total,
     refresh,
-  } = useTableData<IWorkExperience, any>({
+  } = useTableData<IProject, any>({
     data: loadData,
     pageSize: itemPerPage,
     orderBy: null,
@@ -62,15 +60,15 @@ export function AdminWorkList({
   const handleDelete = useCallback(async (id: number) => {
     try {
       setIsDeleting(true);
-      const result = await RepoWorksServer.remove(id);
+      const result = await RepoProjectsServer.remove(id);
       if (!result) {
         throw new Error('Internal error');
       }
 
       refresh(true);
-      Logger.debug(id, 'DELETE');
+      Logger.debug(id, 'Delete project');
     } catch (error) {
-      Logger.error(getErrorMessage(error), 'Delete work Error');
+      Logger.error(getErrorMessage(error), 'Delete project Error');
     } finally {
       setIsDeleting(false);
     }
@@ -94,7 +92,7 @@ export function AdminWorkList({
             <Skeleton key={i} variant="rounded" height={320} />
           ))
           : data.map((item) => (
-            <AdminWorkItem
+            <AdminProjectItem
               key={item.id}
               data={item}
               detailsHref={getRedirectPathDetails(`${item.id}`)}
@@ -106,9 +104,9 @@ export function AdminWorkList({
 
       {totalPage > 1 && (
         <Pagination
-          page={page+1}
+          page={page + 1}
           count={totalPage}
-          onChange={(_, newPage) => handlePageChange(null, newPage-1)}
+          onChange={(_, newPage) => handlePageChange(null, newPage - 1)}
           sx={{
             mt: 4,
             gridColumn: '1 / -1',

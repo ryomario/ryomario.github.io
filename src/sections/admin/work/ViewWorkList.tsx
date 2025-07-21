@@ -3,15 +3,10 @@
 import { AdminWorkList } from "@/components/admin/work/adminWorkList";
 import { AdminWorkSearch } from "@/components/admin/work/adminWorkSearch";
 import { AdminRoute } from "@/types/EnumAdminRoute";
-import { IWorkExperience } from "@/types/IWorkExperience";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 
-type Props = {
-  data: IWorkExperience[];
-}
-
-export function ViewWorkList({ data }: Props) {
+export function ViewWorkList() {
   const redirectPath = (id: string) => `${AdminRoute.WORK_VIEW}/${id}`;
   const redirectPathEdit = (id: string) => `${AdminRoute.WORK_EDIT}/${id}`;
 
@@ -25,7 +20,7 @@ export function ViewWorkList({ data }: Props) {
         alignItems: { xs: 'flex-end', sm: 'center' },
       }}
     >
-      <AdminWorkSearch redirectPath={redirectPath}/>
+      <AdminWorkSearch redirectPath={redirectPath} />
     </Box>
   );
 
@@ -35,7 +30,6 @@ export function ViewWorkList({ data }: Props) {
     </Stack>
 
     <AdminWorkList
-      data={data}
       getRedirectPathDetails={redirectPath}
       getRedirectPathEdit={redirectPathEdit}
     />

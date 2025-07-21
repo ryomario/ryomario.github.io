@@ -1,19 +1,14 @@
 'use client';
 
-import { AdminWorkList } from "@/components/admin/work/adminWorkList";
+import { AdminProjectList } from "@/components/admin/project/adminProjectList";
 import { AdminWorkSearch } from "@/components/admin/work/adminWorkSearch";
 import { AdminRoute } from "@/types/EnumAdminRoute";
-import { IWorkExperience } from "@/types/IWorkExperience";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 
-type Props = {
-  data: IWorkExperience[];
-}
-
-export function ViewWorkList({ data }: Props) {
-  const redirectPath = (id: string) => `${AdminRoute.WORK_VIEW}/${id}`;
-  const redirectPathEdit = (id: string) => `${AdminRoute.WORK_EDIT}/${id}`;
+export function ViewProjectList() {
+  const redirectPath = (id: string) => `${AdminRoute.PROJECT_VIEW}/${id}`;
+  const redirectPathEdit = (id: string) => `${AdminRoute.PROJECT_EDIT}/${id}`;
 
   const renderFilters = () => (
     <Box
@@ -25,7 +20,7 @@ export function ViewWorkList({ data }: Props) {
         alignItems: { xs: 'flex-end', sm: 'center' },
       }}
     >
-      <AdminWorkSearch redirectPath={redirectPath}/>
+      <AdminWorkSearch redirectPath={redirectPath} />
     </Box>
   );
 
@@ -34,8 +29,7 @@ export function ViewWorkList({ data }: Props) {
       {renderFilters()}
     </Stack>
 
-    <AdminWorkList
-      data={data}
+    <AdminProjectList
       getRedirectPathDetails={redirectPath}
       getRedirectPathEdit={redirectPathEdit}
     />

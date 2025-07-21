@@ -39,6 +39,7 @@ export const Image = forwardRef<HTMLSpanElement, ImageProps>((props, ref) => {
     ...rest
   } = props;
 
+  console.log('src',src)
   const localRef = useRef<HTMLSpanElement|null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -73,6 +74,7 @@ export const Image = forwardRef<HTMLSpanElement, ImageProps>((props, ref) => {
         src={src}
         alt={alt}
         onLoad={handleImageLoad}
+        onError={handleImageLoad}
         {...slotProps?.img}
       />
     ),

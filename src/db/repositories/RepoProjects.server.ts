@@ -74,7 +74,16 @@ export async function update(id: number, data: Omit<IProject, 'id'>): Promise<IP
   try {
     const previews = await uploadImagePreviews(data.previews);
 
-    const old_project = await getOne(id);
+    const old_project = await prisma.project.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        previews: true,
+      },
+    });
+    if(!old_project) throw new Error('data not found');
+
     if (old_project.previews.length > 0) {
       for (const preview of old_project.previews) {
         if (previews.findIndex(url => url == preview.url) == -1) {
@@ -246,3 +255,18 @@ async function uploadImagePreviews(previews: IProject['previews']): Promise<Proj
     throw new Error(message);
   }
 }
+
+export async function getCountAll() {
+  try {
+    const projects = await prisma.project.count()
+      
+    Logger.info(`"${projects}" projects counted!`, 'projects getCountAll')
+    return projects
+  } catch(error) {
+    const message = getErrorMessage(error);
+    Logger.error(message, 'projects getCountAll error')
+
+    throw new Error(message);
+  }
+}
+
