@@ -16,7 +16,6 @@ import MenuItem from "@mui/material/MenuItem";
 import { IProject } from "@/types/IProject";
 import { styled } from "@mui/material/styles";
 import CardMedia from "@mui/material/CardMedia";
-import { Image } from "@/components/image/image";
 
 type Props = {
   data: IProject;
@@ -79,7 +78,7 @@ export function AdminProjectItem({
       />
 
       <Overlay>
-        <Typography variant="h6" gutterBottom>
+        <Typography component={RouterLink} href={detailsHref} sx={{ color: 'inherit' }} variant="h6" gutterBottom>
           {data.title}
         </Typography>
         <Typography variant="body2" sx={{

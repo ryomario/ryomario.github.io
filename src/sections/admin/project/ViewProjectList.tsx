@@ -1,7 +1,7 @@
 'use client';
 
 import { AdminProjectList } from "@/components/admin/project/adminProjectList";
-import { AdminWorkSearch } from "@/components/admin/work/adminWorkSearch";
+import { AdminProjectSearch } from "@/components/admin/project/adminProjectSearch";
 import { AdminRoute } from "@/types/EnumAdminRoute";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -20,7 +20,7 @@ export function ViewProjectList() {
         alignItems: { xs: 'flex-end', sm: 'center' },
       }}
     >
-      <AdminWorkSearch redirectPath={redirectPath} />
+      <AdminProjectSearch redirectPath={redirectPath} />
     </Box>
   );
 

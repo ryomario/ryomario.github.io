@@ -8,37 +8,36 @@ import parse from "autosuggest-highlight/parse";
 
 import SearchIcon from '@mui/icons-material/Search';
 import CircularProgress from "@mui/material/CircularProgress";
-import { IWorkExperience } from "@/types/IWorkExperience";
 import { useDebounce } from "@/hooks/debouncedValue";
 
-import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
-import { dbWorkTransform } from "@/db/utils/workTransforms";
+import * as RepoProjectsServer from "@/db/repositories/RepoProjects.server";
 import { Logger } from "@/utils/logger";
 import { SxProps, Theme } from "@mui/material/styles";
 import Link, { linkClasses } from "@mui/material/Link";
 import { AdminSearchNotFound } from "../adminSearchNotFound";
 import RouterLink from "next/link";
 import Typography from "@mui/material/Typography";
+import { IProject } from "@/types/IProject";
 
 type Props = {
   redirectPath: (id: string) => string;
 }
 
-export function AdminWorkSearch({ redirectPath }: Props) {
+export function AdminProjectSearch({ redirectPath }: Props) {
   const router = useRouter();
 
   const [query, setQuery] = useState('');
-  const [selectedItem, setSelectedItem] = useState<IWorkExperience|null>(null);
+  const [selectedItem, setSelectedItem] = useState<IProject | null>(null);
 
   const debouncedQuery = useDebounce(query, 500);
   const { results: options, loading } = useSearchData(debouncedQuery);
 
-  const handleChange = useCallback((item: IWorkExperience|null) => {
+  const handleChange = useCallback((item: IProject | null) => {
     setSelectedItem(item);
-    if(item) {
+    if (item) {
       router.push(redirectPath(`${item.id}`));
     }
-  },[redirectPath, router]);
+  }, [redirectPath, router]);
 
   const paperStyles: SxProps<Theme> = {
     width: 320,
@@ -63,8 +62,8 @@ export function AdminWorkSearch({ redirectPath }: Props) {
       value={selectedItem}
       onChange={(_event, newValue) => handleChange(newValue)}
       onInputChange={(_event, newValue) => setQuery(newValue)}
-      getOptionLabel={(option) => option.jobTitle}
-      noOptionsText={<AdminSearchNotFound query={debouncedQuery}/>}
+      getOptionLabel={(option) => option.title}
+      noOptionsText={<AdminSearchNotFound query={debouncedQuery} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{ paper: { sx: paperStyles } }}
       sx={{
@@ -83,7 +82,7 @@ export function AdminWorkSearch({ redirectPath }: Props) {
                 </InputAdornment>
               ),
               endAdornment: <>
-                {loading && <CircularProgress size="1em" sx={{ mr: -3 }}/>}
+                {loading && <CircularProgress size="1em" sx={{ mr: -3 }} />}
                 {params.InputProps.endAdornment}
               </>,
             }
@@ -91,13 +90,49 @@ export function AdminWorkSearch({ redirectPath }: Props) {
         />
       )}
       renderOption={(props, work, { inputValue }) => {
-        const matches_title = match(work.jobTitle, inputValue, { insideWords: true, findAllOccurrences: true });
-        const parts_title = parse(work.jobTitle, matches_title);
+        const matches_title = match(work.title, inputValue, { insideWords: true, findAllOccurrences: true });
+        const parts_title = parse(work.title, matches_title);
 
-        const matches_company = match(work.companyName, inputValue, { insideWords: true, findAllOccurrences: true });
-        const parts_company = parse(work.companyName, matches_company);
+        const matches_desc = match(work.desc, inputValue, { insideWords: true, findAllOccurrences: true });
+        const parts_desc = parse(work.desc, matches_desc);
+        
+        let parts_desc_cutted: typeof parts_desc = [];
+        const max_desc_length = 35;
+        const firstHighlightedPart_index = parts_desc.findIndex(part => part.highlight);
 
-        // console.log('WORK', work)
+        let i, j, currLength = 0;
+        j = firstHighlightedPart_index == -1 ? 0 : firstHighlightedPart_index;
+        i = j-1;
+
+        while(currLength < max_desc_length) {
+          const part_i = parts_desc[i];
+          const part_j = parts_desc[j];
+          if(part_j.text.length > (max_desc_length - currLength)) {
+            part_j.text = `${part_j.text.substring(0, max_desc_length - currLength - 3)}...`;
+          }
+          parts_desc_cutted.push(part_j);
+          currLength += part_j.text.length;
+          
+          if(currLength >= max_desc_length) {
+            break;
+          }
+
+          if(i!=j && i >= 0) {
+            if(part_i.text.length > (max_desc_length - currLength)) {
+              part_i.text = `...${part_i.text.substring(part_i.text.length - max_desc_length - currLength - 3)}`;
+            }
+            parts_desc_cutted.unshift(part_i);
+            currLength += part_i.text.length;
+          }
+          
+          if(i>0)i--;
+          if(j<(parts_desc.length -1))j++;
+        }
+
+        const last_part = parts_desc_cutted[parts_desc_cutted.length-1];
+        if(parts_desc[j] && parts_desc[j] !== last_part && !last_part.text.endsWith('...')) {
+          last_part.text = `${last_part.text}...`;
+        }
 
         return (
           <li {...props} key={`search-option-${work.id}`}>
@@ -122,7 +157,7 @@ export function AdminWorkSearch({ redirectPath }: Props) {
                 </Typography>
               ))}
               <br />
-              {parts_company.map((part, index) => (
+              {parts_desc_cutted.map((part, index) => (
                 <Typography
                   key={index}
                   component="span"
@@ -144,25 +179,25 @@ export function AdminWorkSearch({ redirectPath }: Props) {
 }
 
 function useSearchData(searchQuery: string) {
-  const [results, setResults] = useState<IWorkExperience[]>([]);
+  const [results, setResults] = useState<IProject[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchResults = useCallback(async () => {
     setLoading(true);
 
     try {
-      const resData = await RepoWorksServer.getAllByFilter({ q: searchQuery });
+      const resData = await RepoProjectsServer.getAll({ filter: { q: searchQuery }, offset: 0, limit: 10 });
 
-      setResults(resData.map(dbWorkTransform));
+      setResults(resData);
     } catch (error) {
-      Logger.error(error, 'Work Search error');
+      Logger.error(error, 'Project Search error');
     } finally {
       setLoading(false);
     }
-  },[searchQuery]);
+  }, [searchQuery]);
 
   useEffect(() => {
-    if(searchQuery) {
+    if (searchQuery) {
       fetchResults();
     } else {
       setResults([]);

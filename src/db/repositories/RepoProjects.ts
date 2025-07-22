@@ -1,13 +1,31 @@
 import { Logger } from "@/utils/logger"
 import { prisma } from "../prisma"
 import { getErrorMessage } from "@/utils/errorMessage"
-import { IProject } from "@/types/IProject";
+import { IProject, IProjectFilter } from "@/types/IProject";
+import { IPaginationParams } from "@/types/IPagination";
 
-async function getAll(offset = 0, limit = 0): Promise<IProject[]> {
+type GetAllParams = IPaginationParams & {
+  filter?: IProjectFilter;
+}
+async function getAll({ filter, offset, limit }: GetAllParams = { limit: 0, offset: 0 }): Promise<IProject[]> {
   try {
     const projects = await prisma.project.findMany({
       skip: offset,
       take: limit > 0 ? limit : undefined,
+      where: filter ? {
+        OR: [
+          {
+            title: {
+              contains: filter.q,
+            }
+          },
+          {
+            desc: {
+              contains: filter.q,
+            }
+          }
+        ],
+      } : undefined,
       orderBy: [
         { updatedAt: 'desc' },
       ],

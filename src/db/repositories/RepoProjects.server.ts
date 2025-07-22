@@ -224,11 +224,12 @@ async function uploadImagePreviews(previews: IProject['previews']): Promise<Proj
       throw Error('At least add an image preview');
     }
 
+    let timestamp = Date.now();
     for (const image of previews) {
       let image_url: string;
       let uploaded = false;
       if (image instanceof File) {
-        const upload = await uploadImage(image, `project_previews/${Date.now()}`);
+        const upload = await uploadImage(image, `project_previews/${timestamp++}`);
         image_url = upload.path;
         uploaded = true;
       } else {
