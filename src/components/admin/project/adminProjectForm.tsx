@@ -95,7 +95,7 @@ export function AdminProjectForm({
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     watch,
     setValue,
   } = methods;
@@ -240,6 +240,7 @@ export function AdminProjectForm({
         variant="contained"
         size="large"
         loading={isSubmitting}
+        disabled={!isDirty}
         sx={{ ml: 2 }}
       >
         {!values ? 'Create' : 'Save'}

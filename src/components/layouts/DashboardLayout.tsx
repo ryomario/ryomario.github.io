@@ -52,7 +52,7 @@ export function DashboardLayout({
           <SidebarLayout data={slotProps?.nav?.data}/>
 
           {/** @slot Main */}
-          <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
+          <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column', overflowX: 'hidden' }}>
             <Toolbar />
             {children}
           </Box>

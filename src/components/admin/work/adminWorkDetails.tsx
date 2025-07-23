@@ -6,11 +6,9 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { fileData } from "@/lib/file";
-import ListItemText from "@mui/material/ListItemText";
 import { getMonthName, monthYearElapsedHuman } from "@/lib/date";
 import RouterLink from "next/link";
 import { AdminRoute } from "@/types/EnumAdminRoute";
@@ -34,18 +32,18 @@ export function AdminWorkDetails({ data }: Props) {
   return (
     <Grid container spacing={3}>
       <Grid size={12} display="flex" gap={3} justifyContent="flex-end" alignItems="center">
-        <Chip size="small" color={data.hidden ? 'default' : 'primary'} icon={data.hidden ? <PublicOffIcon/> : <PublicIcon/>} label={data.hidden ? "Not published" : "Published"}/>
+        <Chip size="small" color={data.hidden ? 'default' : 'primary'} icon={data.hidden ? <PublicOffIcon /> : <PublicIcon />} label={data.hidden ? "Not published" : "Published"} />
         <Button
           variant="contained"
           color="warning"
-          endIcon={<EditIcon/>}
+          endIcon={<EditIcon />}
           LinkComponent={RouterLink}
           href={`${AdminRoute.WORK_EDIT}/${data.id}`}
         >Edit</Button>
       </Grid>
       <Grid size={{ xs: 12, md: 8 }}>
         <Card>
-          <CardHeader title={data.jobTitle} sx={{ mb: 3 }}/>
+          <CardHeader title={data.jobTitle} sx={{ mb: 3 }} />
 
           <CardContent>
             {
@@ -68,7 +66,7 @@ export function AdminWorkDetails({ data }: Props) {
                     }}
                   >
                     {data.skills.map((skill, i) => (
-                      <Chip key={i} label={skill}/>
+                      <Chip key={i} label={skill} />
                     ))}
                   </Box>
                 </Stack>
@@ -85,32 +83,32 @@ export function AdminWorkDetails({ data }: Props) {
           flexDirection: 'column',
         }}>
           <Box display="flex" gap={1.5}>
-            <TodayIcon fontSize="small"/>
+            <TodayIcon fontSize="small" />
             <Stack flexGrow={1} spacing={0.5}>
               <Typography variant="body2" color="text.disabled">Date started</Typography>
               <Typography variant="body2">{`${getMonthName(data.startDate_month)} ${data.startDate_year}`}</Typography>
             </Stack>
           </Box>
           <Box display="flex" gap={1.5}>
-            <EventIcon fontSize="small"/>
+            <EventIcon fontSize="small" />
             <Stack flexGrow={1} spacing={0.5}>
               <Typography variant="body2" color="text.disabled">Date ended</Typography>
               <Typography variant="body2">{
                 (data.endDate_month && data.endDate_year)
-                ? `${getMonthName(data.endDate_month)} ${data.endDate_year}`
-                : 'Present'
+                  ? `${getMonthName(data.endDate_month)} ${data.endDate_year}`
+                  : 'Present'
               }</Typography>
             </Stack>
           </Box>
           <Box display="flex" gap={1.5}>
-            <AccessTimeFilledIcon fontSize="small"/>
+            <AccessTimeFilledIcon fontSize="small" />
             <Stack flexGrow={1} spacing={0.5}>
               <Typography variant="body2" color="text.disabled">Employment type</Typography>
               <Typography variant="body2">{getWorkEmploymentLabel(data.employmentType)}</Typography>
             </Stack>
           </Box>
           <Box display="flex" gap={1.5}>
-            <HourglassBottomIcon fontSize="small"/>
+            <HourglassBottomIcon fontSize="small" />
             <Stack flexGrow={1} spacing={0.5}>
               <Typography variant="body2" color="text.disabled">Experience</Typography>
               <Typography variant="body2">{monthYearElapsedHuman(data.startDate_month, data.startDate_year, data.endDate_month, data.endDate_year)}</Typography>
@@ -144,7 +142,7 @@ export function AdminWorkDetails({ data }: Props) {
                     typography: 'caption',
                   }}
                 >
-                  <LocationOnOutlinedIcon sx={{ fontSize: '1.5em' }}/>
+                  <LocationOnOutlinedIcon sx={{ fontSize: '1.5em' }} />
                   {loc}
                 </Box>
               ))
