@@ -10,16 +10,23 @@ export enum LogLevel {
 
 export class Logger {
   private static getMessage(message: unknown, title = '') {
-    return `${
-      (title.trim())
-      ? title.trim().concat(' => ')
-      : ''
-    }${(typeof message === 'string') ? message : toJSON_safe(message)}`
+    return `${(title.trim())
+        ? title.trim().concat(' => ')
+        : ''
+      }${(typeof message === 'string') ? message : toJSON_safe(message)}`
   }
 
   public static sendLog(level: LogLevel, message: string) {
-    if(process.env.NODE_ENV == 'development') {
+    if (process.env.NODE_ENV == 'development') {
       sendLog(level, message);
+    } else {
+      switch (level) {
+        case LogLevel.DEBUG: console.debug(message);
+        case LogLevel.ERROR: console.error(message);
+        case LogLevel.INFO: console.info(message);
+        case LogLevel.WARN: console.warn(message);
+        default: console.info(message);
+      }
     }
   }
 
@@ -27,7 +34,7 @@ export class Logger {
    * Debug, show in console as log at development mode
    */
   public static debug(message: unknown, title = '') {
-    if(process.env.NODE_ENV == 'development') {
+    if (process.env.NODE_ENV == 'development') {
       this.sendLog(LogLevel.DEBUG, `DEBUG : ${Logger.getMessage(message, title)}`);
     }
   }
