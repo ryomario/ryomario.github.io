@@ -1,4 +1,4 @@
-import { IWorkExperience } from "@/types/IWorkExperience"
+import { IWorkExperience } from "@/types/IWorkExperience";
 import Box from "@mui/material/Box";
 import Pagination, { paginationClasses } from "@mui/material/Pagination";
 import { AdminWorkItem } from "./adminWorkItem";
@@ -6,9 +6,7 @@ import { useCallback, useState } from "react";
 import { Logger } from "@/utils/logger";
 import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
 import { LoadingScreen } from "@/components/loadingScreen/LoadingScreen";
-import { useRouter } from "next/navigation";
 import { useTableData, UseTableLoadData } from "@/hooks/tableData";
-import { dbWorkTransform } from "@/db/utils/workTransforms";
 import { getErrorMessage } from "@/utils/errorMessage";
 import Skeleton from "@mui/material/Skeleton";
 
@@ -28,10 +26,10 @@ export function AdminWorkList({
   const loadData = useCallback<UseTableLoadData<IWorkExperience, any>>(async (offset, limit) => {
     try {
       const countData = await RepoWorksServer.getCountAll();
-      const loadedData = await RepoWorksServer.getAll(offset, limit);
+      const data = await RepoWorksServer.getAll({ offset, limit });
 
       return {
-        data: loadedData.map(dbWorkTransform),
+        data,
         total: countData,
       }
     } catch (error) {
@@ -68,7 +66,7 @@ export function AdminWorkList({
       }
 
       refresh(true);
-      Logger.debug(id, 'DELETE');
+      Logger.debug(id, 'Delete work');
     } catch (error) {
       Logger.error(getErrorMessage(error), 'Delete work Error');
     } finally {
@@ -106,9 +104,9 @@ export function AdminWorkList({
 
       {totalPage > 1 && (
         <Pagination
-          page={page+1}
+          page={page + 1}
           count={totalPage}
-          onChange={(_, newPage) => handlePageChange(null, newPage-1)}
+          onChange={(_, newPage) => handlePageChange(null, newPage - 1)}
           sx={{
             mt: 4,
             gridColumn: '1 / -1',

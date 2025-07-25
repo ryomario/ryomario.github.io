@@ -1,14 +1,13 @@
+import { LoadingScreen } from "@/components/loadingScreen/LoadingScreen";
+import * as RepoEducationsServer from "@/db/repositories/RepoEducations.server";
+import { useTableData, UseTableLoadData } from "@/hooks/tableData";
+import { IEducation } from "@/types/IEducation";
+import { Logger } from "@/utils/logger";
 import Box from "@mui/material/Box";
 import Pagination, { paginationClasses } from "@mui/material/Pagination";
-import { AdminEducationItem } from "./adminEducationItem";
-import { useCallback, useState } from "react";
-import { Logger } from "@/utils/logger";
-import * as RepoEducationsServer from "@/db/repositories/RepoEducations.server";
-import { LoadingScreen } from "@/components/loadingScreen/LoadingScreen";
-import { IEducation } from "@/types/IEducation";
-import { useTableData, UseTableLoadData } from "@/hooks/tableData";
-import { dbEducationTransform } from "@/db/utils/educationTransforms";
 import Skeleton from "@mui/material/Skeleton";
+import { useCallback, useState } from "react";
+import { AdminEducationItem } from "./adminEducationItem";
 
 type Props = {
   itemPerPage?: number;
@@ -26,10 +25,10 @@ export function AdminEducationList({
   const loadData = useCallback<UseTableLoadData<IEducation, any>>(async (offset, limit) => {
     try {
       const countData = await RepoEducationsServer.getCountAll();
-      const loadedData = await RepoEducationsServer.getAll(offset, limit);
+      const data = await RepoEducationsServer.getAll({ offset, limit });
 
       return {
-        data: loadedData.map(dbEducationTransform),
+        data,
         total: countData,
       }
     } catch (error) {

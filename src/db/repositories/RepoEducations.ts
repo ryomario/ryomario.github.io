@@ -1,8 +1,14 @@
-import { Logger } from "@/utils/logger"
-import { prisma } from "../prisma"
-import { getErrorMessage } from "@/utils/errorMessage"
+import { Logger } from "@/utils/logger";
+import { prisma } from "../prisma";
+import { getErrorMessage } from "@/utils/errorMessage";
+import { IPaginationParams } from "@/types/IPagination";
+import { IEducation, IEducationFilter } from "@/types/IEducation";
 
-async function getAll(offset = 0, limit = 0) {
+type GetAllParams = Partial<IPaginationParams> & {
+  filter?: IEducationFilter;
+}
+
+async function getAll({ filter, offset = 0, limit = 0 }: GetAllParams = { limit: 0, offset: 0 }): Promise<IEducation[]> {
   try {
     const educations = await prisma.education.findMany({
       skip: offset,
@@ -11,15 +17,32 @@ async function getAll(offset = 0, limit = 0) {
         { endYear: 'desc' },
         { startYear: 'desc' },
       ],
+      where: filter ? {
+        OR: [
+          {
+            schoolName: {
+              contains: filter.q,
+            }
+          },
+          {
+            degree: {
+              contains: filter.q,
+            }
+          }
+        ],
+      } : undefined,
       include: {
         majors: true,
       }
-    })
-    if(!educations) throw Error(`any educations not found`)
-      
-    Logger.info(`"${educations.length}" data loaded!`, 'educations getAll')
-    return educations
-  } catch(error) {
+    });
+    if (!educations) throw Error(`any educations not found`);
+
+    Logger.info(`"${educations.length}" data loaded!`, 'educations getAll');
+    return educations.map(edu => ({
+      ...edu,
+      majors: edu.majors.map(({ name }) => name),
+    }));
+  } catch (error) {
     const message = getErrorMessage(error);
     Logger.error(message, 'educations getAll error')
 
@@ -27,7 +50,7 @@ async function getAll(offset = 0, limit = 0) {
   }
 }
 
-async function getOne(id: number) {
+async function getOne(id: number): Promise<IEducation> {
   try {
     const education = await prisma.education.findFirst({
       where: {
@@ -36,36 +59,35 @@ async function getOne(id: number) {
       include: {
         majors: true,
       }
-    })
-    if(!education) throw Error(`education with id "${id}" not found`)
-  
-    Logger.info(`data with id "${education.id}" loaded!`, 'educations getOne')
-    return education
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+    });
+    if (!education) throw Error(`education with id "${id}" not found`);
+
+    Logger.info(`data with id "${education.id}" loaded!`, 'educations getOne');
+    return {
+      ...education,
+      majors: education.majors.map(({ name }) => name),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
 
     Logger.error(message, 'education getOne error')
 
-    return null
+    throw new Error(message);
   }
 }
 
 async function getAllMajors() {
   try {
-    const majors = await prisma.educationMajor.findMany()
-    if(!majors) throw Error(`any majors not found`)
-  
-    return majors
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+    const majors = await prisma.educationMajor.findMany();
+    if (!majors) throw Error(`any majors not found`);
 
-    Logger.error(message, 'education getAllMajors error')
+    return majors;
+  } catch (error) {
+    const message = getErrorMessage(error);
 
-    return []
+    Logger.error(message, 'education getAllMajors error');
+
+    throw new Error(message);
   }
 }
 

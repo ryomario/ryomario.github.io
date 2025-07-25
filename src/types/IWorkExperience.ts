@@ -24,10 +24,15 @@ export function getWorkEmploymentLabel(type: WorkEmploymentType): string {
 }
 
 export type IWorkExperience = Omit<Work, 'logo'|'employmentType'|'location'|'skills'> & {
-  logo?: string | File | null;
+  logo?: string | null;
   employmentType: WorkEmploymentType;
   location: string[];
   skills: string[];
+}
+
+export type IFormWorkExperience = Omit<IWorkExperience, 'id'|'logo'> & {
+  id?: IWorkExperience['id'] | null;
+  logo?: IWorkExperience['logo'] | File;
 }
 
 export type IWorkExperienceFilter = {

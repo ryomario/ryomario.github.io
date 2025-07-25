@@ -1,24 +1,21 @@
+import * as RepoEducationsServer from "@/db/repositories/RepoEducations.server";
+import { useDebounce } from "@/hooks/debouncedValue";
+import { IEducation } from "@/types/IEducation";
+import { Logger } from "@/utils/logger";
+import SearchIcon from '@mui/icons-material/Search';
 import Autocomplete, { autocompleteClasses } from "@mui/material/Autocomplete";
+import CircularProgress from "@mui/material/CircularProgress";
 import InputAdornment from "@mui/material/InputAdornment";
+import Link, { linkClasses } from "@mui/material/Link";
+import { SxProps, Theme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import Typography from "@mui/material/Typography";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
-
-import SearchIcon from '@mui/icons-material/Search';
-import CircularProgress from "@mui/material/CircularProgress";
-import { useDebounce } from "@/hooks/debouncedValue";
-
-import * as RepoEducationsServer from "@/db/repositories/RepoEducations.server";
-import { Logger } from "@/utils/logger";
-import { SxProps, Theme } from "@mui/material/styles";
-import Link, { linkClasses } from "@mui/material/Link";
-import { AdminSearchNotFound } from "../adminSearchNotFound";
 import RouterLink from "next/link";
-import Typography from "@mui/material/Typography";
-import { IEducation } from "@/types/IEducation";
-import { dbEducationTransform } from "@/db/utils/educationTransforms";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { AdminSearchNotFound } from "../adminSearchNotFound";
 
 type Props = {
   redirectPath: (id: string) => string;
@@ -28,17 +25,17 @@ export function AdminEducationSearch({ redirectPath }: Props) {
   const router = useRouter();
 
   const [query, setQuery] = useState('');
-  const [selectedItem, setSelectedItem] = useState<IEducation|null>(null);
+  const [selectedItem, setSelectedItem] = useState<IEducation | null>(null);
 
   const debouncedQuery = useDebounce(query, 500);
   const { results: options, loading } = useSearchData(debouncedQuery);
 
-  const handleChange = useCallback((item: IEducation|null) => {
+  const handleChange = useCallback((item: IEducation | null) => {
     setSelectedItem(item);
-    if(item) {
+    if (item) {
       router.push(redirectPath(`${item.id}`));
     }
-  },[redirectPath, router]);
+  }, [redirectPath, router]);
 
   const paperStyles: SxProps<Theme> = {
     width: 320,
@@ -64,7 +61,7 @@ export function AdminEducationSearch({ redirectPath }: Props) {
       onChange={(_event, newValue) => handleChange(newValue)}
       onInputChange={(_event, newValue) => setQuery(newValue)}
       getOptionLabel={(option) => option.schoolName}
-      noOptionsText={<AdminSearchNotFound query={debouncedQuery}/>}
+      noOptionsText={<AdminSearchNotFound query={debouncedQuery} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{ paper: { sx: paperStyles } }}
       sx={{
@@ -83,7 +80,7 @@ export function AdminEducationSearch({ redirectPath }: Props) {
                 </InputAdornment>
               ),
               endAdornment: <>
-                {loading && <CircularProgress size="1em" sx={{ mr: -3 }}/>}
+                {loading && <CircularProgress size="1em" sx={{ mr: -3 }} />}
                 {params.InputProps.endAdornment}
               </>,
             }
@@ -149,18 +146,18 @@ function useSearchData(searchQuery: string) {
     setLoading(true);
 
     try {
-      const resData = await RepoEducationsServer.getAllByFilter({ q: searchQuery });
+      const data = await RepoEducationsServer.getAll({ filter: { q: searchQuery } });
 
-      setResults(resData.map(dbEducationTransform));
+      setResults(data);
     } catch (error) {
       Logger.error(error, 'Education Search error');
     } finally {
       setLoading(false);
     }
-  },[searchQuery]);
+  }, [searchQuery]);
 
   useEffect(() => {
-    if(searchQuery) {
+    if (searchQuery) {
       fetchResults();
     } else {
       setResults([]);

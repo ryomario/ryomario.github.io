@@ -22,8 +22,13 @@ export const EDUCATION_DEGREES = [
 ];
 
 export type IEducation = Omit<Education, 'logo'> & {
-  logo?: string | File | null;
+  logo?: string | null;
   majors: string[];
+}
+
+export type IFormEducation = Omit<IEducation, 'id'|'logo'> & {
+  id?: IEducation['id'] | null;
+  logo?: IEducation['logo'] | File;
 }
 
 export type IEducationFilter = {

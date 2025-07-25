@@ -1,8 +1,13 @@
 import { Project, ProjectPreview, ProjectTag } from "@/generated/prisma";
 
 export type IProject = Project & {
-  previews: (ProjectPreview['url'] | File)[];
+  previews: ProjectPreview['url'][];
   tags: ProjectTag['tag_name'][];
+}
+
+export type IFormProject = Omit<IProject, 'id'|'previews'> & {
+  id?: IProject['id'] | null;
+  previews: (ProjectPreview['url'] | File)[];
 }
 
 export type IProjectFilter = {

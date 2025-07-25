@@ -26,7 +26,6 @@ export default async function Page({ params }: Readonly<{
   }
 
   const dataDbMajors = await RepoEducations.getAllMajors();
-  const values = dbEducationTransform(data);
 
-  return <ViewEducationUpdate values={values} refMajors={dbEducationMajorsTransform(dataDbMajors)}/>;
+  return <ViewEducationUpdate values={data} refMajors={dbEducationMajorsTransform(dataDbMajors)}/>;
 }

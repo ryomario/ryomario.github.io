@@ -1,30 +1,31 @@
 "use server"
 
-import { IProfileForm, IProfileProfessional, IProfileSocialLinks } from "@/types/IProfile"
-import { prisma } from "@/db/prisma"
+import { prisma } from "@/db/prisma";
+import RepoProfileData from "@/db/repositories/RepoProfileData";
+import { toJSON } from "@/lib/json";
+import { IProfileForm, IProfileProfessional, IProfileSocialLinks } from "@/types/IProfile";
+import { getErrorMessage } from "@/utils/errorMessage";
 import { deleteFile, uploadImage } from "@/utils/file.server";
-import RepoProfileData from "@/db/repositories/RepoProfileData"
-import { parseJSON, toJSON } from "@/lib/json";
-import { cookies } from "next/headers";
+import { Logger } from "@/utils/logger";
 
 export const getAll = RepoProfileData.getAll
 export const getOne = RepoProfileData.getOne
 export const getJSONData = RepoProfileData.getJSONData
 
 export async function updateProfileData(data: IProfileForm) {
-  let profile_picture: string = ''
-  let profile_picture_uploaded = false
-  
+  let profile_picture: string = '';
+  let profile_picture_uploaded = false;
+
   try {
-    if(data.profile_picture instanceof File) {
-      const uploadReturn = await uploadImage(data.profile_picture, `profile_${Date.now()}`, 100)
-      profile_picture_uploaded = uploadReturn.success
-      profile_picture = uploadReturn.path
-    } else if(typeof data.profile_picture === 'string') {
-      profile_picture = data.profile_picture
+    if (data.profile_picture instanceof File) {
+      const uploadReturn = await uploadImage(data.profile_picture, `profile_${Date.now()}`, 100);
+      profile_picture_uploaded = uploadReturn.success;
+      profile_picture = uploadReturn.path;
+    } else if (typeof data.profile_picture === 'string') {
+      profile_picture = data.profile_picture;
     }
 
-    const oldProfilePic = await RepoProfileData.getOne('profile_picture','')
+    const oldProfilePic = await RepoProfileData.getOne('profile_picture', '');
 
     const values = [
       ['name', data.name],
@@ -36,7 +37,7 @@ export async function updateProfileData(data: IProfileForm) {
       ['intro', data.intro],
       ['hireable', String(data.hireable)],
       ['lastUpdated', new Date().toISOString()],
-    ]
+    ];
 
     const query = `
       INSERT INTO profile_data(data_name, data_value)
@@ -45,36 +46,30 @@ export async function updateProfileData(data: IProfileForm) {
       DO UPDATE SET
         data_value = excluded.data_value
       WHERE excluded.data_name = profile_data.data_name;
-    `
-    const changes = await prisma.$executeRawUnsafe(query)
+    `;
+    const changes = await prisma.$executeRawUnsafe(query);
 
-    if(changes <= 0) throw Error(`No changes`)
+    if (changes <= 0) throw Error(`No changes`);
 
-    if(oldProfilePic && profile_picture && oldProfilePic != profile_picture) {
-      await deleteFile(oldProfilePic)
+    if (oldProfilePic && profile_picture && oldProfilePic != profile_picture) {
+      await deleteFile(oldProfilePic);
     }
-  
-    return true
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
 
-    if(profile_picture_uploaded) {
+    return true;
+  } catch (error) {
+    const message = getErrorMessage(error);
+
+    if (profile_picture_uploaded) {
       try {
         await deleteFile(profile_picture);
-      } catch (error: any) {
-        let delMsg = 'unknown'
-        if(typeof error == 'string') delMsg = error
-        else if(error.message) delMsg = error.message
-
-        message = `${message}\nDelete File error ${delMsg}`
+      } catch (errorDelete) {
+        Logger.error(getErrorMessage(errorDelete), 'updateProfileData error > delete file');
       }
     }
 
-    console.log('updateProfileData error', message)
+    Logger.error(message, 'updateProfileData error');
 
-    throw Error(message)
+    throw new Error(message);
   }
 }
 
@@ -86,7 +81,7 @@ export async function updateProfileSocialLinks(data: IProfileSocialLinks) {
       ['socialLinks.linkedin', data.linkedin],
       ['socialLinks.website', data.website],
       ['lastUpdated', new Date().toISOString()],
-    ]
+    ];
 
     const query = `
       INSERT INTO profile_data(data_name, data_value)
@@ -95,20 +90,18 @@ export async function updateProfileSocialLinks(data: IProfileSocialLinks) {
       DO UPDATE SET
         data_value = excluded.data_value
       WHERE excluded.data_name = profile_data.data_name;
-    `
-    const changes = await prisma.$executeRawUnsafe(query)
+    `;
+    const changes = await prisma.$executeRawUnsafe(query);
 
-    if(changes <= 0) throw Error(`No changes`)
+    if (changes <= 0) throw Error(`No changes`);
 
-    return true
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+    return true;
+  } catch (error) {
+    const message = getErrorMessage(error);
 
-    console.log('updateProfileSocialLinks error', message)
+    Logger.error(message, 'updateProfileSocialLinks error');
 
-    throw Error(message)
+    throw new Error(message);
   }
 }
 
@@ -125,7 +118,7 @@ export async function updateProfileProfessional(data: IProfileProfessional) {
       ['professional.year_of_experience', data.year_of_experience],
       ['professional.relevant_career_year_of_experience', data.relevant_career_year_of_experience],
       ['lastUpdated', new Date().toISOString()],
-    ]
+    ];
 
     const query = `
       INSERT INTO profile_data(data_name, data_value)
@@ -134,19 +127,17 @@ export async function updateProfileProfessional(data: IProfileProfessional) {
       DO UPDATE SET
         data_value = excluded.data_value
       WHERE excluded.data_name = profile_data.data_name;
-    `
-    const changes = await prisma.$executeRawUnsafe(query)
+    `;
+    const changes = await prisma.$executeRawUnsafe(query);
 
-    if(changes <= 0) throw Error(`No changes`)
+    if (changes <= 0) throw Error(`No changes`);
 
-    return true
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+    return true;
+  } catch (error) {
+    const message = getErrorMessage(error);
 
-    console.log('updateProfileProfessional error', message)
+    Logger.error(message, 'updateProfileProfessional error');
 
-    throw Error(message)
+    throw new Error(message);
   }
 }

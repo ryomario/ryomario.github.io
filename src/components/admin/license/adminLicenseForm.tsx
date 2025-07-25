@@ -1,7 +1,7 @@
 import { Form, RHFField } from "@/components/formHook";
 import * as RepoLicensesServer from "@/db/repositories/RepoLicenses.server";
 import { getAllMonthsName } from "@/lib/date";
-import { ILicense } from "@/types/ILicense";
+import { IFormLicense, ILicense } from "@/types/ILicense";
 import { Logger } from "@/utils/logger";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -25,7 +25,7 @@ export function AdminLicenseForm({
   values,
   afterSubmit,
 }: Props) {
-  const methods = useForm<ILicense>({
+  const methods = useForm<IFormLicense>({
     mode: 'all',
     defaultValues: {
       name: '',
@@ -44,7 +44,7 @@ export function AdminLicenseForm({
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     watch,
     setValue,
   } = methods;
@@ -184,6 +184,7 @@ export function AdminLicenseForm({
         variant="contained"
         size="large"
         loading={isSubmitting}
+        disabled={!isDirty}
         sx={{ ml: 2 }}
       >
         {!values ? 'Create' : 'Save'}

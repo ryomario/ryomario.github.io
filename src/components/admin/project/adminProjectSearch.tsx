@@ -95,42 +95,42 @@ export function AdminProjectSearch({ redirectPath }: Props) {
 
         const matches_desc = match(work.desc, inputValue, { insideWords: true, findAllOccurrences: true });
         const parts_desc = parse(work.desc, matches_desc);
-        
+
         let parts_desc_cutted: typeof parts_desc = [];
         const max_desc_length = 35;
         const firstHighlightedPart_index = parts_desc.findIndex(part => part.highlight);
 
         let i, j, currLength = 0;
         j = firstHighlightedPart_index == -1 ? 0 : firstHighlightedPart_index;
-        i = j-1;
+        i = j - 1;
 
-        while(currLength < max_desc_length) {
+        while (currLength < max_desc_length) {
           const part_i = parts_desc[i];
           const part_j = parts_desc[j];
-          if(part_j.text.length > (max_desc_length - currLength)) {
+          if (part_j.text.length > (max_desc_length - currLength)) {
             part_j.text = `${part_j.text.substring(0, max_desc_length - currLength - 3)}...`;
           }
           parts_desc_cutted.push(part_j);
           currLength += part_j.text.length;
-          
-          if(currLength >= max_desc_length) {
+
+          if (currLength >= max_desc_length) {
             break;
           }
 
-          if(i!=j && i >= 0) {
-            if(part_i.text.length > (max_desc_length - currLength)) {
+          if (i != j && i >= 0) {
+            if (part_i.text.length > (max_desc_length - currLength)) {
               part_i.text = `...${part_i.text.substring(part_i.text.length - max_desc_length - currLength - 3)}`;
             }
             parts_desc_cutted.unshift(part_i);
             currLength += part_i.text.length;
           }
-          
-          if(i>0)i--;
-          if(j<(parts_desc.length -1))j++;
+
+          if (i > 0) i--;
+          if (j < (parts_desc.length - 1)) j++;
         }
 
-        const last_part = parts_desc_cutted[parts_desc_cutted.length-1];
-        if(parts_desc[j] && parts_desc[j] !== last_part && !last_part.text.endsWith('...')) {
+        const last_part = parts_desc_cutted[parts_desc_cutted.length - 1];
+        if (parts_desc[j] && parts_desc[j] !== last_part && !last_part.text.endsWith('...')) {
           last_part.text = `${last_part.text}...`;
         }
 

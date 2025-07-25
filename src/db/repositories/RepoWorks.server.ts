@@ -1,33 +1,35 @@
 'use server';
 
-import { Logger } from "@/utils/logger"
-import { prisma } from "../prisma"
-import RepoWorks from "./RepoWorks"
-import { IWorkExperience, IWorkExperienceFilter } from "@/types/IWorkExperience"
-import { deleteFile, uploadImage } from "@/utils/file.server"
+import { Logger } from "@/utils/logger";
+import { prisma } from "../prisma";
+import RepoWorks from "./RepoWorks";
+import { IFormWorkExperience, IWorkExperience } from "@/types/IWorkExperience";
+import { deleteFile, uploadImage } from "@/utils/file.server";
 import { getErrorMessage } from "@/utils/errorMessage";
+
+const logoDir = 'logo_companies';
 
 export const getAll = RepoWorks.getAll;
 export const getOne = RepoWorks.getOne;
 export const getAllSkills = RepoWorks.getAllSkills;
 export const getAllWorkLocations = RepoWorks.getAllWorkLocations;
 
-export async function saveOrUpdate(data: Omit<IWorkExperience, 'id'> & { id?: IWorkExperience['id'] }) {
+export async function saveOrUpdate(data: IFormWorkExperience) {
   const { id, ...values } = data;
-  if(typeof id === 'undefined' || id === null) {
+  if (typeof id === 'undefined' || id === null) {
     return await save(values);
   } else {
     return await update(id, values);
   }
-} 
+}
 
-export async function save(data: Omit<IWorkExperience,'id'>) {
-  let logoPath: string|undefined|null;
+export async function save(data: Omit<IFormWorkExperience, 'id'>): Promise<IWorkExperience> {
+  let logoPath: string | undefined | null;
   let logoUploaded = false;
   try {
-    if(data.logo instanceof File) {
-      const upload = await uploadImage(data.logo, `${Date.now()}_company_logo`);
-      if(upload.success) {
+    if (data.logo instanceof File) {
+      const upload = await uploadImage(data.logo, `${logoDir}/${Date.now()}_company_logo`);
+      if (upload.success) {
         logoUploaded = true;
         logoPath = upload.path;
       }
@@ -64,48 +66,46 @@ export async function save(data: Omit<IWorkExperience,'id'>) {
         skills: true,
       }
     })
-    if(!work) throw new Error(`work not saved`);
-  
-    return work;
-  } catch(error: any) {
-    let message = 'unknown';
-    if(typeof error == 'string') message = error;
-    else if(error.message) message = error.message;
+    if (!work) throw new Error(`work not saved`);
+
+    return {
+      ...work,
+      location: work.location.map(loc => loc.address),
+      skills: work.skills.map(skill => skill.skillName),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
 
     Logger.error(message, 'work save error');
 
     // delete uploaded image
-    if(logoUploaded && typeof logoPath === 'string') {
+    if (logoUploaded && typeof logoPath === 'string') {
       try {
         await deleteFile(logoPath);
-      } catch (error: any) {
-        let message = 'unknown';
-        if(typeof error == 'string') message = error;
-        else if(error.message) message = error.message;
-
-        Logger.error(message, 'work delete logo error');
+      } catch (errorDelete) {
+        Logger.error(getErrorMessage(errorDelete), 'work delete logo error');
       }
     }
 
-    return false;
+    throw new Error(message);
   }
 }
 
-export async function update(id: number, data: Omit<IWorkExperience,'id'>) {
+export async function update(id: number, data: Omit<IFormWorkExperience, 'id'>): Promise<IWorkExperience> {
   // if set will be deleted after success update
-  let oldLogoPath: string|undefined|null;
-  let logoPath: string|undefined|null;
+  let oldLogoPath: string | undefined | null;
+  let logoPath: string | undefined | null;
   let logoUploaded = false;
   try {
     const old_data = await getOne(id);
     // delete 
-    if(old_data?.logo && old_data.logo != data.logo) {
+    if (old_data?.logo && old_data.logo != data.logo) {
       oldLogoPath = old_data.logo;
     }
 
-    if(data.logo instanceof File) {
-      const upload = await uploadImage(data.logo, `${Date.now()}_company_logo`);
-      if(upload.success) {
+    if (data.logo instanceof File) {
+      const upload = await uploadImage(data.logo, `${logoDir}/${Date.now()}`);
+      if (upload.success) {
         logoUploaded = true;
         logoPath = upload.path;
       }
@@ -147,9 +147,9 @@ export async function update(id: number, data: Omit<IWorkExperience,'id'>) {
         id,
       },
     })
-    if(!work) throw new Error(`work not updated`);
+    if (!work) throw new Error(`work not updated`);
 
-    if(oldLogoPath) {
+    if (oldLogoPath) {
       try {
         await deleteFile(oldLogoPath);
       } catch (error: any) {
@@ -157,94 +157,61 @@ export async function update(id: number, data: Omit<IWorkExperience,'id'>) {
         Logger.error(error, 'delete old logo error');
       }
     }
-  
-    return work;
-  } catch(error: any) {
-    let message = 'unknown';
-    if(typeof error == 'string') message = error;
-    else if(error.message) message = error.message;
+
+    return {
+      ...work,
+      location: work.location.map(loc => loc.address),
+      skills: work.skills.map(skill => skill.skillName),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
 
     Logger.error(message, 'work update error');
 
     // delete uploaded image
-    if(logoUploaded && typeof logoPath === 'string') {
+    if (logoUploaded && typeof logoPath === 'string') {
       try {
         await deleteFile(logoPath);
-      } catch (error: any) {
-        let message = 'unknown';
-        if(typeof error == 'string') message = error;
-        else if(error.message) message = error.message;
-
-        Logger.error(message, 'work delete logo error');
+      } catch (errorDelete) {
+        Logger.error(getErrorMessage(errorDelete), 'work delete logo error');
       }
     }
 
-    return false;
+    throw new Error(message);
   }
 }
 
-export async function remove(id: number) {
+export async function remove(id: number): Promise<IWorkExperience> {
   try {
     const work = await prisma.work.delete({
       where: {
         id,
       },
-    })
-    if(!work) throw new Error(`work not deleted`);
-
-    if(work.logo) {
-      try {
-        await deleteFile(work.logo);
-      } catch (error: any) {
-        // catch error, ignore if fail (only logging)
-        Logger.error(error, 'delete logo error');
-      }
-    }
-  
-    return work;
-  } catch(error: any) {
-    let message = 'unknown';
-    if(typeof error == 'string') message = error;
-    else if(error.message) message = error.message;
-
-    Logger.error(message, 'work remove error');
-
-    return false;
-  }
-}
-
-export async function getAllByFilter(filter: IWorkExperienceFilter) {
-  try {
-    const works = await prisma.work.findMany({
       include: {
         location: true,
         skills: true,
       },
-      where: {
-        OR: [
-          {
-            jobTitle: {
-              contains: filter.q,
-            }
-          },
-          {
-            companyName: {
-              contains: filter.q,
-            }
-          }
-        ],
-      }
     })
-    if(!works) throw Error(`any works not found`)
-      
-    Logger.info(`"${works.length}" data loaded!`, 'works getAllByFilter')
-    return works
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+    if (!work) throw new Error(`work not deleted`);
 
-    Logger.error(message, 'works getAllByFilter error')
+    if (work.logo) {
+      try {
+        await deleteFile(work.logo);
+      } catch (error) {
+        // catch error, ignore if fail (only logging)
+        Logger.error(getErrorMessage(error), 'delete logo error');
+      }
+    }
+
+    return {
+      ...work,
+      location: work.location.map(loc => loc.address),
+      skills: work.skills.map(skill => skill.skillName),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
+
+    Logger.error(message, 'work remove error');
 
     throw new Error(message);
   }
@@ -252,13 +219,13 @@ export async function getAllByFilter(filter: IWorkExperienceFilter) {
 
 export async function getCountAll() {
   try {
-    const works = await prisma.work.count()
-      
-    Logger.info(`"${works}" works counted!`, 'works getCountAll')
-    return works
-  } catch(error) {
+    const works = await prisma.work.count();
+
+    Logger.info(`"${works}" works counted!`, 'works getCountAll');
+    return works;
+  } catch (error) {
     const message = getErrorMessage(error);
-    Logger.error(message, 'works getCountAll error')
+    Logger.error(message, 'works getCountAll error');
 
     throw new Error(message);
   }

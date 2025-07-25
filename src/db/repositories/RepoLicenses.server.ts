@@ -1,31 +1,33 @@
 'use server';
 
+import { IFormLicense, ILicense, ILicenseFilter } from "@/types/ILicense";
+import { getErrorMessage } from "@/utils/errorMessage";
+import { deleteFile, uploadImage } from "@/utils/file.server";
 import { Logger } from "@/utils/logger";
 import { prisma } from "../prisma";
 import RepoLicenses from "./RepoLicenses";
-import { deleteFile, uploadImage } from "@/utils/file.server";
-import { ILicense, ILicenseFilter, ILicenseSortableProperties } from "@/types/ILicense";
-import { ArrayOrder } from "@/lib/array";
+
+const logoDir = 'logo_licenses';
 
 export const getAll = RepoLicenses.getAll;
 export const getOne = RepoLicenses.getOne;
 
-export async function saveOrUpdate(data: Omit<ILicense, 'id'> & { id?: ILicense['id'] }) {
+export async function saveOrUpdate(data: IFormLicense) {
   const { id, ...values } = data;
-  if(typeof id === 'undefined' || id === null) {
+  if (typeof id === 'undefined' || id === null) {
     return await save(values);
   } else {
     return await update(id, values);
   }
-} 
+}
 
-export async function save(data: Omit<ILicense,'id'>) {
-  let logoPath: string|undefined|null;
+export async function save(data: Omit<IFormLicense, 'id'>): Promise<ILicense> {
+  let logoPath: string | undefined | null;
   let logoUploaded = false;
   try {
-    if(data.logo instanceof File) {
-      const upload = await uploadImage(data.logo, `${Date.now()}_license_logo`);
-      if(upload.success) {
+    if (data.logo instanceof File) {
+      const upload = await uploadImage(data.logo, `${logoDir}/${Date.now()}`);
+      if (upload.success) {
         logoUploaded = true;
         logoPath = upload.path;
       }
@@ -46,48 +48,42 @@ export async function save(data: Omit<ILicense,'id'>) {
         credentialUrl: data.credentialUrl,
       }
     })
-    if(!license) throw new Error(`license not saved`);
-  
+    if (!license) throw new Error(`license not saved`);
+
     return license;
-  } catch(error: any) {
-    let message = 'unknown';
-    if(typeof error == 'string') message = error;
-    else if(error.message) message = error.message;
+  } catch (error) {
+    const message = getErrorMessage(error);
 
     Logger.error(message, 'license save error');
 
     // delete uploaded image
-    if(logoUploaded && typeof logoPath === 'string') {
+    if (logoUploaded && typeof logoPath === 'string') {
       try {
         await deleteFile(logoPath);
-      } catch (error: any) {
-        let message = 'unknown';
-        if(typeof error == 'string') message = error;
-        else if(error.message) message = error.message;
-
-        Logger.error(message, 'license delete logo error');
+      } catch (errorDelete) {
+        Logger.error(getErrorMessage(errorDelete), 'license delete logo error');
       }
     }
 
-    return false;
+    throw new Error(message);
   }
 }
 
-export async function update(id: number, data: Omit<ILicense,'id'>) {
+export async function update(id: number, data: Omit<IFormLicense, 'id'>): Promise<ILicense> {
   // if set will be deleted after success update
-  let oldLogoPath: string|undefined|null;
-  let logoPath: string|undefined|null;
+  let oldLogoPath: string | undefined | null;
+  let logoPath: string | undefined | null;
   let logoUploaded = false;
   try {
     const old_data = await getOne(id);
     // delete 
-    if(old_data?.logo && old_data.logo != data.logo) {
+    if (old_data?.logo && old_data.logo != data.logo) {
       oldLogoPath = old_data.logo;
     }
 
-    if(data.logo instanceof File) {
-      const upload = await uploadImage(data.logo, `${Date.now()}_license_logo`);
-      if(upload.success) {
+    if (data.logo instanceof File) {
+      const upload = await uploadImage(data.logo, `${logoDir}/${Date.now()}`);
+      if (upload.success) {
         logoUploaded = true;
         logoPath = upload.path;
       }
@@ -110,154 +106,75 @@ export async function update(id: number, data: Omit<ILicense,'id'>) {
       where: {
         id,
       },
-    })
-    if(!license) throw new Error(`license not updated`);
+    });
+    if (!license) throw new Error(`license not updated`);
 
-    if(oldLogoPath) {
+    if (oldLogoPath) {
       try {
         await deleteFile(oldLogoPath);
-      } catch (error: any) {
+      } catch (error) {
         // catch error, ignore if fail (only logging)
-        Logger.error(error, 'delete old logo error');
+        Logger.error(getErrorMessage(error), 'delete old logo error');
       }
     }
-  
+
     return license;
-  } catch(error: any) {
-    let message = 'unknown';
-    if(typeof error == 'string') message = error;
-    else if(error.message) message = error.message;
+  } catch (error) {
+    const message = getErrorMessage(error);
 
     Logger.error(message, 'license update error');
 
     // delete uploaded image
-    if(logoUploaded && typeof logoPath === 'string') {
+    if (logoUploaded && typeof logoPath === 'string') {
       try {
         await deleteFile(logoPath);
-      } catch (error: any) {
-        let message = 'unknown';
-        if(typeof error == 'string') message = error;
-        else if(error.message) message = error.message;
-
-        Logger.error(message, 'license delete logo error');
+      } catch (errorDelete) {
+        Logger.error(getErrorMessage(errorDelete), 'license delete logo error');
       }
     }
 
-    return false;
+    throw new Error(message);
   }
 }
 
-export async function remove(id: number) {
+export async function remove(id: number): Promise<ILicense> {
   try {
     const license = await prisma.license.delete({
       where: {
         id,
       },
     })
-    if(!license) throw new Error(`license not deleted`);
+    if (!license) throw new Error(`license not deleted`);
 
-    if(license.logo) {
+    if (license.logo) {
       try {
         await deleteFile(license.logo);
-      } catch (error: any) {
+      } catch (error) {
         // catch error, ignore if fail (only logging)
-        Logger.error(error, 'delete logo error');
+        Logger.error(getErrorMessage(error), 'delete logo error');
       }
     }
-  
+
     return license;
-  } catch(error: any) {
-    let message = 'unknown';
-    if(typeof error == 'string') message = error;
-    else if(error.message) message = error.message;
+  } catch (error) {
+    const message = getErrorMessage(error);
 
     Logger.error(message, 'license remove error');
-
-    return false;
-  }
-}
-
-export async function getAllByFilter(filter: ILicenseFilter, offset = 0, limit = 0, order?: ArrayOrder, orderBy?: ILicenseSortableProperties) {
-  try {
-    const licenses = await prisma.license.findMany({
-      skip: offset,
-      take: limit > 0 ? limit : undefined,
-      where: {
-        OR: [
-          {
-            name: {
-              contains: filter.q,
-            }
-          },
-          {
-            orgName: {
-              contains: filter.q,
-            }
-          }
-        ],
-      },
-      orderBy: (
-        orderBy == 'name' ? ({ name: order })
-        : orderBy == 'issueDate' ? ([
-          {
-            startDate_year: order,
-          }, {
-            startDate_month: order,
-          }
-        ]) : orderBy == 'expirationDate' ? ([
-          {
-            endDate_year: order,
-          }, {
-            endDate_month: order,
-          }
-        ]) : orderBy == 'hidden' ? ({
-          hidden: order,
-        }) : undefined
-      ),
-    })
-    if(!licenses) throw Error(`any licenses not found`)
-      
-    Logger.info(`"${licenses.length}" data loaded!`, 'licenses getAllByFilter')
-    return licenses
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
-
-    Logger.error(message, 'licenses getAllByFilter error')
 
     throw new Error(message);
   }
 }
 
-
 export async function getCountByFilter(filter: ILicenseFilter) {
   try {
-    const licenses = await prisma.license.count({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: filter.q,
-            }
-          },
-          {
-            orgName: {
-              contains: filter.q,
-            }
-          }
-        ],
-      }
-    })
-      
-    Logger.info(`"${licenses}" licenses counted!`, 'licenses getCountByFilter')
-    return licenses
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
+    const licenses = (await getAll({ filter })).length;
 
-    Logger.error(message, 'licenses getCountByFilter error')
+    Logger.info(`"${licenses}" licenses counted!`, 'licenses getCountByFilter');
+    return licenses;
+  } catch (error) {
+    const message = getErrorMessage(error);
+
+    Logger.error(message, 'licenses getCountByFilter error');
 
     throw new Error(message);
   }

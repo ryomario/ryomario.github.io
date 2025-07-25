@@ -26,7 +26,7 @@ export function AdminProjectList({
   const loadData = useCallback<UseTableLoadData<IProject, any>>(async (offset, limit) => {
     try {
       const countData = await RepoProjectsServer.getCountAll();
-      const loadedData = await RepoProjectsServer.getAll({offset, limit});
+      const loadedData = await RepoProjectsServer.getAll({ offset, limit });
 
       return {
         data: loadedData,

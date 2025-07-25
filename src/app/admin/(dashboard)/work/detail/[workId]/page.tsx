@@ -1,5 +1,4 @@
 import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
-import { dbWorkTransform } from "@/db/utils/workTransforms";
 import { ViewWorkDetails } from "@/sections/admin/work/ViewWorkDetails";
 import { notFound } from "next/navigation";
 
@@ -15,17 +14,15 @@ export default async function Page({ params }: Readonly<{
 }>) {
   const { workId } = await params;
   const id = Number(workId);
-  if(Number.isNaN(id)) {
+  if (Number.isNaN(id)) {
     return notFound();
   }
 
   const data = await RepoWorksServer.getOne(id);
 
-  if(!data) {
+  if (!data) {
     return notFound();
   }
 
-  const values = dbWorkTransform(data);
-
-  return <ViewWorkDetails data={values}/>;
+  return <ViewWorkDetails data={data} />;
 }

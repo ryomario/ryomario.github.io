@@ -151,9 +151,9 @@ function useSearchData(searchQuery: string) {
     setLoading(true);
 
     try {
-      const resData = await RepoWorksServer.getAllByFilter({ q: searchQuery });
+      const data = await RepoWorksServer.getAll({ filter: { q: searchQuery } });
 
-      setResults(resData.map(dbWorkTransform));
+      setResults(data);
     } catch (error) {
       Logger.error(error, 'Work Search error');
     } finally {

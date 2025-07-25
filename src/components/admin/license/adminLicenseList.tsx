@@ -42,7 +42,7 @@ export function AdminLicenseList({
     try {
       const filter: ILicenseFilter = { q: searchQuery };
       const countData = await RepoLicensesServer.getCountByFilter(filter);
-      const loadedData = await RepoLicensesServer.getAllByFilter(filter, offset, limit, order, orderBy);
+      const loadedData = await RepoLicensesServer.getAll({ filter, offset, limit, order, orderBy });
 
       return {
         data: loadedData,

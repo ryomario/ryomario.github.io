@@ -1,6 +1,6 @@
 "use server"
 
-import { IProject } from "@/types/IProject"
+import { IFormProject, IProject } from "@/types/IProject"
 import { prisma } from "../prisma"
 import RepoProjects from "./RepoProjects"
 import { Logger } from "@/utils/logger"
@@ -12,7 +12,7 @@ export const getAll = RepoProjects.getAll
 export const getOne = RepoProjects.getOne
 export const getAllTags = RepoProjects.getAllTags
 
-export async function saveOrUpdate(data: Omit<IProject, 'id'> & { id?: IProject['id'] }) {
+export async function saveOrUpdate(data: IFormProject) {
   const { id, ...values } = data;
   if (typeof id === 'undefined' || id === null) {
     return await save(values);
@@ -21,7 +21,7 @@ export async function saveOrUpdate(data: Omit<IProject, 'id'> & { id?: IProject[
   }
 }
 
-export async function save(data: Omit<IProject, 'id'>): Promise<IProject> {
+export async function save(data: Omit<IFormProject, 'id'>): Promise<IProject> {
   try {
     const previews = await uploadImagePreviews(data.previews);
 
@@ -69,7 +69,7 @@ export async function save(data: Omit<IProject, 'id'>): Promise<IProject> {
   }
 }
 
-export async function update(id: number, data: Omit<IProject, 'id'>): Promise<IProject> {
+export async function update(id: number, data: Omit<IFormProject, 'id'>): Promise<IProject> {
   const unusedPreviews: ProjectPreview['id'][] = [];
   try {
     const previews = await uploadImagePreviews(data.previews);
@@ -82,7 +82,7 @@ export async function update(id: number, data: Omit<IProject, 'id'>): Promise<IP
         previews: true,
       },
     });
-    if(!old_project) throw new Error('data not found');
+    if (!old_project) throw new Error('data not found');
 
     if (old_project.previews.length > 0) {
       for (const preview of old_project.previews) {
@@ -213,7 +213,7 @@ export async function removeProjectPreview(preview_id: number) {
   }
 }
 
-async function uploadImagePreviews(previews: IProject['previews']): Promise<ProjectPreview['url'][]> {
+async function uploadImagePreviews(previews: IFormProject['previews']): Promise<IProject['previews']> {
   const uploadedUrls: {
     url: ProjectPreview['url'];
     newUpload: boolean;
@@ -260,10 +260,10 @@ async function uploadImagePreviews(previews: IProject['previews']): Promise<Proj
 export async function getCountAll() {
   try {
     const projects = await prisma.project.count()
-      
+
     Logger.info(`"${projects}" projects counted!`, 'projects getCountAll')
     return projects
-  } catch(error) {
+  } catch (error) {
     const message = getErrorMessage(error);
     Logger.error(message, 'projects getCountAll error')
 

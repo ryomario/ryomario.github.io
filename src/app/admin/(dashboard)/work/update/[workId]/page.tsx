@@ -1,5 +1,5 @@
 import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
-import { dbWorkLocatoinsTransform, dbWorkSkillsTransform, dbWorkTransform } from "@/db/utils/workTransforms";
+import { dbWorkLocatoinsTransform, dbWorkSkillsTransform } from "@/db/utils/workTransforms";
 import { ViewWorkUpdate } from "@/sections/admin/work/ViewWorkUpdate";
 import { notFound } from "next/navigation";
 
@@ -15,23 +15,22 @@ export default async function Page({ params }: Readonly<{
 }>) {
   const { workId } = await params;
   const id = Number(workId);
-  if(Number.isNaN(id)) {
+  if (Number.isNaN(id)) {
     return notFound();
   }
 
   const data = await RepoWorksServer.getOne(id);
 
-  if(!data) {
+  if (!data) {
     return notFound();
   }
-  
+
   const dataDbSkills = await RepoWorksServer.getAllSkills();
   const dataDbLocations = await RepoWorksServer.getAllWorkLocations();
-  const values = dbWorkTransform(data);
 
   return (
     <ViewWorkUpdate
-      values={values}
+      values={data}
       refLocations={dbWorkLocatoinsTransform(dataDbLocations)}
       refSkills={dbWorkSkillsTransform(dataDbSkills)}
     />

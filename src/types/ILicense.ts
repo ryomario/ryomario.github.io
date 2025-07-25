@@ -1,7 +1,12 @@
 import { License } from "@/generated/prisma";
 
 export type ILicense = Omit<License, 'logo'> & {
-  logo?: string | File | null;
+  logo?: string | null;
+}
+
+export type IFormLicense = Omit<ILicense, 'id'|'logo'> & {
+  id?: ILicense['id'] | null;
+  logo?: ILicense['logo'] | File;
 }
 
 export type ILicenseFilter = {

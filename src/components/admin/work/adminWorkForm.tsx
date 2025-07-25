@@ -1,7 +1,7 @@
 import { Form, RHFField } from "@/components/formHook";
 import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
 import { getAllMonthsName } from "@/lib/date";
-import { getWorkEmploymentLabel, IWorkExperience, WorkEmploymentType } from "@/types/IWorkExperience"
+import { getWorkEmploymentLabel, IFormWorkExperience, IWorkExperience, WorkEmploymentType } from "@/types/IWorkExperience";
 import { Logger } from "@/utils/logger";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -29,7 +29,7 @@ export function AdminWorkForm({
   refSkills = ['Jawa Tengah, Indonesia'],
   refLocations = ['PHP', 'JavaScript', 'NodeJS', 'SQL', 'HTML/CSS'],
 }: Props) {
-  const methods = useForm<IWorkExperience>({
+  const methods = useForm<IFormWorkExperience>({
     mode: 'all',
     defaultValues: {
       companyName: '',
@@ -50,43 +50,43 @@ export function AdminWorkForm({
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     watch,
     setValue,
   } = methods;
 
-  const [endDate_month, endDate_year] = watch(['endDate_month','endDate_year']);
-  const isStillWorkHere = useMemo(() => !endDate_month && !endDate_year,[endDate_month, endDate_year]);
+  const [endDate_month, endDate_year] = watch(['endDate_month', 'endDate_year']);
+  const isStillWorkHere = useMemo(() => !endDate_month && !endDate_year, [endDate_month, endDate_year]);
   const setStillWorkHere = useCallback((checked: boolean) => {
-    if(!checked) {
+    if (!checked) {
       setValue('endDate_month', new Date().getMonth());
       setValue('endDate_year', new Date().getFullYear());
     } else {
       setValue('endDate_month', null);
       setValue('endDate_year', null);
     }
-  },[endDate_month, endDate_year, setValue]);
+  }, [endDate_month, endDate_year, setValue]);
 
   const onSubmit = handleSubmit(async (values) => {
     try {
       const result = await RepoWorksServer.saveOrUpdate(values);
-      if(!result) {
+      if (!result) {
         throw new Error('Internal error');
       }
 
-      if(afterSubmit) {
+      if (afterSubmit) {
         afterSubmit();
       }
     } catch (error) {
-      Logger.debug(error,'Submit admin work');
+      Logger.debug(error, 'Submit admin work');
     }
   });
 
   const renderDetails = () => (
     <Card>
-      <CardHeader title="Details" subheader="Job Title, short description, company info..." sx={{ mb: 3 }}/>
+      <CardHeader title="Details" subheader="Job Title, short description, company info..." sx={{ mb: 3 }} />
 
-      <Divider/>
+      <Divider />
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }}>
@@ -98,12 +98,12 @@ export function AdminWorkForm({
           <Stack flexGrow={1} spacing={2}>
             <Stack spacing={1}>
               <Typography variant="subtitle2">Company Name</Typography>
-              <RHFField.TextField name="companyName" rules={{ required: { value: true, message: 'Company Name is required!' } }}/>
+              <RHFField.TextField name="companyName" rules={{ required: { value: true, message: 'Company Name is required!' } }} />
             </Stack>
 
             <Stack spacing={1}>
               <Typography variant="subtitle2">Job Title</Typography>
-              <RHFField.TextField name="jobTitle" placeholder="Ex: Web Developer..." rules={{ required: { value: true, message: 'Job Title is required!' } }}/>
+              <RHFField.TextField name="jobTitle" placeholder="Ex: Web Developer..." rules={{ required: { value: true, message: 'Job Title is required!' } }} />
             </Stack>
           </Stack>
         </Stack>
@@ -130,9 +130,9 @@ export function AdminWorkForm({
 
   const renderProperties = () => (
     <Card>
-      <CardHeader title="Properties" subheader="Other attributes and informations..." sx={{ mb: 3 }}/>
+      <CardHeader title="Properties" subheader="Other attributes and informations..." sx={{ mb: 3 }} />
 
-      <Divider/>
+      <Divider />
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Stack spacing={1}>
@@ -232,6 +232,7 @@ export function AdminWorkForm({
         variant="contained"
         size="large"
         loading={isSubmitting}
+        disabled={!isDirty}
         sx={{ ml: 2 }}
       >
         {!values ? 'Create' : 'Save'}

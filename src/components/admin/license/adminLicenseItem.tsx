@@ -100,8 +100,8 @@ export function AdminLicenseItem({
               sx={{ m: 0, ml: 2 }}
               primary={
                 !!data.credentialUrl
-                ? <Link component={RouterLink} target="_blank" href={data.credentialUrl} color="inherit">{data.name}</Link>
-                : data.name
+                  ? <Link component={RouterLink} target="_blank" href={data.credentialUrl} color="inherit">{data.name}</Link>
+                  : data.name
               }
               secondary={data.orgName}
               slotProps={{
@@ -116,7 +116,7 @@ export function AdminLicenseItem({
           </Box>
         </TableCell>
         <TableCell align="center" width={150}>
-          <Chip size="small" color={data.hidden ? 'default' : 'primary'} icon={data.hidden ? <PublicOffIcon/> : <PublicIcon/>} label={data.hidden ? "Not published" : "Published"}/>
+          <Chip size="small" color={data.hidden ? 'default' : 'primary'} icon={data.hidden ? <PublicOffIcon /> : <PublicIcon />} label={data.hidden ? "Not published" : "Published"} />
         </TableCell>
         <TableCell width={150}>{`${getMonthName(data.startDate_month, true)} ${data.startDate_year}`}</TableCell>
         <TableCell width={200}>{(data.endDate_month && data.endDate_year) ? `${getMonthName(data.endDate_month, true)} ${data.endDate_year}` : 'No Expiration Date'}</TableCell>

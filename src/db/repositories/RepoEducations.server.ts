@@ -1,32 +1,34 @@
 'use server';
 
-import { Logger } from "@/utils/logger"
-import RepoEducations from "./RepoEducations";
-import { IEducation, IEducationFilter } from "@/types/IEducation";
-import { deleteFile, uploadImage } from "@/utils/file.server";
-import { prisma } from "../prisma";
+import { IEducation, IFormEducation } from "@/types/IEducation";
 import { getErrorMessage } from "@/utils/errorMessage";
+import { deleteFile, uploadImage } from "@/utils/file.server";
+import { Logger } from "@/utils/logger";
+import { prisma } from "../prisma";
+import RepoEducations from "./RepoEducations";
+
+const logoDir = 'logo_schools';
 
 export const getAll = RepoEducations.getAll;
 export const getOne = RepoEducations.getOne;
 export const getAllMajors = RepoEducations.getAllMajors;
 
-export async function saveOrUpdate(data: Omit<IEducation, 'id'> & { id?: IEducation['id'] }) {
+export async function saveOrUpdate(data: IFormEducation) {
   const { id, ...values } = data;
-  if(typeof id === 'undefined' || id === null) {
+  if (typeof id === 'undefined' || id === null) {
     return await save(values);
   } else {
     return await update(id, values);
   }
-} 
+}
 
-export async function save(data: Omit<IEducation,'id'>) {
-  let logoPath: string|undefined|null;
+export async function save(data: Omit<IFormEducation, 'id'>): Promise<IEducation> {
+  let logoPath: string | undefined | null;
   let logoUploaded = false;
   try {
-    if(data.logo instanceof File) {
-      const upload = await uploadImage(data.logo, `${Date.now()}_school_logo`);
-      if(upload.success) {
+    if (data.logo instanceof File) {
+      const upload = await uploadImage(data.logo, `${logoDir}/${Date.now()}`);
+      if (upload.success) {
         logoUploaded = true;
         logoPath = upload.path;
       }
@@ -34,12 +36,12 @@ export async function save(data: Omit<IEducation,'id'>) {
       logoPath = data.logo;
     }
 
-    let gpa: number|null = Number(data.gpa);
-    let gpa_scale: number|null = Number(data.gpa_scale);
-    if(Number.isNaN(gpa)) {
+    let gpa: number | null = Number(data.gpa);
+    let gpa_scale: number | null = Number(data.gpa_scale);
+    if (Number.isNaN(gpa)) {
       gpa = null;
     }
-    if(Number.isNaN(gpa_scale)) {
+    if (Number.isNaN(gpa_scale)) {
       gpa_scale = null;
     }
     const education = await prisma.education.create({
@@ -65,48 +67,45 @@ export async function save(data: Omit<IEducation,'id'>) {
         majors: true,
       }
     })
-    if(!education) throw new Error(`education not saved`);
-  
-    return education;
-  } catch(error: any) {
-    let message = 'unknown';
-    if(typeof error == 'string') message = error;
-    else if(error.message) message = error.message;
+    if (!education) throw new Error(`education not saved`);
+
+    return {
+      ...education,
+      majors: education.majors.map(major => major.name),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
 
     Logger.error(message, 'education save error');
 
     // delete uploaded image
-    if(logoUploaded && typeof logoPath === 'string') {
+    if (logoUploaded && typeof logoPath === 'string') {
       try {
         await deleteFile(logoPath);
-      } catch (error: any) {
-        let message = 'unknown';
-        if(typeof error == 'string') message = error;
-        else if(error.message) message = error.message;
-
-        Logger.error(message, 'education delete logo error');
+      } catch (errorDelete) {
+        Logger.error(getErrorMessage(errorDelete), 'education delete logo error');
       }
     }
 
-    return false;
+    throw new Error(message);
   }
 }
 
-export async function update(id: number, data: Omit<IEducation,'id'>) {
+export async function update(id: number, data: Omit<IFormEducation, 'id'>): Promise<IEducation> {
   // if set will be deleted after success update
-  let oldLogoPath: string|undefined|null;
-  let logoPath: string|undefined|null;
+  let oldLogoPath: string | undefined | null;
+  let logoPath: string | undefined | null;
   let logoUploaded = false;
   try {
     const old_data = await getOne(id);
     // delete 
-    if(old_data?.logo && old_data.logo != data.logo) {
+    if (old_data?.logo && old_data.logo != data.logo) {
       oldLogoPath = old_data.logo;
     }
 
-    if(data.logo instanceof File) {
-      const upload = await uploadImage(data.logo, `${Date.now()}_school_logo`);
-      if(upload.success) {
+    if (data.logo instanceof File) {
+      const upload = await uploadImage(data.logo, `${logoDir}/${Date.now()}`);
+      if (upload.success) {
         logoUploaded = true;
         logoPath = upload.path;
       }
@@ -114,12 +113,12 @@ export async function update(id: number, data: Omit<IEducation,'id'>) {
       logoPath = data.logo;
     }
 
-    let gpa: number|null = Number(data.gpa);
-    let gpa_scale: number|null = Number(data.gpa_scale);
-    if(Number.isNaN(gpa)) {
+    let gpa: number | null = Number(data.gpa);
+    let gpa_scale: number | null = Number(data.gpa_scale);
+    if (Number.isNaN(gpa)) {
       gpa = null;
     }
-    if(Number.isNaN(gpa_scale)) {
+    if (Number.isNaN(gpa_scale)) {
       gpa_scale = null;
     }
     const education = await prisma.education.update({
@@ -149,52 +148,52 @@ export async function update(id: number, data: Omit<IEducation,'id'>) {
         id,
       },
     })
-    if(!education) throw new Error(`education not updated`);
+    if (!education) throw new Error(`education not updated`);
 
-    if(oldLogoPath) {
+    if (oldLogoPath) {
       try {
         await deleteFile(oldLogoPath);
-      } catch (error: any) {
+      } catch (error) {
         // catch error, ignore if fail (only logging)
-        Logger.error(error, 'delete old logo error');
+        Logger.error(getErrorMessage(error), 'delete old logo error');
       }
     }
-  
-    return education;
-  } catch(error: any) {
-    let message = 'unknown';
-    if(typeof error == 'string') message = error;
-    else if(error.message) message = error.message;
+
+    return {
+      ...education,
+      majors: education.majors.map(major => major.name),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
 
     Logger.error(message, 'education update error');
 
     // delete uploaded image
-    if(logoUploaded && typeof logoPath === 'string') {
+    if (logoUploaded && typeof logoPath === 'string') {
       try {
         await deleteFile(logoPath);
-      } catch (error: any) {
-        let message = 'unknown';
-        if(typeof error == 'string') message = error;
-        else if(error.message) message = error.message;
-
-        Logger.error(message, 'education delete logo error');
+      } catch (errorDelete: any) {
+        Logger.error(getErrorMessage(errorDelete), 'education delete logo error');
       }
     }
 
-    return false;
+    throw new Error(message);
   }
 }
 
-export async function remove(id: number) {
+export async function remove(id: number): Promise<IEducation> {
   try {
     const education = await prisma.education.delete({
       where: {
         id,
       },
+      include: {
+        majors: true,
+      },
     })
-    if(!education) throw new Error(`education not deleted`);
+    if (!education) throw new Error(`education not deleted`);
 
-    if(education.logo) {
+    if (education.logo) {
       try {
         await deleteFile(education.logo);
       } catch (error: any) {
@@ -202,50 +201,15 @@ export async function remove(id: number) {
         Logger.error(error, 'delete logo error');
       }
     }
-  
-    return education;
-  } catch(error: any) {
-    let message = 'unknown';
-    if(typeof error == 'string') message = error;
-    else if(error.message) message = error.message;
+
+    return {
+      ...education,
+      majors: education.majors.map(major => major.name),
+    };
+  } catch (error) {
+    const message = getErrorMessage(error);
 
     Logger.error(message, 'education remove error');
-
-    return false;
-  }
-}
-
-export async function getAllByFilter(filter: IEducationFilter) {
-  try {
-    const educations = await prisma.education.findMany({
-      include: {
-        majors: true,
-      },
-      where: {
-        OR: [
-          {
-            schoolName: {
-              contains: filter.q,
-            }
-          },
-          {
-            degree: {
-              contains: filter.q,
-            }
-          }
-        ],
-      }
-    })
-    if(!educations) throw Error(`any educations not found`)
-      
-    Logger.info(`"${educations.length}" data loaded!`, 'educations getAllByFilter')
-    return educations
-  } catch(error: any) {
-    let message = 'unknown'
-    if(typeof error == 'string') message = error
-    else if(error.message) message = error.message
-
-    Logger.error(message, 'educations getAllByFilter error')
 
     throw new Error(message);
   }
@@ -253,13 +217,13 @@ export async function getAllByFilter(filter: IEducationFilter) {
 
 export async function getCountAll() {
   try {
-    const educations = await prisma.education.count()
-      
-    Logger.info(`"${educations}" educations counted!`, 'educations getCountAll')
-    return educations
-  } catch(error) {
+    const educations = (await getAll()).length;
+
+    Logger.info(`"${educations}" educations counted!`, 'educations getCountAll');
+    return educations;
+  } catch (error) {
     const message = getErrorMessage(error);
-    Logger.error(message, 'educations getCountAll error')
+    Logger.error(message, 'educations getCountAll error');
 
     throw new Error(message);
   }

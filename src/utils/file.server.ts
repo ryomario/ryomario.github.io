@@ -1,8 +1,9 @@
 'use server';
 
 import { convertFilesize, formatFilesize } from "@/lib/file";
-import { rm, writeFile } from "fs/promises";
-import { join } from "path";
+import { existsSync } from "fs";
+import { rm, writeFile, mkdir } from "fs/promises";
+import { dirname, join } from "path";
 import sharp from "sharp";
 
 const MAX_FILE_SIZE = convertFilesize(5, 'b', 'Mb'); // 5MB
@@ -32,24 +33,31 @@ export async function uploadImage(file?: File, filename?: string, quality = 80, 
 
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
-  
+
   // Convert to WebP
   const webpBuffer = await sharp(buffer)
     .webp({ quality })
     .toBuffer();
 
-  if(!filename) {
+  if (!filename) {
     filename = `${Date.now()}_image_uploaded.webp`
   }
 
-  if(filename.split('.').pop() != 'webp') {
+  if (filename.split('.').pop() != 'webp') {
     filename = `${filename}.webp`
   }
 
   const path = join(process.cwd(), "public/images", filename);
+
+  // Ensure directory exists
+  const directory = dirname(path);
+  if (!existsSync(directory)) {
+    await mkdir(directory);
+  }
+
   await writeFile(path, webpBuffer);
-  
-  return { 
+
+  return {
     success: true,
     path: `/images/${filename}`,
   };

@@ -1,6 +1,6 @@
 import { Form, RHFField } from "@/components/formHook";
 import * as RepoEducationsServer from "@/db/repositories/RepoEducations.server";
-import { EDUCATION_DEGREES, IEducation } from "@/types/IEducation";
+import { EDUCATION_DEGREES, IEducation, IFormEducation } from "@/types/IEducation";
 import { Logger } from "@/utils/logger";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -22,7 +22,7 @@ export function AdminEducationForm({
   afterSubmit,
   refMajors = [],
 }: Props) {
-  const methods = useForm<IEducation>({
+  const methods = useForm<IFormEducation>({
     mode: 'all',
     defaultValues: {
       schoolName: '',
@@ -42,7 +42,7 @@ export function AdminEducationForm({
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
   } = methods;
 
   const onSubmit = handleSubmit(async (values) => {
@@ -179,6 +179,7 @@ export function AdminEducationForm({
         variant="contained"
         size="large"
         loading={isSubmitting}
+        disabled={!isDirty}
         sx={{ ml: 2 }}
       >
         {!values ? 'Create' : 'Save'}

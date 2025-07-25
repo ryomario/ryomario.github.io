@@ -1,6 +1,6 @@
 import { Form, RHFField } from "@/components/formHook";
 import * as RepoProjectsServer from "@/db/repositories/RepoProjects.server";
-import { IProject } from "@/types/IProject";
+import { IFormProject, IProject } from "@/types/IProject";
 import { Logger } from "@/utils/logger";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -27,7 +27,7 @@ export function AdminProjectForm({
   afterSubmit,
   refTags = ['PHP', 'NodeJS', 'Game', 'Web Application', 'Mini Project'],
 }: Props) {
-  const methods = useForm<IProject>({
+  const methods = useForm<IFormProject>({
     mode: 'all',
     defaultValues: {
       title: '',
