@@ -1,45 +1,25 @@
-import { Button } from "@/components/reusable/button";
-import {
-  HeroSection,
-  ProjectsShowcase
-} from "@/components/sections/home";
-import { ProjectsProvider } from "@/contexts/projectsContext";
-import RepoProjects from "@/db/repositories/RepoProjects";
+import RepoProfileData from "@/db/repositories/RepoProfileData";
 import { Locale, routing } from "@/i18n/routing";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import RenderTemplate from "@/templates";
+import { ACTIVE_TEMPlATE_STORE_ID } from "@/types/templates/ITemplate";
+import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-export default async function HomePage({ params }: Readonly<{
+export default async function SPAPage({ params }: Readonly<{
   params: Promise<{ locale: string }>;
 }>) {
-  const { locale } = await params
+  const { locale } = await params;
+  const curentLocale = locale as Locale;
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as Locale)) {
+  if (!routing.locales.includes(curentLocale)) {
     notFound();
   }
-  
+
   // Enable static rendering
-  setRequestLocale(locale)
+  setRequestLocale(locale);
 
-  const t = await getTranslations('HomePage')
+  // get active template
+  const activeTemplateIdx = await RepoProfileData.getOne<number>(ACTIVE_TEMPlATE_STORE_ID, 0);
 
-  const projects = await RepoProjects.getAll()
-  const project_tags = await RepoProjects.getAllTags()
-  const project_tech = await RepoProjects.getAllTechs()
-
-  return (
-    <>
-      <HeroSection/>
-      <ProjectsProvider data={projects} tags={project_tags} tech={project_tech}>
-        <ProjectsShowcase/>
-      </ProjectsProvider>
-      <div className="mt-8 sm:mt-10 flex justify-center">
-        <Button
-          href="/projects"
-          text={t('btn_more_projects')}
-          label={t('btn_more_projects')}
-        />
-			</div>
-    </>
-  );
+  return <RenderTemplate currentTemplate={activeTemplateIdx} defaultLocale={curentLocale} />;
 }

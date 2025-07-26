@@ -72,17 +72,9 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <ScrollTop/>
           <ProfileDataProvider data={profileData}>
-            <div className="bg-secondary-light dark:bg-primary-dark transition duration-300 min-h-screen">
-              <Navbar/>
-              <div className="sm:container sm:mx-auto">
-                <div className="mx-auto flex flex-col max-w-7xl items-center justify-between p-6 lg:px-8">
-                  <Suspense>
-                    {children}
-                  </Suspense>
-                </div>
-              </div>
-              <Footer/>
-            </div>
+            <Suspense>
+              {children}
+            </Suspense>
           </ProfileDataProvider>
         </NextIntlClientProvider>
         <ScrollToTop/>
