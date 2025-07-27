@@ -106,7 +106,7 @@ export const defaultTemplateTheme: TemplateTheme = {
   },
   shadows: (size, mode = 'light') => {
     if (!size) return undefined;
-    const rgb = mode == 'light' ? '0,0,0' : '255,255,255';
+    const rgb = mode == 'light' ? '0,0,0' : '100,100,100';
 
     return `0 ${3 * size}px ${4 * size}px ${-0.5 * size}px rgba(${rgb}, 0.1), 0 ${size}px ${1.5 * size}px ${-1 * size}px rgba(${rgb}, 0.1)`;
   }

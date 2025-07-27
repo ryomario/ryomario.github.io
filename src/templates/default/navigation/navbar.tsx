@@ -4,9 +4,9 @@ import { useState } from "react";
 import styled from "@emotion/styled";
 import { Link } from "@/i18n/routing";
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
-import { ThemeToggler } from "@/components/navigation/tools/themeToggler";
 import { LanguageSwitcher } from "./languageSwitcher";
 import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter";
+import { ThemeToggler } from "./themeToggler";
 
 export default function Navbar() {
   const { getLinkHref } = useTemplatePageRouter();
@@ -78,12 +78,28 @@ export default function Navbar() {
           <ThemeToggler />
         </div>
       </div>
-      <div className={`nav-menu-wrapper ${showMenu ? '' : 'hidden'}`}></div>
+      <div className={`nav-menu-wrapper ${showMenu ? '' : 'hidden'}`}>
+        <Link
+          href={getLinkHref('projects')}
+          aria-label={t('menus.projects')}
+        >
+          {t('menus.projects')}
+        </Link>
+        <Link
+          href={getLinkHref('about')}
+          aria-label={t('menus.aboutme')}
+        >
+          {t('menus.aboutme')}
+        </Link>
+        {profileData.hireable && <button className="unset-all-styles" aria-label={t('buttons.hireme')}>
+          {t('buttons.hireme')}
+        </button>}
+      </div>
     </Nav>
   );
 }
 
-// ============================
+// ====================================================================================
 
 const Nav = styled.nav<{ theme?: TemplateTheme }>(({ theme }) => ({
   width: '100%',
@@ -108,14 +124,14 @@ const Nav = styled.nav<{ theme?: TemplateTheme }>(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '1.5rem',
-    [theme.breakpoints.desktop]: {
+    [theme.breakpoints.tablet]: {
       paddingLeft: '2rem',
       paddingRight: '2rem',
     },
 
     '.nav-left-wrapper': {
       display: 'flex',
-      [theme.breakpoints.desktop]: {
+      [theme.breakpoints.tablet]: {
         flex: '1 1 0%',
       },
 
@@ -128,8 +144,9 @@ const Nav = styled.nav<{ theme?: TemplateTheme }>(({ theme }) => ({
 
     '.nav-wrapper-mobile': {
       display: 'flex',
+      alignItems: 'center',
       gap: theme.spacing(3),
-      [theme.breakpoints.desktop]: {
+      [theme.breakpoints.tablet]: {
         display: 'none',
       },
     },
@@ -142,7 +159,7 @@ const Nav = styled.nav<{ theme?: TemplateTheme }>(({ theme }) => ({
       padding: theme.spacing(5),
       boxShadow: theme.shadows(2),
 
-      [theme.breakpoints.desktop]: {
+      [theme.breakpoints.tablet]: {
         display: 'flex',
         marginLeft: theme.spacing(4),
         marginTop: theme.spacing(3),
@@ -157,16 +174,16 @@ const Nav = styled.nav<{ theme?: TemplateTheme }>(({ theme }) => ({
         fontSize: '1.125rem',
         lineHeight: '1.75rem',
         cursor: 'pointer',
-        color: theme.colors.text.primary.light,
+        color: theme.colors.text.secondary.light,
         ...theme.createStyles('dark', {
-          color: theme.colors.text.primary.dark,
+          color: theme.colors.text.secondary.dark,
         }),
         transitionProperty: 'color',
         transitionDuration: '200ms',
         '&:hover': {
-          color: theme.colors.text.secondary.light,
+          color: theme.colors.text.primary.light,
           ...theme.createStyles('dark', {
-            color: theme.colors.text.secondary.dark,
+            color: theme.colors.text.primary.dark,
           }),
         },
         marginBottom: theme.spacing(2),
@@ -180,8 +197,9 @@ const Nav = styled.nav<{ theme?: TemplateTheme }>(({ theme }) => ({
     },
     '.nav-wrapper-right': {
       display: 'none',
-      [theme.breakpoints.desktop]: {
+      [theme.breakpoints.tablet]: {
         display: 'flex',
+        alignItems: 'center',
         flex: '1 1 0%',
         justifyContent: 'flex-end',
         gap: theme.spacing(3),
@@ -191,26 +209,75 @@ const Nav = styled.nav<{ theme?: TemplateTheme }>(({ theme }) => ({
   '& > .nav-menu-wrapper': {
     display: 'block',
     margin: 0,
-    marginTop: '0.75rem',
-    padding: '1.25rem',
-    boxShadow: `0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-                0 4px 6px -4px rgba(0, 0, 0, 0.1)`,
+    marginTop: theme.spacing(3),
+    padding: theme.spacing(5),
+    boxShadow: theme.shadows(3),
 
     justifyContent: 'center',
     alignItems: 'center',
 
     [theme.breakpoints.up(theme.breakpoints.values.mobile)]: {
       display: 'flex',
-      marginLeft: '1rem',
+      marginLeft: theme.spacing(4),
       padding: 0,
       boxShadow: 'none',
     },
 
-    [theme.breakpoints.desktop]: {
+    [theme.breakpoints.tablet]: {
       display: "none !important",
     },
     '&.hidden': {
       display: "none !important",
+    },
+
+    'a, button': {
+      display: 'block',
+      textAlign: 'left',
+      fontSize: '1.125rem',
+      lineHeight: '1.75rem',
+      textDecoration: 'none',
+      cursor: 'pointer',
+
+      marginTop: theme.spacing(2),
+
+      [theme.breakpoints.up('mobile')]: {
+        marginLeft: theme.spacing(4),
+        marginRight: theme.spacing(4),
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+      }
+    },
+    'a': {
+      color: theme.colors.text.secondary.light,
+      '&:hover': {
+        color: theme.colors.text.primary.light,
+      },
+      ...theme.createStyles('dark', {
+        color: theme.colors.text.secondary.dark,
+        '&:hover': {
+          color: theme.colors.text.primary.dark,
+        },
+      }),
+    },
+    'button': {
+      fontSize: '1rem',
+      backgroundColor: '#6366f1',
+      color: '#fff',
+      borderRadius: '0.375rem',
+      boxShadow: theme.shadows(1),
+      marginBlock: 0,
+      paddingLeft: theme.spacing(4),
+      paddingRight: theme.spacing(4),
+      paddingTop: theme.spacing(2),
+      paddingBottom: theme.spacing(2),
+      transitionProperty: 'background-color',
+      transitionDuration: '300ms',
+      '&:hover': {
+        backgroundColor: '#4f46e5',
+      },
+      [theme.breakpoints.mobile]: {
+        marginTop: theme.spacing(5),
+      }
     },
   },
 }));
