@@ -4,14 +4,16 @@ import { useState } from "react";
 import styled from "@emotion/styled";
 import { Link } from "@/i18n/routing";
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
-import { LanguageSelector } from "@/components/navigation/tools/languageSelector";
 import { ThemeToggler } from "@/components/navigation/tools/themeToggler";
+import { LanguageSwitcher } from "./languageSwitcher";
+import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter";
 
 export default function Navbar() {
+  const { getLinkHref } = useTemplatePageRouter();
   const [showMenu, setShowMenu] = useState(false);
   const t = useTranslations('Navbar');
   const profileData = useProfileData();
-  
+
   function toggleMenu() {
     if (!showMenu) {
       setShowMenu(true);
@@ -24,7 +26,7 @@ export default function Navbar() {
     <Nav>
       <div className="nav-wrapper">
         <div className="nav-left-wrapper">
-          <Link href="/" className="logo-wrapper">
+          <Link href={getLinkHref('/')} className="logo-wrapper">
             <span className="sr-only">Ryomario</span>
             <LogoImg
               className="logo"
@@ -36,8 +38,8 @@ export default function Navbar() {
           </Link>
         </div>
         <div className="nav-wrapper-mobile">
-          <LanguageSelector/>
-          <ThemeToggler/>
+          <LanguageSwitcher />
+          <ThemeToggler />
           <ToggleButton type="button" onClick={toggleMenu} className="unset-all-styles">
             {
               showMenu ? <>
@@ -56,24 +58,24 @@ export default function Navbar() {
         </div>
         <div className="nav-wrapper-menu">
           <Link
-            href="/projects"
+            href={getLinkHref('projects')}
             aria-label={t('menus.projects')}
           >
             {t('menus.projects')}
           </Link>
           <Link
-            href="/about"
+            href={getLinkHref('about')}
             aria-label={t('menus.aboutme')}
           >
             {t('menus.aboutme')}
           </Link>
         </div>
         <div className="nav-wrapper-right">
-          {!profileData.hireable && <HereableButton className="unset-all-styles" aria-label={t('buttons.hireme')}>
+          {profileData.hireable && <HereableButton className="unset-all-styles" aria-label={t('buttons.hireme')}>
             {t('buttons.hireme')}
           </HereableButton>}
-          <LanguageSelector/>
-          <ThemeToggler/>
+          <LanguageSwitcher />
+          <ThemeToggler />
         </div>
       </div>
       <div className={`nav-menu-wrapper ${showMenu ? '' : 'hidden'}`}></div>
@@ -83,7 +85,7 @@ export default function Navbar() {
 
 // ============================
 
-const Nav = styled.nav<{theme?: TemplateTheme}>(({ theme }) => ({
+const Nav = styled.nav<{ theme?: TemplateTheme }>(({ theme }) => ({
   width: '100%',
   [theme.breakpoints.up(theme.breakpoints.values.mobile)]: {
     maxWidth: theme.breakpoints.values.mobile,
@@ -110,19 +112,20 @@ const Nav = styled.nav<{theme?: TemplateTheme}>(({ theme }) => ({
       paddingLeft: '2rem',
       paddingRight: '2rem',
     },
-    
+
     '.nav-left-wrapper': {
       display: 'flex',
       [theme.breakpoints.desktop]: {
         flex: '1 1 0%',
       },
-      
+
       '& > .logo-wrapper': {
         margin: '-0.375rem',
         padding: '0.375rem',
+        cursor: 'pointer',
       }
     },
-    
+
     '.nav-wrapper-mobile': {
       display: 'flex',
       gap: theme.spacing(3),
@@ -153,6 +156,7 @@ const Nav = styled.nav<{theme?: TemplateTheme}>(({ theme }) => ({
         textAlign: 'left',
         fontSize: '1.125rem',
         lineHeight: '1.75rem',
+        cursor: 'pointer',
         color: theme.colors.text.primary.light,
         ...theme.createStyles('dark', {
           color: theme.colors.text.primary.dark,
@@ -191,7 +195,7 @@ const Nav = styled.nav<{theme?: TemplateTheme}>(({ theme }) => ({
     padding: '1.25rem',
     boxShadow: `0 10px 15px -3px rgba(0, 0, 0, 0.1), 
                 0 4px 6px -4px rgba(0, 0, 0, 0.1)`,
-    
+
     justifyContent: 'center',
     alignItems: 'center',
 
@@ -214,11 +218,11 @@ const Nav = styled.nav<{theme?: TemplateTheme}>(({ theme }) => ({
 const LogoImg = styled.img<{ theme?: TemplateTheme }>(({ theme }) => ({
   transitionProperty: 'filter',
   transitionDuration: '300ms',
-  
+
   ...theme.createStyles('dark', {
     filter: 'invert(100%)',
   }),
-  
+
   [theme.breakpoints.down(360)]: {
     display: 'none'
   }

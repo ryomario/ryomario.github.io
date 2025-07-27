@@ -4,11 +4,9 @@ import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Locale, routing } from "@/i18n/routing";
-import { Navbar } from "@/components/navigation/navbar";
 import "flag-icons";
 import { ThemeModeLoader } from "@/components/themeModeLoader";
 import NextTopLoader from "nextjs-toploader";
-import { Footer } from "@/components/navigation/footer";
 import { ScrollTop } from "@/components/scrollTop";
 import { ScrollToTop } from "@/components/scrollToTop";
 import { ProfileDataProvider } from "@/contexts/profileDataContext";
@@ -55,7 +53,7 @@ export default async function RootLayout({
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
-  
+
   // Enable static rendering
   setRequestLocale(locale)
 
@@ -66,18 +64,18 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.className} ${geistSans.variable} ${geistMono.variable}`}
       >
-        <ThemeModeLoader/>
+        <ThemeModeLoader />
         <NextIntlClientProvider messages={messages}>
-          <ScrollTop/>
+          <ScrollTop />
           <ProfileDataProvider data={profileData}>
             <Suspense>
               {children}
             </Suspense>
           </ProfileDataProvider>
         </NextIntlClientProvider>
-        <ScrollToTop/>
+        <ScrollToTop />
         <NextTopLoader
           showSpinner={false}
         />

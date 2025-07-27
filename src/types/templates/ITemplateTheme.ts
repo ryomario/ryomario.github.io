@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import { CSSObject } from "@emotion/react";
 
 type TemplateThemeMode = 'dark' | 'light';
 type TemplateThemeBreakpoints = keyof typeof breakpointsValues;
@@ -29,20 +29,20 @@ export interface TemplateTheme {
       disabled: TemplateThemeColor;
     };
   };
-  spacing: (size: number|string) => string;
+  spacing: (size: number | string) => string;
   breakpoints: {
     mobile: string;
     tablet: string;
     desktop: string;
-    down: (size: TemplateThemeBreakpoints|number) => string;
-    up: (size: TemplateThemeBreakpoints|number) => string;
+    down: (size: TemplateThemeBreakpoints | number) => string;
+    up: (size: TemplateThemeBreakpoints | number) => string;
     values: {
       mobile: number;
       tablet: number;
       desktop: number;
     }
   };
-  createStyles: (mode: TemplateThemeMode|null, styles: CSSProperties) => CSSProperties;
+  createStyles: (mode: TemplateThemeMode | null, styles: CSSObject) => CSSObject;
   shadows: (size: number, mode?: TemplateThemeMode) => string | undefined;
 }
 
@@ -98,25 +98,25 @@ export const defaultTemplateTheme: TemplateTheme = {
     values: breakpointsValues,
   },
   createStyles: (mode, styles) => {
-    if(mode === 'dark') return {
+    if (mode === 'dark') return {
       '.dark &': styles,
-    } as CSSProperties;
-      
+    } as CSSObject;
+
     return styles;
   },
   shadows: (size, mode = 'light') => {
-    if(!size) return undefined;
+    if (!size) return undefined;
     const rgb = mode == 'light' ? '0,0,0' : '255,255,255';
 
     return `0 ${3 * size}px ${4 * size}px ${-0.5 * size}px rgba(${rgb}, 0.1), 0 ${size}px ${1.5 * size}px ${-1 * size}px rgba(${rgb}, 0.1)`;
   }
 };
 
-function breakpointMediaQuery(size: TemplateThemeBreakpoints|number, type: 'up'|'down'): string {
+function breakpointMediaQuery(size: TemplateThemeBreakpoints | number, type: 'up' | 'down'): string {
   let point = breakpointsValues.desktop;
-  if(size === 'mobile') point = breakpointsValues.mobile;
-  else if(size === 'tablet') point = breakpointsValues.tablet;
-  else if(size === 'desktop') point = breakpointsValues.desktop;
+  if (size === 'mobile') point = breakpointsValues.mobile;
+  else if (size === 'tablet') point = breakpointsValues.tablet;
+  else if (size === 'desktop') point = breakpointsValues.desktop;
   else point = size;
 
   return `@media (${type === 'up' ? 'min' : 'max'}-width: ${point}px)`;

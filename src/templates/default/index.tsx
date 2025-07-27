@@ -6,8 +6,11 @@ import styled from "@emotion/styled";
 import { Global, css } from "@emotion/react";
 import Navbar from "./navigation/navbar";
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
+import { useTemplatePageRouter } from "../hooks/templatePageRouter";
 
 export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemplateProps) {
+  const { currentPage } = useTemplatePageRouter();
+
   return (
     <Container {...rest}>
       <Global
@@ -28,20 +31,26 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
           }
         `}
       />
-      <Navbar/>
+      <Navbar />
       <main>
         <div className="content">
-          <h1>Default Template</h1>
+          {currentPage == 'projects' ? (
+            <h1>Projects</h1>
+          ) : currentPage == 'about' ? (
+            <h1>About</h1>
+          ) : (
+            <h1>Default Template</h1>
+          )}
         </div>
       </main>
-      <Footer/>
+      <Footer />
     </Container>
   );
 }
 
 // =========================
 
-const Container = styled.div<{theme?: TemplateTheme}>(({ theme }) => ({
+const Container = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
   backgroundColor: theme.colors.background.default.main,
   ...theme.createStyles('dark', {
     backgroundColor: theme.colors.background.default.dark,
@@ -63,7 +72,7 @@ const Container = styled.div<{theme?: TemplateTheme}>(({ theme }) => ({
         maxWidth: theme.breakpoints.values.desktop,
       },
     },
-    
+
     '& > .content': {
       marginLeft: 'auto',
       marginRight: 'auto',
@@ -73,7 +82,7 @@ const Container = styled.div<{theme?: TemplateTheme}>(({ theme }) => ({
       justifyContent: 'space-between',
 
       maxWidth: '80rem',
-      
+
       padding: '1.5rem',
 
       [theme.breakpoints.up(theme.breakpoints.values.desktop)]: {
