@@ -8,7 +8,6 @@ import "flag-icons";
 import { ThemeModeLoader } from "@/components/themeModeLoader";
 import NextTopLoader from "nextjs-toploader";
 import { ScrollTop } from "@/components/scrollTop";
-import { ScrollToTop } from "@/components/scrollToTop";
 import { ProfileDataProvider } from "@/contexts/profileDataContext";
 import RepoProfileData from "@/db/repositories/RepoProfileData";
 import { Suspense } from "react";
@@ -75,7 +74,6 @@ export default async function RootLayout({
             </Suspense>
           </ProfileDataProvider>
         </NextIntlClientProvider>
-        <ScrollToTop />
         <NextTopLoader
           showSpinner={false}
         />

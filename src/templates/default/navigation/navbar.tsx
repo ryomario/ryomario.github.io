@@ -23,7 +23,7 @@ export default function Navbar() {
   }
 
   return (
-    <Nav>
+    <Nav className="container">
       <div className="nav-wrapper">
         <div className="nav-left-wrapper">
           <Link href={getLinkHref('/')} className="logo-wrapper">
@@ -102,19 +102,6 @@ export default function Navbar() {
 // ====================================================================================
 
 const Nav = styled.nav<{ theme?: TemplateTheme }>(({ theme }) => ({
-  width: '100%',
-  [theme.breakpoints.up(theme.breakpoints.values.mobile)]: {
-    maxWidth: theme.breakpoints.values.mobile,
-    margin: '0 auto',
-    padding: '0 0.5rem',
-
-    [theme.breakpoints.up(theme.breakpoints.values.tablet)]: {
-      maxWidth: theme.breakpoints.values.tablet,
-    },
-    [theme.breakpoints.up(theme.breakpoints.values.desktop)]: {
-      maxWidth: theme.breakpoints.values.desktop,
-    },
-  },
   '& > .nav-wrapper': {
     zIndex: 10,
     marginLeft: "auto",

@@ -1,12 +1,13 @@
 'use client';
 
-import { Footer } from "@/components/navigation/footer";
 import { ITemplateProps } from "@/types/templates/ITemplate";
 import styled from "@emotion/styled";
 import { Global, css } from "@emotion/react";
 import Navbar from "./navigation/navbar";
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
 import { useTemplatePageRouter } from "../hooks/templatePageRouter";
+import { Footer } from "./footer";
+import { ScrollToTop } from "@/components/scrollToTop";
 
 export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemplateProps) {
   const { currentPage } = useTemplatePageRouter();
@@ -32,7 +33,7 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
         `}
       />
       <Navbar />
-      <main>
+      <main className="container">
         <div className="content">
           {currentPage == 'projects' ? (
             <h1>Projects</h1>
@@ -44,6 +45,7 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
         </div>
       </main>
       <Footer />
+      <ScrollToTop />
     </Container>
   );
 }
@@ -58,7 +60,7 @@ const Container = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
   transitionProperty: 'background-color',
   transitionDuration: '300ms',
   minHeight: '100vh',
-  '& > main': {
+  '.container': {
     width: '100%',
     [theme.breakpoints.up(theme.breakpoints.values.mobile)]: {
       maxWidth: theme.breakpoints.values.mobile,
@@ -72,23 +74,22 @@ const Container = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
         maxWidth: theme.breakpoints.values.desktop,
       },
     },
+  },
+  '& > main > .content': {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
 
-    '& > .content': {
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+    maxWidth: '80rem',
 
-      maxWidth: '80rem',
+    padding: '1.5rem',
 
-      padding: '1.5rem',
-
-      [theme.breakpoints.up(theme.breakpoints.values.desktop)]: {
-        paddingLeft: '2rem',
-        paddingRight: '2rem',
-      },
-    }
+    [theme.breakpoints.up(theme.breakpoints.values.desktop)]: {
+      paddingLeft: '2rem',
+      paddingRight: '2rem',
+    },
   }
 }));

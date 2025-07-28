@@ -51,7 +51,7 @@ export const defaultTemplateTheme: TemplateTheme = {
     primary: {
       main: '#0070f3',
       light: '#338CF5',
-      dark: '#004EAA',
+      dark: '#115FBB',
     },
     secondary: {
       main: '#7928ca',
@@ -67,7 +67,7 @@ export const defaultTemplateTheme: TemplateTheme = {
       paper: {
         main: '#ffffff',
         light: '#ffffff',
-        dark: '#000000',
+        dark: '#171717',
       },
     },
     text: {
