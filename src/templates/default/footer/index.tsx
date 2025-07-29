@@ -142,19 +142,20 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
     cursor: 'pointer',
     borderRadius: theme.spacing(1),
     color: theme.colors.text.disabled.light,
-    backgroundColor: theme.colors.background.paper.light,
-    boxShadow: theme.shadows(1),
+    backgroundColor: theme.colors.background.default.light,
 
     padding: theme.spacing(4),
     transition: 'all 300ms ease',
     '&:hover': {
       color: theme.colors.primary.light,
-      backgroundColor: theme.colors.background.default.light,
+      backgroundColor: theme.colors.background.paper.light,
+      boxShadow: theme.shadows(1),
     },
     ...theme.createStyles('dark', {
-      backgroundColor: theme.colors.background.paper.dark,
+      backgroundColor: theme.colors.background.default.dark,
       color: theme.colors.text.disabled.dark,
       '&:hover': {
+        backgroundColor: theme.colors.background.paper.dark,
         color: theme.colors.primary.dark,
       }
     }),

@@ -1,7 +1,6 @@
-import RepoProfileData from "@/db/repositories/RepoProfileData";
 import { Locale, routing } from "@/i18n/routing";
 import RenderTemplate from "@/templates";
-import { ACTIVE_TEMPlATE_STORE_ID } from "@/types/templates/ITemplate";
+import { getActiveTemplate } from "@/templates/registered";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
@@ -19,7 +18,7 @@ export default async function SPAPage({ params }: Readonly<{
   setRequestLocale(locale);
 
   // get active template
-  const activeTemplateIdx = await RepoProfileData.getOne<number>(ACTIVE_TEMPlATE_STORE_ID, 0);
+  const templateName = await getActiveTemplate();
 
-  return <RenderTemplate currentTemplate={activeTemplateIdx} defaultLocale={curentLocale} />;
+  return <RenderTemplate templateName={templateName} defaultLocale={curentLocale} />;
 }

@@ -1,0 +1,10 @@
+{
+  "MainSection": {
+    "heading_1": "Hi, Iam {name}",
+    "heading_2": "A Web Developer, Front-End & Back-End Engineer",
+    "hero_img_alt": "Developer",
+    "download_btn": "Download CV",
+    "download_filename": "{name}-resume.{ext}",
+    "btn_more_projects": "More Projects"
+  }
+}

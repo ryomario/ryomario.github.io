@@ -3,9 +3,7 @@
 import { styled, SxProps, Theme } from "@mui/material/styles";
 import React from "react";
 
-import logo from "@/app/icon.svg";
 import Portal from "@mui/material/Portal";
-import Stack from "@mui/material/Stack";
 import LinearProgress from "@mui/material/LinearProgress";
 
 export type SplashScreenProps = React.ComponentProps<'div'> & {
@@ -16,11 +14,11 @@ export type SplashScreenProps = React.ComponentProps<'div'> & {
 export function LoadingScreen({ portal, sx, ...rest }: SplashScreenProps) {
   const content = (
     <LoadingContent sx={sx} {...rest}>
-      <LinearProgress color="inherit" variant="indeterminate" sx={{ width: 1, maxWidth: 360 }}/>
+      <LinearProgress color="inherit" variant="indeterminate" sx={{ width: 1, maxWidth: 360 }} />
     </LoadingContent>
   )
 
-  if(portal) {
+  if (portal) {
     return <Portal>{content}</Portal>
   }
 

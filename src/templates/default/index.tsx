@@ -8,6 +8,7 @@ import { TemplateTheme } from "@/types/templates/ITemplateTheme";
 import { useTemplatePageRouter } from "../hooks/templatePageRouter";
 import { Footer } from "./footer";
 import { ScrollToTop } from "@/components/scrollToTop";
+import { MainSection } from "./sections/main";
 
 export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemplateProps) {
   const { currentPage } = useTemplatePageRouter();
@@ -40,7 +41,7 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
           ) : currentPage == 'about' ? (
             <h1>About</h1>
           ) : (
-            <h1>Default Template</h1>
+            <MainSection />
           )}
         </div>
       </main>
