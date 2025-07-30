@@ -1,10 +1,12 @@
-import { useProfileData } from "@/contexts/profileDataContext";
 import { useTranslations } from "next-intl";
 import styled from "@emotion/styled";
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
+import { adjustColorBrightness } from "@/lib/colors";
+import { useDataContext } from "@/contexts/dataContext";
 
 export function Footer() {
-  const { socialLinks, lastUpdated } = useProfileData();
+  const { data: { profile } } = useDataContext();
+  const { socialLinks, lastUpdated } = profile;
 
   const t = useTranslations('Footer');
 
@@ -118,14 +120,14 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
   [`.${FooterClasses.heading}`]: {
     fontSize: '1.875rem',
     lineHeight: '2.25rem',
-    color: theme.colors.primary.light,
+    color: theme.colors.text.primary.light,
     marginBottom: theme.spacing(5),
     [theme.breakpoints.up('tablet')]: {
       fontSize: '2.25rem',
       lineHeight: '2.5rem',
     },
     ...theme.createStyles('dark', {
-      color: theme.colors.primary.dark,
+      color: theme.colors.text.primary.dark,
     }),
   },
 
@@ -142,21 +144,21 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
     cursor: 'pointer',
     borderRadius: theme.spacing(1),
     color: theme.colors.text.disabled.light,
-    backgroundColor: theme.colors.background.default.light,
+    backgroundColor: theme.colors.background.paper.light,
 
     padding: theme.spacing(4),
     transition: 'all 300ms ease',
     '&:hover': {
-      color: theme.colors.primary.light,
-      backgroundColor: theme.colors.background.paper.light,
+      color: theme.colors.secondary.light,
+      backgroundColor: adjustColorBrightness(theme.colors.background.paper.light, -5),
       boxShadow: theme.shadows(1),
     },
     ...theme.createStyles('dark', {
-      backgroundColor: theme.colors.background.default.dark,
+      backgroundColor: theme.colors.background.paper.dark,
       color: theme.colors.text.disabled.dark,
       '&:hover': {
-        backgroundColor: theme.colors.background.paper.dark,
-        color: theme.colors.primary.dark,
+        backgroundColor: adjustColorBrightness(theme.colors.background.paper.light, -5),
+        color: theme.colors.secondary.dark,
       }
     }),
 

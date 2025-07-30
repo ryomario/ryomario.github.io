@@ -8,9 +8,10 @@ import "flag-icons";
 import { ThemeModeLoader } from "@/components/themeModeLoader";
 import NextTopLoader from "nextjs-toploader";
 import { ScrollTop } from "@/components/scrollTop";
-import { ProfileDataProvider } from "@/contexts/profileDataContext";
 import RepoProfileData from "@/db/repositories/RepoProfileData";
 import { Suspense } from "react";
+import { DataProvider } from "@/contexts/dataContext";
+import RepoProjects from "@/db/repositories/RepoProjects";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,6 +60,8 @@ export default async function RootLayout({
   const messages = await getMessages()
 
   const profileData = await RepoProfileData.getAll()
+  const projects = await RepoProjects.getAll()
+  const project_tags = await RepoProjects.getAllTags()
 
   return (
     <html lang={locale}>
@@ -68,11 +71,19 @@ export default async function RootLayout({
         <ThemeModeLoader />
         <NextIntlClientProvider messages={messages}>
           <ScrollTop />
-          <ProfileDataProvider data={profileData}>
+          <DataProvider value={{
+            data: {
+              profile: profileData,
+              projects,
+            },
+            refs: {
+              project_tags,
+            }
+          }}>
             <Suspense>
               {children}
             </Suspense>
-          </ProfileDataProvider>
+          </DataProvider>
         </NextIntlClientProvider>
         <NextTopLoader
           showSpinner={false}

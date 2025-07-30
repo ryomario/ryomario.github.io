@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
+import { adjustColorBrightness } from "@/lib/colors";
 
 export function ScrollToTop() {
   const [showScroll, setShowScroll] = useState(false)
@@ -91,7 +92,7 @@ const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
   // Hover states
   '&:hover': {
     color: theme.colors.primary.light || '#6366f1',
-    backgroundColor: theme.colors.background.default.light || '#e5e7eb',
+    backgroundColor: adjustColorBrightness(theme.colors.background.paper.light || '#f3f4f6', -5),
     boxShadow: theme.shadows(2) || '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
   },
 
@@ -110,16 +111,13 @@ const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
 
   // Dark mode styles using theme createStyles
   ...theme.createStyles('dark', {
-    backgroundColor: theme.colors.secondary.dark || '#1f2937',
+    color: theme.colors.text.disabled.dark || '#818cf8',
+    backgroundColor: theme.colors.background.paper.dark || '#1f2937',
     '&:hover': {
       color: theme.colors.primary.light || '#818cf8',
-      backgroundColor: theme.colors.background.paper.light || '#111827'
     },
-    '&:focus': {
-      backgroundColor: theme.colors.background.paper.light || '#111827'
-    },
-    '&:active': {
-      backgroundColor: theme.colors.background.paper.light || '#111827'
+    '&:focus, &:active, &:hover': {
+      backgroundColor: adjustColorBrightness(theme.colors.background.paper.dark || '#111827', 20),
     },
   }),
 

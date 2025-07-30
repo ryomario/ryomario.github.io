@@ -1,12 +1,14 @@
-import { useProfileData } from "@/contexts/profileDataContext";
+import { useDataContext } from "@/contexts/dataContext";
 import { Link } from "@/i18n/routing";
+import { adjustColorBrightness, getContrastTextColor } from "@/lib/colors";
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
 import styled from '@emotion/styled';
 import { useTranslations } from "next-intl";
 
 export function ButtonDownloadCV() {
   const t = useTranslations('MainSection');
-  const { name } = useProfileData();
+  const { data: { profile } } = useDataContext();
+  const { name } = profile;
 
   return (
     <DownloadButton
@@ -43,12 +45,12 @@ const DownloadButton = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
   marginBottom: theme.spacing(6),
   fontSize: '1.125rem',
   border: '1px solid',
-  borderColor: 'rgb(199 210 254)',
+  borderColor: adjustColorBrightness(theme.colors.background.paper.light, -10),
   padding: `${theme.spacing(3)} ${theme.spacing(6)}`,
   boxShadow: theme.shadows(2),
   borderRadius: theme.spacing(2),
-  backgroundColor: 'rgb(238 242 255)',
-  color: 'rgb(55 65 81)',
+  backgroundColor: theme.colors.background.paper.light,
+  color: getContrastTextColor(theme.colors.background.paper.light),
   transitionProperty: 'background-color, color',
   transitionDuration: '300ms',
   transitionTimingFunction: 'ease',
@@ -56,12 +58,15 @@ const DownloadButton = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
 
   // Hover states
   '&:hover': {
-    backgroundColor: 'rgb(99 102 241)',
-    color: '#ffffff',
+    backgroundColor: theme.colors.secondary.light,
+    color: getContrastTextColor(theme.colors.secondary.light),
   },
 
   ...theme.createStyles('dark', {
-    borderColor: 'rgb(30 56 81)',
+    '&:hover': {
+      backgroundColor: theme.colors.secondary.dark,
+    },
+    borderColor: adjustColorBrightness(theme.colors.secondary.dark, -50),
   }),
 
   // Responsive

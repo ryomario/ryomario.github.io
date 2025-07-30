@@ -1,132 +1,75 @@
 import { useTranslations } from "next-intl";
 import styled from '@emotion/styled';
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
-import { useProfileData } from "@/contexts/profileDataContext";
-import ilustration from "./illustration.svg";
-import { ButtonDownloadCV } from "./buttonDownloadCV";
+import { HeroSection } from "./heroSection";
+import { Link } from "@/i18n/routing";
+import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter";
+import { adjustColorBrightness } from "@/lib/colors";
+import { useDataContext } from "@/contexts/dataContext";
 
 export function MainSection() {
   const t = useTranslations('MainSection');
-  const { name, headline } = useProfileData();
+  const { data: { projects } } = useDataContext();
+  const { getLinkHref } = useTemplatePageRouter();
 
   return (
-    <HeroContainer>
-      <TextContainer>
-        <Heading>{t('heading_1', { name })}</Heading>
-        <Subheading>{headline}</Subheading>
-        <ButtonWrapper>
-          <ButtonDownloadCV />
-        </ButtonWrapper>
-      </TextContainer>
-      <ImageContainer>
-        <HeroImage
-          src={ilustration.src}
-          alt={t('hero_img_alt')}
-        />
-      </ImageContainer>
-      {/**TODO - refactor other components */}
-    </HeroContainer>
+    <>
+      <HeroSection />
+      {/**TODO - project  showcase section */}
+      {/* {projects.map(p => p.title)} */}
+      <ButtonWrapper>
+        <LinkButton
+          href={getLinkHref('projects')}
+        >
+          {t('btn_more_projects')}
+        </LinkButton>
+      </ButtonWrapper>
+    </>
   );
 }
 
 // ============================================================================
 
-const HeroContainer = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  marginTop: theme.spacing(12),
-
-  [theme.breakpoints.up('mobile')]: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-
-  [theme.breakpoints.up('tablet')]: {
-    marginTop: theme.spacing(2)
-  }
-}));
-
-const TextContainer = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
-  width: '100%',
-  textAlign: 'center',
-
-  [theme.breakpoints.up('tablet')]: {
-    width: '33.333333%',
-    textAlign: 'left'
-  }
-}));
-
-const Heading = styled.h1<{ theme?: TemplateTheme }>(({ theme }) => ({
-  fontSize: '1.5rem',
-  textTransform: 'uppercase',
-  color: theme.colors.text.primary.light,
-  textAlign: 'center',
-
-  [theme.breakpoints.up('mobile')]: {
-    textAlign: 'left'
-  },
-
-  [theme.breakpoints.up('tablet')]: {
-    fontSize: '1.875rem'
-  },
-
-  [theme.breakpoints.up('desktop')]: {
-    fontSize: '2.25rem'
-  },
-
-  ...theme.createStyles('dark', {
-    color: theme.colors.text.primary.dark,
-  }),
-}));
-
-const Subheading = styled.p<{ theme?: TemplateTheme }>(({ theme }) => ({
-  marginTop: theme.spacing(4),
-  fontSize: '1.125rem',
-  lineHeight: '1.75rem',
-  color: theme.colors.text.secondary.light,
-  textAlign: 'center',
-
-  [theme.breakpoints.up('mobile')]: {
-    textAlign: 'left',
-    fontSize: '1.25rem'
-  },
-
-  [theme.breakpoints.up('tablet')]: {
-    fontSize: '1.5rem'
-  },
-
-  [theme.breakpoints.up('desktop')]: {
-    fontSize: '1.875rem'
-  },
-
-  ...theme.createStyles('dark', {
-    color: theme.colors.text.secondary.dark,
-  }),
-}));
-
 const ButtonWrapper = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
+  width: '100%',
   display: 'flex',
   justifyContent: 'center',
-  [theme.breakpoints.up('mobile')]: {
-    justifyContent: 'flex-start',
-  }
-}));
-
-const ImageContainer = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
-  width: '100%',
-  float: 'right',
   marginTop: theme.spacing(8),
-  textAlign: 'right',
 
   [theme.breakpoints.up('mobile')]: {
-    width: '66.666667%',
-    marginTop: 0
-  }
+    marginTop: theme.spacing(10),
+  },
 }));
 
-const HeroImage = styled.img({
-  width: '100%',
-  objectFit: 'cover'
-});
+const LinkButton = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
+  all: 'unset',
+
+  cursor: 'pointer',
+  fontSize: '1rem',
+  backgroundColor: theme.colors.secondary.light,
+  color: '#ffffff',
+
+  transition: 'background-color 200ms',
+
+  ['&:hover']: {
+    backgroundColor: adjustColorBrightness(theme.colors.secondary.light, -15),
+  },
+
+  borderRadius: theme.spacing(1),
+  boxShadow: theme.shadows(1),
+
+  padding: `${theme.spacing(2.5)} ${theme.spacing(5)}`,
+
+  [theme.breakpoints.up('mobile')]: {
+    marginLeft: theme.spacing(4),
+    marginRight: theme.spacing(4),
+  },
+
+  ...theme.createStyles('dark', {
+    backgroundColor: theme.colors.secondary.dark,
+
+    ['&:hover']: {
+      backgroundColor: adjustColorBrightness(theme.colors.secondary.dark, -15),
+    },
+  }),
+}));

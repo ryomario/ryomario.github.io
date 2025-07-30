@@ -1,3 +1,4 @@
+import { adjustColorBrightness, rgb2hex } from "@/lib/colors";
 import { CSSObject } from "@emotion/react";
 
 type TemplateThemeMode = 'dark' | 'light';
@@ -49,42 +50,42 @@ export interface TemplateTheme {
 export const defaultTemplateTheme: TemplateTheme = {
   colors: {
     primary: {
-      main: '#0070f3',
-      light: '#338CF5',
-      dark: '#115FBB',
+      main: rgb2hex([0, 112, 243]),
+      light: adjustColorBrightness(rgb2hex([0, 112, 243]), 20),
+      dark: adjustColorBrightness(rgb2hex([0, 112, 243]), -20),
     },
     secondary: {
-      main: '#7928ca',
-      light: '#9353D4',
-      dark: '#541C8D',
+      main: rgb2hex([99, 102, 241]),
+      light: adjustColorBrightness(rgb2hex([99, 102, 241]), 20),
+      dark: adjustColorBrightness(rgb2hex([99, 102, 241]), -20),
     },
     background: {
       default: {
-        main: '#fafafa',
-        light: '#fafafa',
-        dark: '#232323',
-      },
-      paper: {
         main: '#ffffff',
         light: '#ffffff',
-        dark: '#171717',
+        dark: rgb2hex([13, 36, 56]),
+      },
+      paper: {
+        main: rgb2hex([247, 248, 252]),
+        light: rgb2hex([247, 248, 252]),
+        dark: rgb2hex([30, 56, 81]),
       },
     },
     text: {
       primary: {
-        main: 'rgba(0,0,0,0.85)',
-        light: 'rgba(0,0,0,0.85)',
-        dark: 'rgba(255,255,255,0.85)',
+        main: rgb2hex([0,0,0], 0.9),
+        light: rgb2hex([0,0,0], 0.9),
+        dark: rgb2hex([255, 255, 255], 0.9),
       },
       secondary: {
-        main: 'rgba(0,0,0,0.5)',
-        light: 'rgba(0,0,0,0.5)',
-        dark: 'rgba(255,255,255,0.5)',
+        main: rgb2hex([0,0,0], 0.7),
+        light: rgb2hex([0,0,0], 0.7),
+        dark: rgb2hex([255, 255, 255], 0.7),
       },
       disabled: {
-        main: 'rgba(0,0,0,0.3)',
-        light: 'rgba(0,0,0,0.3)',
-        dark: 'rgba(255,255,255,0.3)',
+        main: rgb2hex([0,0,0], 0.3),
+        light: rgb2hex([0,0,0], 0.3),
+        dark: rgb2hex([255, 255, 255], 0.3),
       },
     },
   },
@@ -99,7 +100,7 @@ export const defaultTemplateTheme: TemplateTheme = {
   },
   createStyles: (mode, styles) => {
     if (mode === 'dark') return {
-      '.dark &': styles,
+      ['.dark &']: styles,
     } as CSSObject;
 
     return styles;

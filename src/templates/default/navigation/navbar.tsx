@@ -1,4 +1,3 @@
-import { useProfileData } from "@/contexts/profileDataContext";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import styled from "@emotion/styled";
@@ -7,12 +6,14 @@ import { TemplateTheme } from "@/types/templates/ITemplateTheme";
 import { LanguageSwitcher } from "./languageSwitcher";
 import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter";
 import { ThemeToggler } from "./themeToggler";
+import { useDataContext } from "@/contexts/dataContext";
 
 export default function Navbar() {
   const { getLinkHref } = useTemplatePageRouter();
   const [showMenu, setShowMenu] = useState(false);
   const t = useTranslations('Navbar');
-  const profileData = useProfileData();
+  const { data: { profile } } = useDataContext();
+  const { hireable } = profile;
 
   function toggleMenu() {
     if (!showMenu) {
@@ -71,7 +72,7 @@ export default function Navbar() {
           </Link>
         </div>
         <div className="nav-wrapper-right">
-          {profileData.hireable && <HereableButton className="unset-all-styles" aria-label={t('buttons.hireme')}>
+          {hireable && <HereableButton className="unset-all-styles" aria-label={t('buttons.hireme')}>
             {t('buttons.hireme')}
           </HereableButton>}
           <LanguageSwitcher />
@@ -91,7 +92,7 @@ export default function Navbar() {
         >
           {t('menus.aboutme')}
         </Link>
-        {profileData.hireable && <button className="unset-all-styles" aria-label={t('buttons.hireme')}>
+        {hireable && <button className="unset-all-styles" aria-label={t('buttons.hireme')}>
           {t('buttons.hireme')}
         </button>}
       </div>

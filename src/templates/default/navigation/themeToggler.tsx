@@ -18,19 +18,26 @@ export function ThemeToggler() {
 const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
   all: 'unset',
 
-  backgroundColor: theme.colors.primary.light,
-  boxShadow: theme.shadows(1),
+  backgroundColor: theme.colors.background.paper.light,
+  color: theme.colors.text.disabled.light,
   ...theme.createStyles('dark', {
-    backgroundColor: theme.colors.primary.dark,    
-    boxShadow: theme.shadows(1, 'dark'),
+    color: theme.colors.text.disabled.dark,
+    backgroundColor: theme.colors.background.paper.dark,
+
+    '&:hover svg': {
+      color: theme.colors.text.secondary.dark,
+    },
   }),
   padding: theme.spacing(2),
   borderRadius: theme.spacing(2),
   cursor: 'pointer',
 
+  '&:hover svg': {
+    color: theme.colors.text.secondary.light,
+  },
+
   'svg': {
     display: 'block',
-    color: theme.colors.text.secondary.dark,
     fontSize: theme.spacing(5),
     '&.dark-icon': {
       display: 'none',
@@ -44,8 +51,5 @@ const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
         display: 'block',
       }
     }),
-  },
-  '&:hover svg': {
-    color: theme.colors.text.primary.dark,
   },
 }));
