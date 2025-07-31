@@ -60,7 +60,21 @@ export function useTableData<Data extends any, Order extends string>({
           setTotal(totalData);
         } else if (Array.isArray(propData)) {
           const totalData = propData.length;
-          const loadedData = propData.slice(firstIdx, firstIdx + limit);
+          const loadedData = await new Promise<Data[]>((resolve, reject) => {
+            setTimeout(() => {
+              try {
+                if(!propData || !propData.length) {
+                  resolve([]);
+                } else {
+                  const data = propData.slice(firstIdx, firstIdx + limit);
+                  
+                  resolve(data);
+                }
+              } catch (error) {
+                reject(error);
+              }
+            }, 0);
+          });
 
           setData(loadedData);
           setTotal(totalData);
@@ -68,7 +82,7 @@ export function useTableData<Data extends any, Order extends string>({
           throw new Error('Data not loaded!');
         }
         if (reset) {
-          setPage(0);
+          setPage(prevValue => prevValue !== 0 ? 0 : prevValue);
         }
       } catch (error: any) {
         Logger.error(error.message ?? error ?? 'unknown error', 'useTableData loadData');
@@ -77,7 +91,7 @@ export function useTableData<Data extends any, Order extends string>({
       }
     }
     ,
-    [propData, limit, offset, order, orderBy, setData, setIsLoading, setTotal]
+    [propData, limit, offset, order, orderBy, setData, setIsLoading, setTotal, setPage]
   );
 
   const handleRequestSort = useCallback(

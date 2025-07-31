@@ -54,8 +54,10 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
 // =========================
 
 const Container = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
+  color: theme.colors.text.primary.light,
   backgroundColor: theme.colors.background.default.main,
   ...theme.createStyles('dark', {
+    color: theme.colors.text.primary.dark,
     backgroundColor: theme.colors.background.default.dark,
   }),
   transitionProperty: 'background-color',

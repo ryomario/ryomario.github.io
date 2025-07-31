@@ -6,7 +6,7 @@ import { UrlObject } from "url";
 type UseTemplatePageRouterReturn = {
   currentPage: string;
   handlePageChange: (page?: string | null) => MouseEventHandler<HTMLElement>;
-  getLinkHref: (page?: string | null) => UrlObject;
+  getLinkHref: (page?: string | null, params?: Record<string, string|number>) => UrlObject;
 }
 
 const PAGE_KEY_PARAM = 'page';
@@ -38,17 +38,22 @@ export function useTemplatePageRouter(defaultPage = ''): UseTemplatePageRouterRe
     return handler;
   }, [currentPage, defaultPage, searchParams, router, pathname]);
 
-  const getLinkHref = useCallback((page?: string | null): UrlObject => {
+  const getLinkHref = useCallback((page?: string | null, params: Record<string, string|number> = {}): UrlObject => {
     const urlObj: UrlObject = {
       pathname,
     };
+    const sp = new URLSearchParams(searchParams);
 
     if (page && page != '/' && page != '') {
-      const sp = new URLSearchParams(searchParams);
       sp.set(PAGE_KEY_PARAM, page);
-
-      urlObj.search = sp.toString();
     }
+
+    for (const key in params) {
+      if (key !== PAGE_KEY_PARAM) {
+        sp.set(key, `${params[key]}`);
+      }
+    }
+    urlObj.search = sp.toString();
 
     return urlObj;
   }, [pathname, searchParams]);

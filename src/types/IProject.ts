@@ -15,3 +15,5 @@ export type IProjectFilter = {
   tags?: IProject['tags'];
   published?: boolean;
 }
+
+export type IProjectSortableProperties = 'title' | 'createdAt' | 'updatedAt';

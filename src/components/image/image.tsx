@@ -39,9 +39,9 @@ export const Image = forwardRef<HTMLSpanElement, ImageProps>((props, ref) => {
     ...rest
   } = props;
 
-  console.log('src',src)
   const localRef = useRef<HTMLSpanElement|null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const isInView = useInView(localRef, {
     once: true,
@@ -59,8 +59,19 @@ export const Image = forwardRef<HTMLSpanElement, ImageProps>((props, ref) => {
     return () => clearTimeout(timer);
   },[delayTime, onLoad]);
 
+  const handleImageError = useCallback(() => {
+    const timer = setTimeout(() => {
+      startTransition(() => {
+        setIsError(true);
+        console.log('error')
+      });
+    }, delayTime);
+
+    return () => clearTimeout(timer);
+  },[delayTime]);
+
   const shouldRenderImage = visibleByDefault || isInView;
-  const showPlaceholder = !visibleByDefault && !isLoaded && !disablePlaceholder;
+  const showPlaceholder = (!visibleByDefault && !isLoaded && !disablePlaceholder) || isError;
 
   const renderComponents = {
     overlay: () => slotProps?.overlay && (
@@ -69,12 +80,12 @@ export const Image = forwardRef<HTMLSpanElement, ImageProps>((props, ref) => {
     placeholder: () => showPlaceholder && (
       <ImagePlaceholder {...slotProps?.placeholder}/>
     ),
-    image: () => (
+    image: () => !isError && (
       <ImageImg
         src={src}
         alt={alt}
         onLoad={handleImageLoad}
-        onError={handleImageLoad}
+        onError={handleImageError}
         {...slotProps?.img}
       />
     ),

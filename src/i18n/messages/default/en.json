@@ -5,6 +5,10 @@
     "hero_img_alt": "Developer",
     "download_btn": "Download CV",
     "download_filename": "{name}-resume.{ext}",
+    "projects_header": "Projects Portofolio",
     "btn_more_projects": "More Projects"
+  },
+  "GridProjects": {
+    "empty_text": "No Projects published!"
   }
 }

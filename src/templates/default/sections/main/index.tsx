@@ -5,18 +5,17 @@ import { HeroSection } from "./heroSection";
 import { Link } from "@/i18n/routing";
 import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter";
 import { adjustColorBrightness } from "@/lib/colors";
-import { useDataContext } from "@/contexts/dataContext";
+import { GridProjects } from "../projects/gridProjects";
 
 export function MainSection() {
   const t = useTranslations('MainSection');
-  const { data: { projects } } = useDataContext();
   const { getLinkHref } = useTemplatePageRouter();
 
   return (
     <>
       <HeroSection />
-      {/**TODO - project  showcase section */}
-      {/* {projects.map(p => p.title)} */}
+      <SectionHeader>{t('projects_header')}</SectionHeader>
+      <GridProjects maxItems={3} filter={{ published: true }}/>
       <ButtonWrapper>
         <LinkButton
           href={getLinkHref('projects')}
@@ -29,6 +28,17 @@ export function MainSection() {
 }
 
 // ============================================================================
+
+const SectionHeader = styled.h1<{ theme?: TemplateTheme }>(({ theme }) => ({
+  width: '100%',
+  marginBlock: theme.spacing(10),
+  textAlign: 'center',
+  fontWeight: 500,
+
+  [theme.breakpoints.up('mobile')]: {
+    marginBlock: theme.spacing(15),
+  },
+}));
 
 const ButtonWrapper = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
   width: '100%',
