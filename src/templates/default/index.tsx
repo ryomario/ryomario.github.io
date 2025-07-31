@@ -66,7 +66,6 @@ const Container = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
     [theme.breakpoints.up(theme.breakpoints.values.mobile)]: {
       maxWidth: theme.breakpoints.values.mobile,
       margin: '0 auto',
-      padding: '0 0.5rem',
 
       [theme.breakpoints.up(theme.breakpoints.values.tablet)]: {
         maxWidth: theme.breakpoints.values.tablet,
