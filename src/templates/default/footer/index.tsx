@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import styled from "@emotion/styled";
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
-import { adjustColorBrightness } from "@/lib/colors";
+import { adjustColorBrightness, hexAlpha } from "@/lib/colors";
 import { useDataContext } from "@/contexts/dataContext";
 
 export function Footer() {
@@ -68,7 +68,8 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
   paddingBottom: theme.spacing(8),
   marginTop: theme.spacing(20),
 
-  borderTop: '2px solid #dbeafe',
+  borderTop: '2px solid',
+  borderColor: hexAlpha(theme.colors.text.disabled.light, 0.3),
   ...theme.createStyles('dark', {
     borderTopColor: '#1e293b',
   }),
