@@ -19,14 +19,16 @@ type Props = {
   maxItems?: number;
   orderBy?: IProjectSortableProperties;
   orderMode?: ArrayOrder;
+
+  alwaysShowDetails?: boolean;
 }
 
-export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt', orderMode = 'desc' }: Props) {
+export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt', orderMode = 'desc', alwaysShowDetails = false }: Props) {
   const t = useTranslations('GridProjects');
   const { getLinkHref } = useTemplatePageRouter();
   const { data: { projects } } = useDataContext();
 
-  const filteredProjects = useMemo(() => filterProjects(projects, filter),[projects]);
+  const filteredProjects = useMemo(() => filterProjects(projects, filter), [projects, filter]);
 
   const {
     handlePageChange,
@@ -43,6 +45,8 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
   });
 
   const showPagination = !maxItems;
+
+  const dataToRender = useMemo(() => (maxItems > 0 ? data.slice(0, maxItems) : data), [maxItems, data]);
 
   if (isLoading) {
     return (
@@ -62,10 +66,15 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
 
   return (
     <GridContainer>
-      {(maxItems > 0 ? data.slice(0, maxItems) : data).map(project => (
+      {dataToRender.map(project => (
         <GridCard key={project.id} href={getLinkHref('project', { id: project.id })}>
           <Image src={project.previews[0]} sx={{ width: 300, height: 300 }} />
-          <div className="details">
+          <div
+            className={[
+              "details",
+              alwaysShowDetails ? 'always-open' : '',
+            ].join(' ')}
+          >
             {project.title}
           </div>
         </GridCard>
@@ -122,7 +131,6 @@ const GridCard = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
 
   position: 'relative',
   ['.details']: {
-    position: 'absolute',
     display: 'block',
     backgroundColor: hexAlpha(theme.colors.background.default.light, 0.5),
     backdropFilter: 'blur(5px)',
@@ -130,8 +138,12 @@ const GridCard = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
     left: 0,
     right: 0,
     padding: theme.spacing(5),
-    transform: 'translateY(100%)',
+    ['&:not(.always-open)']: {
+      position: 'absolute',
+      transform: 'translateY(100%)',
+    },
     transition: 'transform 300ms',
+    transitionDelay: '500ms', // delay 0.5 second to close after mouse leave
     fontWeight: 900,
     textAlign: 'center',
   },
@@ -139,8 +151,9 @@ const GridCard = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
   ['&:hover']: {
     boxShadow: theme.shadows(5),
     scale: 1.025,
-    ['.details']: {
+    ['.details:not(.always-open)']: {
       transform: 'translateY(0)',
+      transitionDelay: '0s', // no delay to open on mouse enter
     },
   },
 

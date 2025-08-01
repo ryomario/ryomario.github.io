@@ -8,6 +8,11 @@
     "projects_header": "Projects Portofolio",
     "btn_more_projects": "More Projects"
   },
+  "ProjectsSection": {
+    "heading": "Projects Portofolio",
+    "filter_helper": "Search projects by title or filter by tags",
+    "search_projects": "Search Projects"
+  },
   "GridProjects": {
     "empty_text": "No Projects published!"
   }

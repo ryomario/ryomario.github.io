@@ -13,8 +13,7 @@ export function filterProjects(data: IProject[], filter: IProjectFilter) {
     // filter queries
     if (filter?.q && filter?.q.trim() != '') {
       if (
-        !d.title.match(new RegExp(filter.q, 'gi')) &&
-        !d.desc.match(new RegExp(filter.q, 'gi'))
+        !d.title.match(new RegExp(filter.q, 'gi'))
       ) return false;
     }
     return true;

@@ -9,6 +9,7 @@ import { useTemplatePageRouter } from "../hooks/templatePageRouter";
 import { Footer } from "./footer";
 import { ScrollToTop } from "@/components/scrollToTop";
 import { MainSection } from "./sections/main";
+import { ProjectsSection } from "./sections/projects";
 
 export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemplateProps) {
   const { currentPage } = useTemplatePageRouter();
@@ -17,6 +18,22 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
     <Container {...rest}>
       <Global
         styles={css`
+          :host,
+          html {
+            line-height:1.5;
+            -webkit-text-size-adjust:100%;
+            -moz-tab-size:4;
+            tab-size:4;
+            font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+            font-feature-settings:normal;
+            font-variation-settings:normal;
+            -webkit-tap-highlight-color:transparent;
+          }
+          body {
+            margin:0;
+            line-height:inherit;
+          }
+
           .sr-only {
             position: absolute;
             width: 1px;
@@ -37,7 +54,7 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
       <main className="container">
         <div className="content">
           {currentPage == 'projects' ? (
-            <h1>Projects</h1>
+            <ProjectsSection />
           ) : currentPage == 'about' ? (
             <h1>About</h1>
           ) : (
