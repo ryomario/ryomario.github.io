@@ -1,5 +1,6 @@
-import { toJSON_safe } from "@/lib/json";
 import { sendLog } from "./logger.server";
+import { getErrorMessage } from "./errorMessage";
+import { toJSON_safe } from "@/lib/json";
 
 export enum LogLevel {
   INFO = 'INFO',
@@ -10,10 +11,12 @@ export enum LogLevel {
 
 export class Logger {
   private static getMessage(message: unknown, title = '') {
-    return `${(title.trim())
-        ? title.trim().concat(' => ')
-        : ''
-      }${(typeof message === 'string') ? message : toJSON_safe(message)}`
+    const finalMessage = `${(title.trim())
+      ? title.trim().concat(' => ')
+      : ''
+    }${getErrorMessage(message)}`;
+
+    return toJSON_safe(finalMessage, '').slice(1, -1);
   }
 
   public static sendLog(level: LogLevel, message: string) {
