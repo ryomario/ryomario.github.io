@@ -45,6 +45,7 @@ export interface TemplateTheme {
   };
   createStyles: (mode: TemplateThemeMode | null, styles: CSSObject) => CSSObject;
   shadows: (size: number, mode?: TemplateThemeMode) => string | undefined;
+  shadowRing: (size: number, hexColor?: string) => string | undefined;
 }
 
 export const defaultTemplateTheme: TemplateTheme = {
@@ -109,8 +110,13 @@ export const defaultTemplateTheme: TemplateTheme = {
     if (!size) return undefined;
     const rgb = mode == 'light' ? '0,0,0' : '100,100,100';
 
-    return `0 ${3 * size}px ${4 * size}px ${-0.5 * size}px rgba(${rgb}, 0.1), 0 ${size}px ${1.5 * size}px ${-1 * size}px rgba(${rgb}, 0.1)`;
-  }
+    return `0 ${2 * size}px ${2 * size}px ${-0.5 * size}px rgba(${rgb}, 0.05), 0 ${size}px ${1.5 * size}px ${-0.5 * size}px rgba(${rgb}, 0.05)`;
+  },
+  shadowRing: (size, color) => {
+    if(!size) return undefined;
+
+    return `0 0 0 ${size}px ${color}`;
+  },
 };
 
 function breakpointMediaQuery(size: TemplateThemeBreakpoints | number, type: 'up' | 'down'): string {

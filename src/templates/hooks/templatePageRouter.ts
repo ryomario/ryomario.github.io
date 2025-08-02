@@ -46,6 +46,8 @@ export function useTemplatePageRouter(defaultPage = ''): UseTemplatePageRouterRe
 
     if (page && page != '/' && page != '') {
       sp.set(PAGE_KEY_PARAM, page);
+    } else {
+      sp.delete(PAGE_KEY_PARAM);
     }
 
     for (const key in params) {

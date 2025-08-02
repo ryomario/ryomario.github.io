@@ -1,5 +1,6 @@
 import { Image } from "@/components/image/image";
 import { useDataContext } from "@/contexts/dataContext";
+import { useDebounce } from "@/hooks/debouncedValue";
 import { useTableData } from "@/hooks/tableData";
 import { Link } from "@/i18n/routing";
 import { ArrayOrder } from "@/lib/array";
@@ -35,7 +36,7 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
     page,
 
     data,
-    isLoading,
+    isLoading: dataIsLoading,
     total,
   } = useTableData<IProject, IProjectSortableProperties>({
     data: filteredProjects,
@@ -43,6 +44,8 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
     orderBy,
     order: orderMode,
   });
+
+  const isLoading = useDebounce(dataIsLoading, 300);
 
   const showPagination = !maxItems;
 
@@ -53,7 +56,7 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
       <GridContainer>
         {Array.from({ length: maxItems > 0 ? maxItems : PAGE_SIZE }, (_, i) => (
           <GridCard key={i} href="#">
-            <div style={{ width: 300, height: 300 }}></div>
+            <div style={{ minWidth: 300, minHeight: 300 }}></div>
           </GridCard>
         ))}
       </GridContainer>
@@ -68,14 +71,17 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
     <GridContainer>
       {dataToRender.map(project => (
         <GridCard key={project.id} href={getLinkHref('project', { id: project.id })}>
-          <Image src={project.previews[0]} sx={{ width: 300, height: 300 }} />
+          <Image src={project.previews[0]} sx={{ minWidth: 300, minHeight: 300 }} />
           <div
             className={[
               "details",
               alwaysShowDetails ? 'always-open' : '',
             ].join(' ')}
           >
-            {project.title}
+            <span>{project.title}</span>
+            <div className="tags-container">{project.tags.map(tag => (
+              <span key={tag}>{tag}</span>
+            ))}</div>
           </div>
         </GridCard>
       ))}
@@ -131,13 +137,15 @@ const GridCard = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
 
   position: 'relative',
   ['.details']: {
-    display: 'block',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(2),
     backgroundColor: hexAlpha(theme.colors.background.default.light, 0.5),
     backdropFilter: 'blur(5px)',
     bottom: 0,
     left: 0,
     right: 0,
-    padding: theme.spacing(5),
+    padding: theme.spacing(3),
     ['&:not(.always-open)']: {
       position: 'absolute',
       transform: 'translateY(100%)',
@@ -146,6 +154,25 @@ const GridCard = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
     transitionDelay: '500ms', // delay 0.5 second to close after mouse leave
     fontWeight: 900,
     textAlign: 'center',
+
+    ['.tags-container']: {
+      display: 'flex',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      gap: theme.spacing(1),
+      ['span']: {
+        display: 'inline-block',
+        padding: '0 0.5em',
+        lineHeight: 1.5,
+        fontSize: '0.8em',
+        fontWeight: 'normal',
+        backgroundColor: hexAlpha('#000', 0.05),
+        borderRadius: 99999,
+        ...theme.createStyles('dark', {
+          backgroundColor: hexAlpha('#fff', 0.05),
+        }),
+      },
+    }
   },
 
   ['&:hover']: {

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { IProjectFilter } from "@/types/IProject";
 import { hexAlpha } from "@/lib/colors";
 import { useDebounce } from "@/hooks/debouncedValue";
+import { ProjectsFilter } from "./projectsFilter";
 
 export function ProjectsSection() {
   const t = useTranslations('ProjectsSection');
@@ -43,6 +44,10 @@ export function ProjectsSection() {
             aria-label={t('search_projects')}
           />
         </SearchContainer>
+        <ProjectsFilter
+          filter={filter}
+          onChangeFilter={(newFilter) => setFilter(old => ({ ...old, ...newFilter }))}
+        />
       </FilterContainer>
       <GridProjects
         filter={filter}

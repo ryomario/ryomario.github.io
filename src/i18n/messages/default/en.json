@@ -15,5 +15,12 @@
   },
   "GridProjects": {
     "empty_text": "No Projects published!"
+  },
+  "ProjectsFilter": {
+    "labels": {
+      "not_filterred": "Filter",
+      "tag_filterred": "Filtered {count, plural, =1 {(one tag)} other {(# tags)}}",
+      "tag_heading": "Tags (contains)"
+    }
   }
 }
