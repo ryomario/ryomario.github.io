@@ -4,7 +4,7 @@ import { useDebounce } from "@/hooks/debouncedValue";
 import { useTableData } from "@/hooks/tableData";
 import { Link } from "@/i18n/routing";
 import { ArrayOrder } from "@/lib/array";
-import { hexAlpha } from "@/lib/colors";
+import { adjustColorBrightness, getContrastTextColor, hexAlpha } from "@/lib/colors";
 import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter";
 import { IProject, IProjectFilter, IProjectSortableProperties } from "@/types/IProject";
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
@@ -34,6 +34,7 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
   const {
     handlePageChange,
     page,
+    pageSize,
 
     data,
     isLoading: dataIsLoading,
@@ -45,9 +46,11 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
     order: orderMode,
   });
 
+  const totalPage = !total ? 1 : Math.ceil(total / pageSize);
+
   const isLoading = useDebounce(dataIsLoading, 300);
 
-  const showPagination = !maxItems;
+  const showPagination = !maxItems && totalPage > 1;
 
   const dataToRender = useMemo(() => (maxItems > 0 ? data.slice(0, maxItems) : data), [maxItems, data]);
 
@@ -71,7 +74,7 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
     <GridContainer>
       {dataToRender.map(project => (
         <GridCard key={project.id} href={getLinkHref('project', { id: project.id })}>
-          <Image src={project.previews[0]} sx={{ minWidth: 300, minHeight: 300 }} />
+          <Image src={project.previews[0]} ratio="1/1" />
           <div
             className={[
               "details",
@@ -85,7 +88,35 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
           </div>
         </GridCard>
       ))}
-      {/**TODO - pagination */}
+
+      {showPagination && (
+        <PaginationContainer>
+          <ul>
+            <li>
+              <NavigationButton
+                onClick={(e) => handlePageChange(e, page - 1)}
+                disabled={page === 0}
+              >{t('pagination.prev')}</NavigationButton>
+            </li>
+            {Array.from({ length: totalPage }, (_, i) => (
+              <li key={i}>
+                <PaginationPageButton
+                  isActive={page === i}
+                  onClick={(e) => handlePageChange(e, i)}
+                >
+                  {i + 1}
+                </PaginationPageButton>
+              </li>
+            ))}
+            <li>
+              <NavigationButton
+                onClick={(e) => handlePageChange(e, page + 1)}
+                disabled={page === (totalPage - 1)}
+              >{t('pagination.next')}</NavigationButton>
+            </li>
+          </ul>
+        </PaginationContainer>
+      )}
     </GridContainer>
   );
 }
@@ -190,4 +221,62 @@ const GridCard = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
       backgroundColor: hexAlpha(theme.colors.background.default.dark, 0.5),
     }
   }),
+}));
+
+// ============== PAGINATION STYLES ====================
+const PaginationContainer = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
+  display: 'block',
+  marginTop: theme.spacing(4),
+  gridColumn: '1 / -1',
+  ['ul']: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: theme.spacing(2),
+    padding: `${theme.spacing(4)} ${theme.spacing(6)}`,
+    ['li']: {
+      display: 'block',
+    },
+  },
+}));
+
+const PaginationPageButton = styled.button<{ isActive?: boolean, theme?: TemplateTheme }>(({ theme, isActive }) => ({
+  padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
+  borderRadius: theme.spacing(1),
+  border: `1px solid ${theme.colors.text.disabled.light}`,
+  backgroundColor: isActive ? theme.colors.primary.light : 'transparent',
+  color: isActive ? getContrastTextColor(theme.colors.primary.light) : theme.colors.text.primary.light,
+  cursor: 'pointer',
+  transition: 'all 150ms ease',
+  minWidth: '2.5rem',
+
+  '&:not(:disabled):hover': {
+    backgroundColor: isActive 
+      ? adjustColorBrightness(theme.colors.primary.light, -10)
+      : theme.colors.background.paper.light,
+  },
+
+  ...theme.createStyles('dark', {
+    borderColor: theme.colors.text.disabled.dark,
+    backgroundColor: isActive ? theme.colors.primary.dark : theme.colors.background.paper.dark,
+    color: isActive ? getContrastTextColor(theme.colors.primary.dark) : theme.colors.text.secondary.dark,
+
+    '&:not(:disabled):hover': {
+      backgroundColor: isActive 
+        ? adjustColorBrightness(theme.colors.primary.dark, 10)
+        : adjustColorBrightness(theme.colors.background.paper.dark, 10)
+    }
+  }),
+
+  '&:disabled': {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  },
+}));
+
+const NavigationButton = styled(PaginationPageButton)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1),
+  padding: `${theme.spacing(2)} ${theme.spacing(4)}`
 }));

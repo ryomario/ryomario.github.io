@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -239,6 +239,7 @@ const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
 
 const DropdownContainer = styled.div<{ open?: boolean, theme?: TemplateTheme }>(({ open = false, theme }) => ({
   position: 'fixed',
+  display: open ? 'block' : 'none',
   inset: 0,
   transitionProperty: 'display',
   transitionDelay: '0.3s',

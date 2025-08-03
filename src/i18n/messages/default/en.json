@@ -14,7 +14,11 @@
     "search_projects": "Search Projects"
   },
   "GridProjects": {
-    "empty_text": "No Projects published!"
+    "empty_text": "No Projects published!",
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next"
+    }
   },
   "ProjectsFilter": {
     "labels": {

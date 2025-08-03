@@ -1,3 +1,5 @@
+'use client';
+
 import { TemplateTheme } from "@/types/templates/ITemplateTheme";
 import styled from '@emotion/styled';
 import { useTranslations } from "next-intl";
