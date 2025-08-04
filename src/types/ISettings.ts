@@ -1,8 +1,10 @@
+import { TemplateName } from '@/templates/registered';
 import type { SupportedColorScheme } from '@mui/material/styles'
 
 export interface ISettingsState {
   colorScheme?: SupportedColorScheme;
   miniSidebar?: boolean;
+  templateName?: TemplateName;
 }
 
 export interface ISettingsContextValue {

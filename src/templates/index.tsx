@@ -1,22 +1,16 @@
 'use client';
 
 import { ITemplateProps } from "@/types/templates/ITemplate";
+import { useSettingsContext } from "@/settings/settingsProvider";
 import TemplateDefault from "./default";
-import { ThemeProvider } from "@emotion/react";
-import { defaultTemplateTheme } from "@/types/templates/ITemplateTheme";
-import { TemplateName } from "./registered";
 
-type Props = ITemplateProps & {
-  templateName: TemplateName;
-};
+type Props = ITemplateProps;
 
-export default function RenderTemplate({ templateName, ...rest }: Props) {
-  return (
-    <ThemeProvider theme={defaultTemplateTheme}>
-      {
-        templateName == TemplateDefault.name ? <TemplateDefault {...rest} />
-          : <TemplateDefault {...rest} />
-      }
-    </ThemeProvider>
-  );
+export default function RenderTemplate(props: Props) {
+  const { state } = useSettingsContext();
+
+  switch(state.templateName) {
+    case 'default': return <TemplateDefault {...props} />;
+    default: return <TemplateDefault {...props} />;
+  }
 }

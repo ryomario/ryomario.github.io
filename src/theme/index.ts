@@ -40,6 +40,7 @@ function updateThemeWithSettings(themeOptions: IThemeOptions, settings?: ISettin
 
   return {
     ...themeOptions,
+    colorScheme,
     colorSchemes: {
       light: updateColorSheme('light'),
       dark: updateColorSheme('dark'),
@@ -49,12 +50,14 @@ function updateThemeWithSettings(themeOptions: IThemeOptions, settings?: ISettin
 
 type CreateThemeProps = {
   settingsState?: ISettingsState;
+  theme?: IThemeOptions;
 }
 
 export function createTheme({
   settingsState,
+  theme: propTheme = baseTheme,
 }: CreateThemeProps) {
-  const updatedTheme = settingsState ? updateThemeWithSettings(baseTheme, settingsState) : baseTheme;
+  const updatedTheme = settingsState ? updateThemeWithSettings(propTheme, settingsState) : baseTheme;
 
   const theme = createMuiTheme(updatedTheme);
 

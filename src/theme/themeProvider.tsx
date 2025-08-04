@@ -5,17 +5,22 @@ import { ThemeProviderProps as MuiThemeProviderProps, ThemeProvider as ThemeVars
 import { useSettingsContext } from "@/settings/settingsProvider";
 import { createTheme } from ".";
 import CssBaseline from "@mui/material/CssBaseline";
+import { IThemeOptions } from "@/types/ITheme";
 
-type Props = Omit<MuiThemeProviderProps, 'theme'>;
+type Props = Omit<MuiThemeProviderProps, 'theme'> & {
+  theme?: IThemeOptions;
+};
 
 export function ThemeProvider({
   children,
+  theme: propTheme,
   ...rest
 }: Props) {
   const settings = useSettingsContext();
 
   const theme = createTheme({
     settingsState: settings.state,
+    theme: propTheme,
   });
 
   return (

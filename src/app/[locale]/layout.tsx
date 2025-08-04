@@ -5,13 +5,15 @@ import { notFound } from "next/navigation";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Locale, routing } from "@/i18n/routing";
 import "flag-icons";
-import { ThemeModeLoader } from "@/components/themeModeLoader";
 import NextTopLoader from "nextjs-toploader";
 import { ScrollTop } from "@/components/scrollTop";
 import RepoProfileData from "@/db/repositories/RepoProfileData";
-import { Suspense } from "react";
 import { DataProvider } from "@/contexts/dataContext";
 import RepoProjects from "@/db/repositories/RepoProjects";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import { ThemeProvider } from "@/theme/themeProvider";
+import { SettingsProvider } from "@/settings/settingsProvider";
+import { getActiveTemplate, getTemplateTheme } from "@/templates/registered";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +59,9 @@ export default async function RootLayout({
   // Enable static rendering
   setRequestLocale(locale)
 
+  // get active template
+  const templateName = await getActiveTemplate();
+
   const messages = await getMessages()
 
   const profileData = await RepoProfileData.getAll()
@@ -64,30 +69,31 @@ export default async function RootLayout({
   const project_tags = await RepoProjects.getAllTags()
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${geistSans.className} ${geistSans.variable} ${geistMono.variable}`}
       >
-        <ThemeModeLoader />
-        <NextIntlClientProvider messages={messages}>
-          <ScrollTop />
-          <DataProvider value={{
-            data: {
-              profile: profileData,
-              projects,
-            },
-            refs: {
-              project_tags,
-            }
-          }}>
-            <Suspense>
-              {children}
-            </Suspense>
-          </DataProvider>
-        </NextIntlClientProvider>
-        <NextTopLoader
-          showSpinner={false}
-        />
+        <SettingsProvider defaultSettings={{ templateName, colorScheme: 'light' }}>
+          <NextIntlClientProvider messages={messages}>
+            <ScrollTop />
+            <DataProvider value={{
+              data: {
+                profile: profileData,
+                projects,
+              },
+              refs: {
+                project_tags,
+              }
+            }}>
+              <AppRouterCacheProvider options={{ key: 'css' }}>
+                <ThemeProvider theme={getTemplateTheme(templateName)}>
+                  <NextTopLoader showSpinner={false} />
+                  {children}
+                </ThemeProvider>
+              </AppRouterCacheProvider>
+            </DataProvider>
+          </NextIntlClientProvider>
+        </SettingsProvider>
       </body>
     </html>
   );
