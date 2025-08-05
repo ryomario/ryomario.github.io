@@ -52,17 +52,17 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
       <Navbar />
       <main className="container">
         <div className="content">
-          {/* {currentPage == 'projects' ? (
+          {currentPage == 'projects' ? (
             <ProjectsSection />
           ) : currentPage == 'about' ? (
             <h1>About</h1>
           ) : (
             <MainSection />
-          )} */}
+          )}
         </div>
       </main>
-      {/* <Footer /> */}
-      {/* <ScrollToTop /> */}
+      <Footer />
+      <ScrollToTop />
     </Container>
   );
 }

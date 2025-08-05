@@ -1,8 +1,7 @@
 import { Locale } from "@/i18n/routing";
 import React, { useCallback } from "react";
-import styled from "@emotion/styled";
 import { useLanguage } from "@/templates/hooks/languageHook";
-import { TemplateTheme } from "@/types/templates/ITemplateTheme";
+import { darken, styled } from "@mui/material/styles";
 
 type Props = React.ComponentProps<'button'>;
 
@@ -65,38 +64,31 @@ export const languageSwitcherClasses = {
   labelRight: 'languageSwitcher-label-right',
 };
 
-const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
+const StyledButton = styled('button')(({ theme }) => ({
   all: 'unset',
 
   boxSizing: 'border-box',
   cursor: 'pointer',
   position: 'relative',
   display: 'inline-flex',
-  height: theme.spacing(8),
-  width: theme.spacing(16),
+  fontSize: '1rem',
+  height: '2em',
+  width: '4em',
   margin: 'auto 0',
   alignItems: 'center',
   borderRadius: '9999px',
-  padding: theme.spacing(1),
+  padding: '0.25rem',
 
   transitionProperty: 'background-color',
   transitionDuration: '200ms',
 
   outline: 'none',
 
-  backgroundColor: '#e5e7eb',
-  color: '#374151',
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
   '&:hover': {
-    backgroundColor: '#d1d5db',
+    backgroundColor: darken(theme.palette.background.paper, theme.palette.action.hoverOpacity),
   },
-  // dark theme
-  ...theme.createStyles('dark', {
-    backgroundColor: '#374151',
-    color: '#e5e7eb',
-    '&:hover': {
-      backgroundColor: '#2b323e',
-    },
-  }),
 
   '&:disabled': {
     opacity: 0.5,
@@ -105,19 +97,15 @@ const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
 
   [`.${languageSwitcherClasses.thumb}`]: {
     display: 'inline-flex',
-    width: theme.spacing(6),
-    height: theme.spacing(6),
+    width: '1.5em',
+    height: '1.5em',
     alignItems: 'center',
     justifyContent: 'center',
     transform: 'translateX(0)',
 
     borderRadius: '9999px',
     backgroundColor: '#fff',
-    // dark theme
-    ...theme.createStyles('dark', {
-      backgroundColor: '#666',
-    }),
-    boxShadow: theme.shadows(0.5),
+    boxShadow: theme.shadows[1],
 
     transitionProperty: 'transform',
     transitionDuration: '200ms',
@@ -125,7 +113,7 @@ const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
     zIndex: 1,
 
     [`&.${languageSwitcherClasses.thumbRight}`]: {
-      transform: `translateX(${theme.spacing(8)})`,
+      transform: 'translateX(2em)',
     },
     [`.${languageSwitcherClasses.thumbFlag}`]: {
       borderRadius: '9999px',
@@ -134,17 +122,17 @@ const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
 
   [`.${languageSwitcherClasses.label}`]: {
     position: 'absolute',
-    left: theme.spacing(1),
+    left: '0.25em',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: theme.spacing(6),
-    height: theme.spacing(6),
-    fontSize: theme.spacing(3),
+    width: '1.5em',
+    height: '1.5em',
+    scale: 0.75,
     fontWeight: 500,
     [`&.${languageSwitcherClasses.labelRight}`]: {
       left: 'unset',
-      right: theme.spacing(1),
+      right: '0.25em',
     },
   }
 }));

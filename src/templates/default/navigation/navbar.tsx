@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Link } from "@/i18n/routing";
-import { TemplateTheme } from "@/types/templates/ITemplateTheme";
 import { LanguageSwitcher } from "./languageSwitcher";
 import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter";
 import { ThemeToggler } from "./themeToggler";
@@ -39,7 +38,7 @@ export default function Navbar() {
           </Link>
         </div>
         <div className="nav-wrapper-mobile">
-          {/* <LanguageSwitcher /> */}
+          <LanguageSwitcher />
           <ThemeToggler />
           <ToggleButton type="button" onClick={toggleMenu} className="unset-all-styles">
             {
@@ -75,7 +74,7 @@ export default function Navbar() {
           {hireable && <HereableButton className="unset-all-styles" aria-label={t('buttons.hireme')}>
             {t('buttons.hireme')}
           </HereableButton>}
-          {/* <LanguageSwitcher /> */}
+          <LanguageSwitcher />
           <ThemeToggler />
         </div>
       </div>

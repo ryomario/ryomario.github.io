@@ -1,5 +1,4 @@
 import { useThemeToggler } from "@/hooks/themeToggler";
-import { TemplateTheme } from "@/types/templates/ITemplateTheme";
 import { styled } from "@mui/material/styles";
 
 export function ThemeToggler() {

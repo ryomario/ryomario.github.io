@@ -1,17 +1,4 @@
 {
-  "HomePage": {
-    "btn_more_projects": "More Projects"
-  },
-  "LanguageSelector": {
-    "languages": {
-      "en": "English",
-      "id": "Indonesian"
-    },
-    "loading": "Loading..."
-  },
-  "LanguageSwitcher": {
-    "label": "Switch language. Current: {current_lang}"
-  },
   "Navbar": {
     "srOnly": {
       "closeMenu": "Close Main Menu",
@@ -23,25 +10,6 @@
     },
     "buttons": {
       "hireme": "Hire Me"
-    }
-  },
-  "HeroSection": {
-    "heading_1": "Hi, Iam {name}",
-    "heading_2": "A Web Developer, Front-End & Back-End Engineer",
-    "hero_img_alt": "Developer"
-  },
-  "ProjectsShowcase": {
-    "title": "Projects portofolio",
-    "search_by_helper": "Search projects by title or filter by tags",
-    "search_projects": "Search Projects",
-    "empty_projects": "No Data",
-    "select_allProjects": "All Projects",
-    "filters": {
-      "tags": "Tags",
-      "buttons": {
-        "no_filter": "Filter",
-        "tag_filtered": "Filtered {count, plural, =1 {(one tag)} other {(# tags)}}"
-      }
     }
   },
   "Footer": {

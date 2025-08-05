@@ -1,11 +1,9 @@
 import { useTranslations } from "next-intl";
-import styled from '@emotion/styled';
-import { TemplateTheme } from "@/types/templates/ITemplateTheme";
 import { HeroSection } from "./heroSection";
 import { Link } from "@/i18n/routing";
 import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter";
-import { adjustColorBrightness } from "@/lib/colors";
 import { GridProjects } from "../projects/gridProjects";
+import { darken, styled } from "@mui/material/styles";
 
 export function MainSection() {
   const t = useTranslations('MainSection');
@@ -29,57 +27,49 @@ export function MainSection() {
 
 // ============================================================================
 
-const SectionHeader = styled.h1<{ theme?: TemplateTheme }>(({ theme }) => ({
+const SectionHeader = styled('h1')(({ theme }) => ({
   width: '100%',
-  marginBlock: theme.spacing(10),
+  marginBlock: theme.spacing(4),
   textAlign: 'center',
   fontWeight: 500,
 
-  [theme.breakpoints.up('mobile')]: {
-    marginBlock: theme.spacing(15),
+  [theme.breakpoints.up('sm')]: {
+    marginBlock: theme.spacing(8),
   },
 }));
 
-const ButtonWrapper = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
+const ButtonWrapper = styled('div')(({ theme }) => ({
   width: '100%',
   display: 'flex',
   justifyContent: 'center',
-  marginTop: theme.spacing(8),
+  marginTop: theme.spacing(3),
 
-  [theme.breakpoints.up('mobile')]: {
-    marginTop: theme.spacing(10),
+  [theme.breakpoints.up('sm')]: {
+    marginTop: theme.spacing(5),
   },
 }));
 
-const LinkButton = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
+const LinkButton = styled(Link)(({ theme }) => ({
   all: 'unset',
 
   cursor: 'pointer',
   fontSize: '1rem',
-  backgroundColor: theme.colors.secondary.light,
+  backgroundColor: theme.palette.secondary.main,
   color: '#ffffff',
 
   transition: 'background-color 200ms',
 
   ['&:hover']: {
-    backgroundColor: adjustColorBrightness(theme.colors.secondary.light, -15),
+    backgroundColor: darken(theme.palette.secondary.main, 0.15),
   },
 
   borderRadius: theme.spacing(1),
-  boxShadow: theme.shadows(1),
+  boxShadow: theme.shadows[1],
 
-  padding: `${theme.spacing(2.5)} ${theme.spacing(5)}`,
+  padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
 
-  [theme.breakpoints.up('mobile')]: {
-    marginLeft: theme.spacing(4),
-    marginRight: theme.spacing(4),
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
   },
-
-  ...theme.createStyles('dark', {
-    backgroundColor: theme.colors.secondary.dark,
-
-    ['&:hover']: {
-      backgroundColor: adjustColorBrightness(theme.colors.secondary.dark, -15),
-    },
-  }),
 }));

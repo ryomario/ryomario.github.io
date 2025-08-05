@@ -1,0 +1,29 @@
+{
+  "MainSection": {
+    "heading_1": "Hai, Saya {name}",
+    "hero_img_alt": "Developer",
+    "download_btn": "Download CV",
+    "download_filename": "{name}-resume.{ext}",
+    "projects_header": "Portofolio Proyek",
+    "btn_more_projects": "Proyek Lainnya"
+  },
+  "ProjectsSection": {
+    "heading": "Portofolio Proyek",
+    "filter_helper": "Cari proyek berdasarkan judul atau filter sesuai tag nya",
+    "search_projects": "Cari Proyek"
+  },
+  "GridProjects": {
+    "empty_text": "Tidak ada proyek ditemukan!",
+    "pagination": {
+      "prev": "Sebelumnya",
+      "next": "Selanjutnya"
+    }
+  },
+  "ProjectsFilter": {
+    "labels": {
+      "not_filterred": "Filter",
+      "tag_filterred": "Difilter ({count} tag)",
+      "tag_heading": "Tags (berisi)"
+    }
+  }
+}

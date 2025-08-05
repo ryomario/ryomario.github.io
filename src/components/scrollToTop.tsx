@@ -1,9 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import styled from "@emotion/styled";
-import { TemplateTheme } from "@/types/templates/ITemplateTheme";
-import { adjustColorBrightness } from "@/lib/colors";
+import { darken, styled } from "@mui/material/styles";
 
 export function ScrollToTop() {
   const [showScroll, setShowScroll] = useState(false)
@@ -59,73 +57,61 @@ const ScrollToTopClasses = {
   hidden: 'ScrollToTopClasses-hidden',
 };
 
-const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
+const StyledButton = styled('button')(({ theme }) => ({
   // reset styles
   all: 'unset',
   cursor: 'pointer',
   // Positioning
   position: 'fixed',
-  bottom: theme.spacing(5) || '1.25rem',
-  right: theme.spacing(5) || '1.25rem',
+  bottom: theme.spacing(3),
+  right: theme.spacing(3),
 
   // Shape
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   borderRadius: '9999px',
-  padding: theme.spacing(3) || '0.75rem',
+  padding: theme.spacing(2),
 
   // Typography
   fontSize: '0.75rem',
   fontWeight: 500,
   textTransform: 'uppercase',
   lineHeight: '1.25',
-  color: theme.colors.text.disabled.light || '#9ca3af',
+  color: theme.palette.text.disabled,
 
   // Background & Shadow
-  backgroundColor: theme.colors.background.paper.light || '#f3f4f6',
-  boxShadow: theme.shadows(1) || '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+  backgroundColor: theme.palette.background.paper,
+  boxShadow: theme.shadows[3],
 
   // Transition
   transition: 'all 150ms ease-in-out',
 
   // Hover states
   '&:hover': {
-    color: theme.colors.primary.light || '#6366f1',
-    backgroundColor: adjustColorBrightness(theme.colors.background.paper.light || '#f3f4f6', -5),
-    boxShadow: theme.shadows(2) || '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+    color: theme.palette.primary.main,
+    backgroundColor: darken(theme.palette.background.paper, 0.05),
+    boxShadow: theme.shadows[2],
   },
 
   // Focus states
   '&:focus': {
-    backgroundColor: theme.colors.background.default.light || '#e5e7eb',
-    boxShadow: theme.shadows(2) || '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-    outline: 'none'
+    backgroundColor: darken(theme.palette.background.paper, 0.2),
+    boxShadow: theme.shadows[2],
+    outline: 'none',
   },
 
   // Active states
   '&:active': {
-    backgroundColor: theme.colors.background.default.light || '#e5e7eb',
-    boxShadow: theme.shadows(2) || '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+    backgroundColor: darken(theme.palette.background.paper, 0.2),
+    boxShadow: theme.shadows[1],
   },
-
-  // Dark mode styles using theme createStyles
-  ...theme.createStyles('dark', {
-    color: theme.colors.text.disabled.dark || '#818cf8',
-    backgroundColor: theme.colors.background.paper.dark || '#1f2937',
-    '&:hover': {
-      color: theme.colors.primary.light || '#818cf8',
-    },
-    '&:focus, &:active, &:hover': {
-      backgroundColor: adjustColorBrightness(theme.colors.background.paper.dark || '#111827', 20),
-    },
-  }),
 
   [`&.${ScrollToTopClasses.hidden}`]: {
     display: 'none',
   },
   'svg': {
-    width: theme.spacing(4),
-    height: theme.spacing(4),
+    width: '1rem',
+    height: '1rem',
   }
 }));

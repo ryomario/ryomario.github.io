@@ -1,8 +1,6 @@
 import { useDataContext } from "@/contexts/dataContext";
 import { Link } from "@/i18n/routing";
-import { adjustColorBrightness, getContrastTextColor } from "@/lib/colors";
-import { TemplateTheme } from "@/types/templates/ITemplateTheme";
-import styled from '@emotion/styled';
+import { styled } from "@mui/material/styles";
 import { useTranslations } from "next-intl";
 
 export function ButtonDownloadCV() {
@@ -37,20 +35,20 @@ export function ButtonDownloadCV() {
   );
 }
 
-const DownloadButton = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
+const DownloadButton = styled(Link)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop: theme.spacing(6),
-  marginBottom: theme.spacing(6),
+  marginTop: theme.spacing(4),
+  marginBottom: theme.spacing(4),
   fontSize: '1.125rem',
   border: '1px solid',
-  borderColor: adjustColorBrightness(theme.colors.background.paper.light, -10),
-  padding: `${theme.spacing(3)} ${theme.spacing(6)}`,
-  boxShadow: theme.shadows(2),
-  borderRadius: theme.spacing(2),
-  backgroundColor: theme.colors.background.paper.light,
-  color: getContrastTextColor(theme.colors.background.paper.light),
+  borderColor: theme.palette.text.disabled,
+  padding: `${theme.spacing(1.5)} ${theme.spacing(2)}`,
+  boxShadow: theme.shadows[2],
+  borderRadius: theme.spacing(1),
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
   transitionProperty: 'background-color, color',
   transitionDuration: '300ms',
   transitionTimingFunction: 'ease',
@@ -58,20 +56,13 @@ const DownloadButton = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
 
   // Hover states
   '&:hover': {
-    backgroundColor: theme.colors.secondary.light,
-    color: getContrastTextColor(theme.colors.secondary.light),
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.secondary.contrastText,
   },
 
-  ...theme.createStyles('dark', {
-    '&:hover': {
-      backgroundColor: theme.colors.secondary.dark,
-    },
-    borderColor: adjustColorBrightness(theme.colors.secondary.dark, -50),
-  }),
-
   // Responsive
-  [theme.breakpoints.up('mobile')]: {
-    marginBottom: 0 // sm:mb-0
+  [theme.breakpoints.up('sm')]: {
+    marginBottom: 0, // sm:mb-0
   },
 
   ['svg']: {
@@ -79,18 +70,18 @@ const DownloadButton = styled(Link)<{ theme?: TemplateTheme }>(({ theme }) => ({
     height: '1.25rem', // h-5
     width: '1.25rem', // w-5
 
-    [theme.breakpoints.up('mobile')]: {
+    [theme.breakpoints.up('sm')]: {
       marginRight: theme.spacing(3), // sm:mr-3
       height: '1.5rem', // sm:h-6
-      width: '1.5rem' // sm:w-6
-    }
+      width: '1.5rem', // sm:w-6
+    },
   },
 
   ['span']: {
     fontSize: '0.875rem', // text-sm
 
-    [theme.breakpoints.up('mobile')]: {
-      fontSize: '1.125rem' // sm:text-lg
-    }
+    [theme.breakpoints.up('sm')]: {
+      fontSize: '1.125rem', // sm:text-lg
+    },
   },
 }));

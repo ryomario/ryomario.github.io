@@ -1,8 +1,6 @@
 import { useTranslations } from "next-intl";
-import styled from "@emotion/styled";
-import { TemplateTheme } from "@/types/templates/ITemplateTheme";
-import { adjustColorBrightness, hexAlpha } from "@/lib/colors";
 import { useDataContext } from "@/contexts/dataContext";
+import { darken, styled } from "@mui/material/styles";
 
 export function Footer() {
   const { data: { profile } } = useDataContext();
@@ -63,19 +61,16 @@ const FooterClasses = {
   linkSocial_container: 'Footer-linkSocial_container',
 };
 
-const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
-  paddingTop: theme.spacing(20),
-  paddingBottom: theme.spacing(8),
-  marginTop: theme.spacing(20),
+const StyledFooter = styled('footer')(({ theme }) => ({
+  paddingTop: theme.spacing(3),
+  paddingBottom: theme.spacing(2),
+  marginTop: theme.spacing(2),
 
   borderTop: '2px solid',
-  borderColor: hexAlpha(theme.colors.text.disabled.light, 0.3),
-  ...theme.createStyles('dark', {
-    borderTopColor: '#1e293b',
-  }),
+  borderColor: theme.palette.divider,
 
-  [theme.breakpoints.up('mobile')]: {
-    paddingTop: theme.spacing(30),
+  [theme.breakpoints.up('sm')]: {
+    paddingTop: theme.spacing(5),
   },
 
   [`.${FooterClasses.topSide}`]: {
@@ -83,10 +78,10 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing(12),
+    marginBottom: theme.spacing(5),
 
-    [theme.breakpoints.up('mobile')]: {
-      marginBottom: theme.spacing(28),
+    [theme.breakpoints.up('sm')]: {
+      marginBottom: theme.spacing(10),
     },
   },
 
@@ -98,9 +93,6 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
     fontSize: '1.125rem',
     lineHeight: '1.75rem',
     color: '#64748b',
-    ...theme.createStyles('dark', {
-      color: '#e2e8f0',
-    }),
     '& > a': {
       all: 'unset',
 
@@ -111,9 +103,6 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
       '&:hover': {
         textDecoration: 'underline',
         color: '#7c3aed',
-        ...theme.createStyles('dark', {
-          color: '#a78bfa',
-        }),
       }
     },
   },
@@ -121,22 +110,19 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
   [`.${FooterClasses.heading}`]: {
     fontSize: '1.875rem',
     lineHeight: '2.25rem',
-    color: theme.colors.text.primary.light,
-    marginBottom: theme.spacing(5),
-    [theme.breakpoints.up('tablet')]: {
+    color: theme.palette.text.primary,
+    marginBottom: theme.spacing(3),
+    [theme.breakpoints.up('md')]: {
       fontSize: '2.25rem',
       lineHeight: '2.5rem',
     },
-    ...theme.createStyles('dark', {
-      color: theme.colors.text.primary.dark,
-    }),
   },
 
   [`.${FooterClasses.linkSocial_container}`]: {
     display: 'flex',
-    gap: theme.spacing(4),
-    [theme.breakpoints.up('mobile')]: {
-      gap: theme.spacing(8),
+    gap: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      gap: theme.spacing(4),
     },
   },
   [`.${FooterClasses.linkSocial}`]: {
@@ -144,24 +130,16 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
 
     cursor: 'pointer',
     borderRadius: theme.spacing(1),
-    color: theme.colors.text.disabled.light,
-    backgroundColor: theme.colors.background.paper.light,
+    color: theme.palette.text.disabled,
+    backgroundColor: theme.palette.background.paper,
 
-    padding: theme.spacing(4),
+    padding: theme.spacing(2),
     transition: 'all 300ms ease',
     '&:hover': {
-      color: theme.colors.secondary.light,
-      backgroundColor: adjustColorBrightness(theme.colors.background.paper.light, -5),
-      boxShadow: theme.shadows(1),
+      color: theme.palette.secondary.main,
+      backgroundColor: darken(theme.palette.background.paper, 0.05),
+      boxShadow: theme.shadows[1],
     },
-    ...theme.createStyles('dark', {
-      backgroundColor: theme.colors.background.paper.dark,
-      color: theme.colors.text.disabled.dark,
-      '&:hover': {
-        backgroundColor: adjustColorBrightness(theme.colors.background.paper.light, -5),
-        color: theme.colors.secondary.dark,
-      }
-    }),
 
     'svg': {
       fontSize: '1.25rem',
@@ -170,11 +148,11 @@ const StyledFooter = styled.footer<{ theme?: TemplateTheme }>(({ theme }) => ({
       width: '1em',
       height: '1em',
 
-      [theme.breakpoints.up('mobile')]: {
+      [theme.breakpoints.up('sm')]: {
         fontSize: '1.5rem',
         lineHeight: '2rem',
       },
-      [theme.breakpoints.up('tablet')]: {
+      [theme.breakpoints.up('md')]: {
         fontSize: '1.875rem',
         lineHeight: '2.25rem',
       },

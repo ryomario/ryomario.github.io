@@ -1,14 +1,12 @@
 'use client';
 
-import { TemplateTheme } from "@/types/templates/ITemplateTheme";
-import styled from '@emotion/styled';
 import { useTranslations } from "next-intl";
 import { GridProjects } from "./gridProjects";
 import { useEffect, useState } from "react";
 import { IProjectFilter } from "@/types/IProject";
-import { hexAlpha } from "@/lib/colors";
 import { useDebounce } from "@/hooks/debouncedValue";
 import { ProjectsFilter } from "./projectsFilter";
+import { alpha, styled } from "@mui/material/styles";
 
 export function ProjectsSection() {
   const t = useTranslations('ProjectsSection');
@@ -61,104 +59,84 @@ export function ProjectsSection() {
 
 // =========================================================================
 
-const SectionHeader = styled.h1<{ theme?: TemplateTheme }>(({ theme }) => ({
+const SectionHeader = styled('h1')(({ theme }) => ({
   width: '100%',
-  marginBlock: theme.spacing(10),
+  marginBlock: theme.spacing(2),
   textAlign: 'center',
   fontWeight: 500,
 
-  [theme.breakpoints.up('mobile')]: {
-    marginBlock: theme.spacing(15),
+  [theme.breakpoints.up('sm')]: {
+    marginBlock: theme.spacing(4),
   },
 }));
 
-const FilterHelper = styled.h3<{ theme?: TemplateTheme }>(({ theme }) => ({
+const FilterHelper = styled('h3')(({ theme }) => ({
   marginBlock: theme.spacing(3),
   textAlign: 'center',
   fontWeight: 'normal',
-  color: theme.colors.text.secondary.light,
-  ...theme.createStyles('dark', {
-    color: theme.colors.text.secondary.dark,
-  }),
+  color: theme.palette.text.secondary,
 }));
 
-const FilterContainer = styled.div<{ theme?: TemplateTheme }>(({ theme }) => ({
+const FilterContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   width: '100%',
   justifyContent: 'space-between',
   borderBottom: '2px solid',
-  borderColor: hexAlpha(theme.colors.text.disabled.light, 0.3),
-  paddingBottom: theme.spacing(3),
-  marginBottom: theme.spacing(5),
-  gap: theme.spacing(3),
-  ...theme.createStyles('dark', {
-    borderColor: theme.colors.text.disabled.dark,
-  }),
+  borderColor: theme.palette.divider,
+  paddingBottom: theme.spacing(2),
+  marginBottom: theme.spacing(3.5),
+  gap: theme.spacing(2),
 }));
 
 /** ============== Search Input ============== **/
 
-const SearchContainer = styled.label<{ theme?: TemplateTheme }>(({ theme }) => ({
+const SearchContainer = styled('label')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  gap: theme.spacing(2),
+  gap: theme.spacing(1),
 
   ['.icon-wrapper']: {
     display: 'none',
-    color: theme.colors.text.secondary.light,
-    backgroundColor: theme.colors.background.paper.light,
-    padding: theme.spacing(2.5),
-    borderRadius: theme.spacing(3),
+    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(1.25),
+    borderRadius: theme.spacing(1),
     cursor: 'pointer',
 
-    [theme.breakpoints.up('mobile')]: {
+    [theme.breakpoints.up('sm')]: {
       display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
 
-    ...theme.createStyles('dark', {
-      color: theme.colors.text.secondary.dark,
-      backgroundColor: theme.colors.background.paper.dark,
-    }),
-
     ['svg']: {
-      width: theme.spacing(5),
-      height: theme.spacing(5),
+      width: '1.25rem',
+      height: '1.25rem',
     },
   },
   ['input']: {
-    paddingLeft: theme.spacing(3),
+    paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
+    paddingTop: theme.spacing(1.5),
+    paddingBottom: theme.spacing(1.5),
     border: '1px solid',
-    borderColor: hexAlpha(theme.colors.text.disabled.light, 0.3),
-    borderRadius: theme.spacing(2),
+    borderColor: theme.palette.text.disabled,
+    borderRadius: theme.spacing(1),
     fontSize: '0.875rem',
-    backgroundColor: theme.colors.background.default.light,
-    color: theme.colors.text.primary.light,
+    backgroundColor: theme.palette.background.default,
+    color: theme.palette.text.primary,
     width: '100%',
     outline: 'none',
 
-    [theme.breakpoints.up('mobile')]: {
-      paddingLeft: theme.spacing(4),
-      paddingRight: theme.spacing(4),
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(2),
       fontSize: '1rem',
     },
 
     ['&:focus']: {
-      borderColor: hexAlpha(theme.colors.primary.light, 0.5),
-      outline: `1px solid ${hexAlpha(theme.colors.primary.light, 0.5)}`,
+      borderColor: alpha(theme.palette.primary.main, 0.5),
+      outline: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
     },
-
-    ...theme.createStyles('dark', {
-      borderColor: hexAlpha(theme.colors.text.disabled.dark, 0.3),
-      backgroundColor: theme.colors.background.paper.dark,
-      color: theme.colors.text.primary.dark,
-
-      ['&:focus']: {
-        borderColor: hexAlpha(theme.colors.primary.light, 0.5),
-        outline: `1px solid ${hexAlpha(theme.colors.primary.light, 0.5)}`,
-      },
-    }),
   },
 }));

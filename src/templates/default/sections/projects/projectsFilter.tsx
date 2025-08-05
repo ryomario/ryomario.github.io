@@ -2,12 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import styled from '@emotion/styled';
-import { TemplateTheme } from "@/types/templates/ITemplateTheme";
-import { adjustColorBrightness, hexAlpha } from "@/lib/colors";
 import { IProject, IProjectFilter } from "@/types/IProject";
 import { useTranslations } from "next-intl";
 import { useDataContext } from "@/contexts/dataContext";
+import { alpha, styled } from "@mui/material/styles";
 
 type Props = {
   filter: Required<IProjectFilter>;
@@ -174,61 +172,51 @@ const dropdownClasses = {
   box: 'dropdown-box',
 }
 
-const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
+const StyledButton = styled('button')(({ theme }) => ({
   all: 'unset',
   cursor: 'pointer',
   display: 'flex',
   width: '100%',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: theme.spacing(2),
-  padding: theme.spacing(2),
-  paddingLeft: theme.spacing(3),
+  gap: theme.spacing(1),
+  padding: theme.spacing(1),
+  paddingLeft: theme.spacing(2),
   fontSize: '0.875rem',
   fontWeight: 500,
-  color: hexAlpha(theme.colors.text.primary.light, 0.75),
-  backgroundColor: theme.colors.background.default.light,
-  borderRadius: theme.spacing(2),
+  color: alpha(theme.palette.text.primary, 0.75),
+  backgroundColor: theme.palette.background.default,
+  borderRadius: theme.spacing(1),
   border: '1px solid',
-  borderColor: adjustColorBrightness(theme.colors.background.paper.light, -10),
+  borderColor: theme.palette.divider,
   transitionProperty: 'background-color, color',
   transitionDuration: '300ms',
   transitionTimingFunction: 'ease',
 
   // Hover states
   '&:hover': {
-    backgroundColor: theme.colors.background.paper.light,
-    color: theme.colors.text.primary.light,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
   },
 
   ['&:focus']: {
-    borderColor: hexAlpha(theme.colors.primary.light, 0.5),
-    outline: `1px solid ${hexAlpha(theme.colors.primary.light, 0.5)}`,
+    borderColor: alpha(theme.palette.primary.main, 0.5),
+    outline: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
   },
 
-  [theme.breakpoints.up('mobile')]: {
+  [theme.breakpoints.up('sm')]: {
     width: 'auto',
   },
 
-  ...theme.createStyles('dark', {
-    backgroundColor: theme.colors.background.paper.dark,
-    color: hexAlpha(theme.colors.text.primary.dark, 0.75),
-    borderColor: adjustColorBrightness(theme.colors.background.paper.dark, 40),
-
-    '&:hover': {
-      color: theme.colors.text.primary.dark,
-    },
-  }),
-
   ['svg']: {
-    width: theme.spacing(4),
-    height: theme.spacing(4),
+    width: '1.25rem',
+    height: '1.25rem',
 
     ['&.arrow']: {
       marginLeft: 'auto',
       transition: 'all 150ms ease',
-      [theme.breakpoints.up('tablet')]: {
-        marginLeft: theme.spacing(1.5),
+      [theme.breakpoints.up('md')]: {
+        marginLeft: theme.spacing(1),
       },
       ['&.open']: {
         transform: 'rotate(-180deg)',
@@ -237,7 +225,7 @@ const StyledButton = styled.button<{ theme?: TemplateTheme }>(({ theme }) => ({
   },
 }));
 
-const DropdownContainer = styled.div<{ open?: boolean, theme?: TemplateTheme }>(({ open = false, theme }) => ({
+const DropdownContainer = styled('div')<{ open?: boolean }>(({ open = false, theme }) => ({
   position: 'fixed',
   display: open ? 'block' : 'none',
   inset: 0,
@@ -251,64 +239,54 @@ const DropdownContainer = styled.div<{ open?: boolean, theme?: TemplateTheme }>(
     top: 0,
     left: 0,
     overflowY: 'auto',
-    width: theme.spacing(56),
-    padding: theme.spacing(3),
-    backgroundColor: theme.colors.background.default.light,
-    color: theme.colors.text.primary.light,
+    width: theme.spacing(28),
+    padding: theme.spacing(2),
+    backgroundColor: theme.palette.background.default,
+    color: theme.palette.text.primary,
     borderRadius: theme.spacing(1),
-    border: `1px solid #0001`,
-    boxShadow: theme.shadows(5),
+    border: `1px solid ${theme.palette.divider}`,
+    boxShadow: theme.shadows[3],
 
     ['& > :not(:last-child)']: {
       borderBottom: `2px solid`,
       borderColor: 'inherit',
-      paddingBottom: theme.spacing(2),
-      marginBottom: theme.spacing(2),
+      paddingBottom: theme.spacing(1),
+      marginBottom: theme.spacing(1),
     },
     ['.heading']: {
       fontSize: '1em',
       fontWeight: 'normal',
     },
 
-    ...theme.createStyles('dark', {
-      backgroundColor: theme.colors.background.paper.dark,
-      color: theme.colors.text.primary.dark,
-      borderColor: '#fff1',
-    }),
-
     ['ul, ol']: {
       margin: 0,
       ['& > * + *']: {
-        marginTop: theme.spacing(2),
+        marginTop: theme.spacing(1.5),
       },
       padding: 0,
-      paddingTop: theme.spacing(2),
+      paddingTop: theme.spacing(1.5),
       fontSize: '0.875rem',
     }
   },
 }));
 
-const TagSelectItem = styled.label<{ theme?: TemplateTheme }>(({ theme }) => ({
+const TagSelectItem = styled('label')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   fontSize: '1em',
   lineHeight: 1.1,
-  color: theme.colors.text.primary.light,
-
-  ...theme.createStyles('dark', {
-    color: theme.colors.text.primary.dark,
-  }),
+  color: theme.palette.text.primary,
 
   ['input']: {
     appearance: 'none',
     margin: 0,
-    marginRight: theme.spacing(2),
-    backgroundColor: theme.colors.background.default.light,
+    marginRight: theme.spacing(1.5),
+    backgroundColor: theme.palette.background.default,
     font: 'inherit',
     width: '1em',
     height: '1em',
     border: '0.1em solid',
-    borderColor: theme.colors.text.primary.main,
+    borderColor: theme.palette.divider,
     backgroundClip: 'content-box',
     borderRadius: '0.1em',
     transform: 'translateY(-0.05em)',
@@ -322,14 +300,15 @@ const TagSelectItem = styled.label<{ theme?: TemplateTheme }>(({ theme }) => ({
       height: '0.55em',
       transform: 'scale(0)',
       transition: '120ms transform ease-in-out',
-      boxShadow: `inset 1em 1em ${theme.colors.primary.light}`,
+      boxShadow: `inset 1em 1em ${theme.palette.primary.main}`,
     },
     ['&:checked::before']: {
       transform: 'scale(1)',
     },
     '&:focus': {
       outline: 'none',
-      boxShadow: theme.shadowRing(2, hexAlpha(theme.colors.primary.light, 0.5)),
+      borderColor: alpha(theme.palette.primary.main, 0.5),
+      boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.5)}`,
     },
   }
 }));
