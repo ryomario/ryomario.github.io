@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { getMessages, setRequestLocale } from "next-intl/server";
@@ -14,16 +13,6 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider } from "@/theme/themeProvider";
 import { SettingsProvider } from "@/settings/settingsProvider";
 import { getActiveTemplate, getTemplateTheme } from "@/templates/registered";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({
@@ -70,9 +59,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body
-        className={`${geistSans.className} ${geistSans.variable} ${geistMono.variable}`}
-      >
+      <body>
         <SettingsProvider defaultSettings={{ templateName, colorScheme: 'light' }}>
           <NextIntlClientProvider messages={messages}>
             <ScrollTop />

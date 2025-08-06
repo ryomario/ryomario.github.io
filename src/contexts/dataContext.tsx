@@ -29,3 +29,9 @@ export const useDataContext = () => {
   if (!ctx) throw new Error('useData only available inside DataProvider component!');
   return ctx;
 }
+
+export const useDataProject = (id: number): IProject | null => {
+  const { data: { projects } } = useDataContext();
+
+  return projects.find(project => project.id === id) ?? null;
+}

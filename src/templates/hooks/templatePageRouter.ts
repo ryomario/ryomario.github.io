@@ -7,6 +7,7 @@ type UseTemplatePageRouterReturn = {
   currentPage: string;
   handlePageChange: (page?: string | null) => MouseEventHandler<HTMLElement>;
   getLinkHref: (page?: string | null, params?: Record<string, string|number>) => UrlObject;
+  getParam: (key: string) => string | undefined;
 }
 
 const PAGE_KEY_PARAM = 'page';
@@ -15,6 +16,8 @@ export function useTemplatePageRouter(defaultPage = ''): UseTemplatePageRouterRe
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+
+  const getParam = (key: string) => searchParams.get(key) ?? undefined;
 
   const currentPage = useMemo(() => searchParams.get(PAGE_KEY_PARAM) ?? defaultPage, [searchParams]);
 
@@ -42,7 +45,7 @@ export function useTemplatePageRouter(defaultPage = ''): UseTemplatePageRouterRe
     const urlObj: UrlObject = {
       pathname,
     };
-    const sp = new URLSearchParams(searchParams);
+    const sp = new URLSearchParams();
 
     if (page && page != '/' && page != '') {
       sp.set(PAGE_KEY_PARAM, page);
@@ -58,8 +61,10 @@ export function useTemplatePageRouter(defaultPage = ''): UseTemplatePageRouterRe
     urlObj.search = sp.toString();
 
     return urlObj;
-  }, [pathname, searchParams]);
+  }, [pathname]);
+  
   return {
+    getParam,
     currentPage,
     handlePageChange,
     getLinkHref,

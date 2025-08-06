@@ -19,7 +19,7 @@ export function GalleryHorizontalScroll({ images }: Props) {
     const image = gallery.querySelector<HTMLDivElement>(`#image-${index}`);
     if (image) {
       gallery.scrollTo({
-        left: image.offsetLeft - image.offsetWidth - gallery.offsetWidth / 2,
+        left: (image.offsetLeft - gallery.offsetLeft) - gallery.offsetWidth / 2,
         behavior: 'smooth'
       });
     }

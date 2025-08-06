@@ -9,9 +9,15 @@ import { ScrollToTop } from "@/components/scrollToTop";
 import { MainSection } from "./sections/main";
 import { ProjectsSection } from "./sections/projects";
 import { styled } from "@mui/material/styles";
+import { DetailsProject } from "./sections/projects/detailsProject";
+import { NotFoundComponent } from "@/components/notFound";
+import { useLocale } from "next-intl";
 
 export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemplateProps) {
-  const { currentPage } = useTemplatePageRouter();
+  const locale = useLocale();
+  const { currentPage, getParam } = useTemplatePageRouter();
+
+  const id = Number(getParam('id'));
 
   return (
     <Container {...rest}>
@@ -53,11 +59,15 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
       <main className="container">
         <div className="content">
           {currentPage == 'projects' ? (
-            <ProjectsSection />
+            Number.isNaN(id)
+            ? <ProjectsSection />
+            : <DetailsProject projectId={id}/>
           ) : currentPage == 'about' ? (
             <h1>About</h1>
-          ) : (
+          ) : !currentPage ? (
             <MainSection />
+          ) : (
+            <NotFoundComponent homeUrl={`/${locale}`}/>
           )}
         </div>
       </main>

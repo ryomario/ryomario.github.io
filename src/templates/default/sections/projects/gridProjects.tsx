@@ -71,7 +71,7 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
   return (
     <GridContainer>
       {dataToRender.map(project => (
-        <GridCard key={project.id} href={getLinkHref('project', { id: project.id })}>
+        <GridCard key={project.id} href={getLinkHref('projects', { id: project.id })}>
           <Image src={project.previews[0]} ratio="1/1" />
           <div
             className={[
