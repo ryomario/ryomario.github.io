@@ -1,5 +1,5 @@
+import { styled } from '@mui/material/styles';
 import { useRef, useState } from 'react';
-import styled from '@emotion/styled';
 
 type Props = {
   images: string[]
@@ -10,7 +10,7 @@ export function GalleryHorizontalScroll({ images }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const scrollToImage = (index: number) => {
-    if(!galleryRef.current) {
+    if (!galleryRef.current) {
       return;
     }
 
@@ -19,23 +19,24 @@ export function GalleryHorizontalScroll({ images }: Props) {
     const image = gallery.querySelector<HTMLDivElement>(`#image-${index}`);
     if (image) {
       gallery.scrollTo({
-        left: (image.offsetLeft - gallery.offsetLeft) - gallery.offsetWidth / 2,
+        left: (image.offsetLeft - gallery.offsetLeft) - (gallery.offsetWidth / 2) + (image.offsetWidth / 2),
         behavior: 'smooth'
       });
     }
   };
 
   return (
-    <Container>
+    <Container className={galleryHorizontalScrollClasses.root}>
       {/* Main gallery with horizontal scroll */}
       <Gallery
         ref={galleryRef}
+        className={galleryHorizontalScrollClasses.gallery}
       >
         {images.map((img, index) => (
           <div
             key={index}
             id={`image-${index}`}
-            className={`image-wraper ${activeIndex === index ? 'active' : ''}`}
+            className={`${galleryHorizontalScrollClasses.imgWrapper} ${activeIndex === index ? galleryHorizontalScrollClasses.imgWrapper_active : ''}`}
           >
             <img
               src={img}
@@ -48,19 +49,19 @@ export function GalleryHorizontalScroll({ images }: Props) {
       </Gallery>
 
       {/* Navigation dots */}
-      <Navigation>
+      <Navigation className={galleryHorizontalScrollClasses.navigation}>
         {images.map((_, index) => (
           <button
             key={index}
             onClick={() => scrollToImage(index)}
-            className={activeIndex === index ? 'active' : ''}
+            className={activeIndex === index ? galleryHorizontalScrollClasses.navigation_active : ''}
             aria-label={`Go to image ${index + 1}`}
           />
         ))}
       </Navigation>
 
       {/* Optional: Image counter */}
-      <div className="counter">
+      <div className={galleryHorizontalScrollClasses.counter}>
         {activeIndex + 1} / {images.length}
       </div>
     </Container>
@@ -69,93 +70,84 @@ export function GalleryHorizontalScroll({ images }: Props) {
 
 // ================================================
 
-const Container = styled.div`
-  max-width: 100%;
-  margin-inline: auto;
-  padding: 2rem;
-  & .counter {
-    text-align: center;
-    color: #4b5563;
-    margin-top: 0.5rem;
+export const galleryHorizontalScrollClasses = {
+  root: 'GalleryHorizontalScroll',
+  gallery: 'GalleryHorizontalScroll-gallery',
+  counter: 'GalleryHorizontalScroll-counter',
+  imgWrapper: 'GalleryHorizontalScroll-img-wrapper',
+  imgWrapper_active: 'GalleryHorizontalScroll-img-wrapper_active',
+  navigation: 'GalleryHorizontalScroll-navigation',
+  navigation_active: 'GalleryHorizontalScroll-navigation_active',
+};
+
+const Container = styled('div')(({ theme }) => ({
+  maxWidth: '100%',
+  marginInline: 'auto',
+  padding: theme.spacing(4),
+  [`.${galleryHorizontalScrollClasses.counter}`]: {
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    marginTop: theme.spacing(1),
   }
-`;
+}));
 
-const Gallery = styled.div`
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  gap: 1rem;
-  padding: 0.5rem;
+const Gallery = styled('div')(({ theme }) => ({
+  display: 'flex',
+  overflowX: 'auto',
+  scrollSnapType: 'x mandatory',
+  gap: theme.spacing(2),
+  padding: theme.spacing(1),
 
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  msOverflowStyle: 'none',
+  scrollbarWidth: 'none',
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  & > * {
-    scroll-snap-align: start;
-  }
+  ['&::-webkit-scrollbar']: {
+    display: 'none',
+  },
+  ['& > *']: {
+    scrollSnapAlign: 'start',
+  },
+  [`.${galleryHorizontalScrollClasses.imgWrapper}`]: {
+    flexShrink: 0,
+    width: '16rem',
+    height: '16rem',
+    borderRadius: theme.spacing(1),
+    overflow: 'hidden',
+    boxShadow: theme.shadows[2],
+    scrollSnapAlign: 'center',
+    transitionProperty: 'box-shadow',
+    transitionDuration: '300ms',
+    [`&.${galleryHorizontalScrollClasses.imgWrapper_active}`]: {
+      boxShadow: `0 0 0 4px ${theme.palette.primary.main}`,
+    },
+    ['img']: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      transitionProperty: 'transform',
+      transitionDuration: '300ms',
+      ['&:hover']: {
+        transform: 'scale(1.05)',
+      },
+    },
+  },
+}));
 
-  & .image-wraper {
-    flex-shrink: 0;
-    width: 16rem;
-    height: 16rem;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    scroll-snap-align: center;
-    transition-property: box-shadow;
-    transition-duration: 300ms;
+const Navigation = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: theme.spacing(1),
+  gap: theme.spacing(1),
 
-    &.active {
-      box-shadow: 0 0 0 4px #3B82F6;
-    }
-
-    & img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition-property: transform;
-      transition-duration: 300ms;
-
-      &:hover {
-        transform: scale(1.05);
-      }
-    }
-  }
-`;
-
-const Navigation = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 0.5rem;
-  gap: 0.5rem; 
-
-  & > button {
-    border: none;
-    padding: 0;
-    margin: 0;
-    font: inherit;
-    color: inherit;
-    cursor: pointer;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    text-align: left;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 9999px;
-    background-color: #d1d5db;
-    &.active {
-      background-color: #3b82f6;
-    }
-  }
-`;
+  ['& > button']: {
+    all: 'unset',
+    cursor: 'pointer',
+    width: '0.75rem',
+    height: '0.75rem',
+    borderRadius: 99999,
+    backgroundColor: theme.palette.text.disabled,
+    [`&.${galleryHorizontalScrollClasses.navigation_active}`]: {
+      backgroundColor: theme.palette.primary.main,
+    },
+  },
+}));
