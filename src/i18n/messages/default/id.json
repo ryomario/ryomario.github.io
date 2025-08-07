@@ -10,7 +10,15 @@
   "ProjectsSection": {
     "heading": "Portofolio Proyek",
     "filter_helper": "Cari proyek berdasarkan judul atau filter sesuai tag nya",
-    "search_projects": "Cari Proyek"
+    "search_projects": "Cari Proyek",
+    "detailsLabels": {
+      "details": "Detail",
+      "description": "Deskripsi",
+      "related_projects": "Proyek yang mirip",
+      "created_at": "Dibuat pada",
+      "demo": "Demonstrasi",
+      "source_code": "Kode Sumber"
+    }
   },
   "GridProjects": {
     "empty_text": "Tidak ada proyek ditemukan!",

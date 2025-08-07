@@ -15,19 +15,40 @@ const PAGE_SIZE = 6;
 
 type Props = {
   filter?: IProjectFilter;
+  /**
+   * default to `0`, means that pagination will be shown
+   */
   maxItems?: number;
+  /**
+   * default to `updatedAt`
+   */
   orderBy?: IProjectSortableProperties;
+  /**
+   * default to `desc`
+   */
   orderMode?: ArrayOrder;
 
+  /**
+   * must be static, can not be dynamic or changed programmaticaly
+   */
+  hide?: IProject['id'][];
+
+  /**
+   * default to `false`
+   */
   alwaysShowDetails?: boolean;
+  /**
+   * default to `false`
+   */
+  smallPreview?: boolean;
 }
 
-export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt', orderMode = 'desc', alwaysShowDetails = false }: Props) {
+export function GridProjects({ hide = [], filter = {}, maxItems = 0, orderBy = 'updatedAt', orderMode = 'desc', alwaysShowDetails = false, smallPreview = false }: Props) {
   const t = useTranslations('GridProjects');
   const { getLinkHref } = useTemplatePageRouter();
   const { data: { projects } } = useDataContext();
 
-  const filteredProjects = useMemo(() => filterProjects(projects, filter), [projects, filter]);
+  const filteredProjects = useMemo(() => filterProjects(projects.filter(({ id }) => !hide.includes(id)), filter), [projects, filter]);
 
   const {
     handlePageChange,
@@ -54,10 +75,10 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
 
   if (isLoading) {
     return (
-      <GridContainer>
+      <GridContainer smallPreview={smallPreview}>
         {Array.from({ length: maxItems > 0 ? maxItems : PAGE_SIZE }, (_, i) => (
           <GridCard key={i} href="#">
-            <div style={{ minWidth: 300, minHeight: 300 }}></div>
+            <div style={{ width: 'auto', aspectRatio: '1/1' }}></div>
           </GridCard>
         ))}
       </GridContainer>
@@ -69,7 +90,7 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
   }
 
   return (
-    <GridContainer>
+    <GridContainer smallPreview={smallPreview}>
       {dataToRender.map(project => (
         <GridCard key={project.id} href={getLinkHref('projects', { id: project.id })}>
           <Image src={project.previews[0]} ratio="1/1" />
@@ -80,9 +101,9 @@ export function GridProjects({ filter = {}, maxItems = 0, orderBy = 'updatedAt',
             ].join(' ')}
           >
             <span>{project.title}</span>
-            <div className="tags-container">{project.tags.map(tag => (
+            {!smallPreview && <div className="tags-container">{project.tags.map(tag => (
               <span key={tag}>{tag}</span>
-            ))}</div>
+            ))}</div>}
           </div>
         </GridCard>
       ))}
@@ -138,17 +159,18 @@ const EmptyContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-const GridContainer = styled('div')(({ theme }) => ({
+const GridContainer = styled('div')<{ smallPreview?: boolean }>(({ theme, smallPreview }) => ({
   display: 'grid',
-  gridTemplateColumns: 'repeat(1, 1fr)',
+  gridTemplateColumns: `repeat(${smallPreview ? 2 : 1}, 1fr)`,
   gap: theme.spacing(3),
+  fontSize: smallPreview ? '0.75rem' : '1.2rem',
 
   [theme.breakpoints.up('sm')]: {
-    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateColumns: `repeat(${smallPreview ? 4 : 2}, 1fr)`,
     gap: theme.spacing(5),
   },
   [theme.breakpoints.up('lg')]: {
-    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridTemplateColumns: `repeat(${smallPreview ? 6 : 3}, 1fr)`,
   },
 }));
 
@@ -159,7 +181,7 @@ const GridCard = styled(Link)(({ theme }) => ({
   display: 'block',
   width: '100%',
   backgroundColor: theme.palette.background.paper,
-  borderRadius: '1rem',
+  borderRadius: '1em',
   overflow: 'hidden',
   boxShadow: theme.shadows[3],
   transition: 'all 100ms',
@@ -168,13 +190,13 @@ const GridCard = styled(Link)(({ theme }) => ({
   ['.details']: {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(2),
+    gap: '0.5em',
     backgroundColor: alpha(theme.palette.background.default, 0.5),
     backdropFilter: 'blur(5px)',
     bottom: 0,
     left: 0,
     right: 0,
-    padding: theme.spacing(2),
+    padding: '0.5em',
     ['&:not(.always-open)']: {
       position: 'absolute',
       transform: 'translateY(100%)',
@@ -188,7 +210,7 @@ const GridCard = styled(Link)(({ theme }) => ({
       display: 'flex',
       justifyContent: 'center',
       flexWrap: 'wrap',
-      gap: theme.spacing(1),
+      gap: '0.25em',
       ['span']: {
         display: 'inline-block',
         padding: '0 0.5em',

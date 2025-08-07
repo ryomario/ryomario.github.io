@@ -1,11 +1,12 @@
-import { styled } from '@mui/material/styles';
+import { styled, SxProps, Theme } from '@mui/material/styles';
 import { useRef, useState } from 'react';
 
 type Props = {
-  images: string[]
+  images: string[];
+  sx?: SxProps<Theme>;
 }
 
-export function GalleryHorizontalScroll({ images }: Props) {
+export function GalleryHorizontalScroll({ images, sx }: Props) {
   const galleryRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -26,7 +27,7 @@ export function GalleryHorizontalScroll({ images }: Props) {
   };
 
   return (
-    <Container className={galleryHorizontalScrollClasses.root}>
+    <Container className={galleryHorizontalScrollClasses.root} sx={sx}>
       {/* Main gallery with horizontal scroll */}
       <Gallery
         ref={galleryRef}

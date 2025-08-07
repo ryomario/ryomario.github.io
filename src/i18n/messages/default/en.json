@@ -10,7 +10,15 @@
   "ProjectsSection": {
     "heading": "Projects Portofolio",
     "filter_helper": "Search projects by title or filter by tags",
-    "search_projects": "Search Projects"
+    "search_projects": "Search Projects",
+    "detailsLabels": {
+      "details": "Details",
+      "description": "Description",
+      "related_projects": "Related Projects",
+      "created_at": "Created at",
+      "demo": "Demo",
+      "source_code": "Source Code"
+    }
   },
   "GridProjects": {
     "empty_text": "No Projects published!",

@@ -4,8 +4,20 @@ import { useDataProject } from "@/contexts/dataContext";
 import { Locale } from "@/i18n/routing";
 import { date2localeString } from "@/lib/date";
 import { fileData } from "@/lib/file";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
-import { useLocale } from "next-intl";
+import Typography from "@mui/material/Typography";
+import { useLocale, useTranslations } from "next-intl";
+import Link from "@mui/material/Link";
+
+import {
+  AccessTime,
+  Code as CodeIcon,
+  Link as LinkIcon,
+  SellOutlined
+} from '@mui/icons-material';
+import { GridProjects } from "./gridProjects";
 
 type Props = {
   projectId: number;
@@ -13,6 +25,7 @@ type Props = {
 
 export function DetailsProject({ projectId }: Props) {
   const locale = useLocale();
+  const t = useTranslations('ProjectsSection');
   const project = useDataProject(projectId);
 
   if(!project) {
@@ -24,21 +37,71 @@ export function DetailsProject({ projectId }: Props) {
       <SectionHeader>{project.title}</SectionHeader>
       <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%' }}>
         <SubHeaderItem sx={(theme) => ({ marginRight: theme.spacing(5)})}>
-          <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
+          <AccessTime fontSize="inherit"/>
           <span>{date2localeString(project.updatedAt, false, locale as Locale)}</span>
         </SubHeaderItem>
         <SubHeaderItem>
-          <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-            <line x1="7" y1="7" x2="7.01" y2="7"></line>
-          </svg>
+          <SellOutlined fontSize="inherit"/>
           <span>{project.tags.join(', ')}</span>
         </SubHeaderItem>
       </div>
-      <GalleryHorizontalScroll images={project.previews.map(preview => fileData(preview).path ?? '')} />
+      <GalleryHorizontalScroll
+        sx={{ marginTop: 4 }}
+        images={project.previews.map(preview => fileData(preview).path ?? '')}
+      />
+
+      <Grid container columns={3} sx={{ width: '100%', mt: 4 }} spacing={2}>
+        <Grid size={{ xs: 3, md: 1 }}>
+          <Stack spacing={2}>
+            <Typography variant="h4">{t('detailsLabels.details')}</Typography>
+            <Stack>
+              <Typography variant="body1">{t('detailsLabels.created_at')}</Typography>
+              <Stack direction="row" spacing={1} alignItems="flex-start">
+                <AccessTime fontSize="small"/>
+                <Typography variant="caption">{date2localeString(project.createdAt, false, locale as Locale)}</Typography>
+              </Stack>
+            </Stack>
+            {(
+              project.link_demo && project.link_demo.trim() != ''
+            ) && (
+              <Stack>
+                <Typography variant="body1">{t('detailsLabels.demo')}</Typography>
+                <Stack direction="row" spacing={1} alignItems="flex-start">
+                  <LinkIcon fontSize="small"/>
+                  <Typography component={Link} href={project.link_demo} target="_blank" color="inherit" variant="caption">{project.link_demo}</Typography>
+                </Stack>
+              </Stack>
+            )}
+            {(
+              project.link_repo && project.link_repo.trim() != ''
+            ) && (
+              <Stack>
+                <Typography variant="body1">{t('detailsLabels.source_code')}</Typography>
+                <Stack direction="row" spacing={1} alignItems="flex-start">
+                  <CodeIcon fontSize="small"/>
+                  <Typography component={Link} href={project.link_repo} target="_blank" color="inherit" variant="caption">{project.link_repo}</Typography>
+                </Stack>
+              </Stack>
+            )}
+          </Stack>
+        </Grid>
+        <Grid size={{ xs: 3, md: 2 }}>
+          <Stack spacing={2}>
+            <Typography variant="h4">{t('detailsLabels.description')}</Typography>
+            <Stack spacing={1}>
+              {project.desc.split('\n').map((paragraph, i) => (
+                <Typography key={i} variant="body2">{paragraph}</Typography>
+              ))}
+            </Stack>
+          </Stack>
+        </Grid>
+        <Grid size={3} sx={{ mt: 8 }}>
+          <Stack spacing={5}>
+            <Typography variant="h4">{t('detailsLabels.related_projects')}</Typography>
+            <GridProjects hide={[project.id]} filter={{ published: true, tags: project.tags }} maxItems={4} smallPreview/>
+          </Stack>
+        </Grid>
+      </Grid>
     </>
   );
 }
