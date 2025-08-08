@@ -15,37 +15,3 @@ model profile_data {
   data_name  String @id
   data_value String @default("")
 }
-
-model projects {
-  project_id      Int            @id @default(autoincrement())
-  project_title   String
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  published       Boolean        @default(false)
-  project_desc    String
-  project_preview project_previews[]
-  project_tags    project_tags[]
-  project_tech    project_tech[]
-  link_repo       String?
-  link_demo       String?
-}
-
-model project_previews {
-  preview_id         Int            @id @default(autoincrement())
-  preview_url        String         @unique
-
-  order              Int            @default(0)
-
-  project            projects?       @relation(fields: [project_id], references: [project_id], onDelete: SetNull)
-  project_id         Int?            // relation scalar field  (used in the `@relation` attribute above)
-}
-
-model project_tags {
-  tag_name           String    @id
-  projects           projects[]
-}
-
-model project_tech {
-  tech_name          String @id
-  projects           projects[]
-}

@@ -1,0 +1,13 @@
+model License {
+  id              Int            @id @default(autoincrement())
+  name            String
+  logo            String?
+  orgName         String
+  startDate_month Int
+  startDate_year  Int
+  endDate_month   Int?
+  endDate_year    Int?
+  credentialId    String?
+  credentialUrl   String?
+  hidden          Boolean?
+}

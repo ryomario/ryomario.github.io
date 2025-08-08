@@ -1,6 +1,6 @@
 {
   "name": "ryomario.github.io",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "generate-sitemap": "node scripts/generate-sitemap.js",
@@ -11,10 +11,25 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@emotion/cache": "^11.14.0",
+    "@emotion/css": "^11.13.5",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fontsource/roboto": "^5.2.6",
+    "@mui/icons-material": "^7.1.2",
+    "@mui/material": "^7.1.2",
+    "@mui/material-nextjs": "^7.1.1",
+    "@mui/x-date-pickers": "^8.9.0",
     "@prisma/client": "6.7.0",
     "@react-pdf/renderer": "^4.2.2",
     "@react-pdf/types": "^2.8.0",
+    "autosuggest-highlight": "^3.3.4",
+    "dayjs": "^1.11.13",
     "flag-icons": "^7.3.2",
+    "framer-motion": "^12.19.2",
     "globby": "^14.1.0",
     "next": "15.1.6",
     "next-intl": "^3.26.3",
@@ -22,10 +37,12 @@
     "react": "^19.0.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-dropzone": "^14.3.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/autosuggest-highlight": "^3.2.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dnd": "^3.0.2",
@@ -45,5 +62,8 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",
     "typescript": "^5"
+  },
+  "prisma": {
+    "schema": "./prisma"
   }
 }

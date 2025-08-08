@@ -1,0 +1,20 @@
+model Work {
+  id              Int            @id @default(autoincrement())
+  companyName     String
+  logo            String?
+  jobTitle        String
+  employmentType  Int
+  location        WorkLocation[]
+  skills          Skill[]
+  description     String
+  startDate_month Int
+  startDate_year  Int
+  endDate_month   Int?
+  endDate_year    Int?
+  hidden          Boolean?
+}
+
+model WorkLocation {
+  address         String    @id
+  works           Work[]
+}

@@ -1,56 +1,117 @@
 'use client';
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
+import { darken, styled } from "@mui/material/styles";
 
 export function ScrollToTop() {
   const [showScroll, setShowScroll] = useState(false)
 
-	useEffect(() => {
-		window.addEventListener('scroll', onScroll);
-		return () => {
-			window.removeEventListener('scroll', onScroll);
-		}
-	})
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    }
+  })
 
-	const onScroll = () => {
-		if (!showScroll && window.scrollY > 400) {
-			setShowScroll(true);
-		} else if (showScroll && window.scrollY <= 400) {
-			setShowScroll(false);
-		}
-	};
+  const onScroll = () => {
+    if (!showScroll && window.scrollY > 400) {
+      setShowScroll(true);
+    } else if (showScroll && window.scrollY <= 400) {
+      setShowScroll(false);
+    }
+  };
 
-	const backToTop = () => {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth',
-		});
-	};
+  const backToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   return (
-    <button
+    <StyledButton
       type="button"
-      className={`!fixed bottom-5 end-5 rounded-full p-3 text-xs font-medium uppercase leading-tight
-        text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400
-        shadow-md transition duration-150 ease-in-out
-        bg-gray-100 dark:bg-secondary-dark hover:bg-gray-200 dark:hover:bg-ternary-dark
-        hover:shadow-lg focus:bg-gray-200 dark:focus:bg-ternary-dark focus:shadow-lg focus:outline-none focus:ring-0
-        active:bg-gray-200 dark:active:bg-ternary-dark active:shadow-lg ${showScroll?'':'hidden'}`}
+      className={`${ScrollToTopClasses.root} ${showScroll ? '' : ScrollToTopClasses.hidden}`}
       onClick={backToTop}
-      id="btn-back-to-top">
-      <span className="[&>svg]:w-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="3"
-          stroke="currentColor">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-        </svg>
-      </span>
-    </button>
+      id="btn-back-to-top"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="3"
+        stroke="currentColor">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+      </svg>
+    </StyledButton>
   )
 }
+
+// ==============================================
+
+const ScrollToTopClasses = {
+  root: 'ScrollToTopClasses-root',
+  hidden: 'ScrollToTopClasses-hidden',
+};
+
+const StyledButton = styled('button')(({ theme }) => ({
+  // reset styles
+  all: 'unset',
+  cursor: 'pointer',
+  // Positioning
+  position: 'fixed',
+  bottom: theme.spacing(3),
+  right: theme.spacing(3),
+
+  // Shape
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '9999px',
+  padding: theme.spacing(2),
+
+  // Typography
+  fontSize: '0.75rem',
+  fontWeight: 500,
+  textTransform: 'uppercase',
+  lineHeight: '1.25',
+  color: theme.palette.text.disabled,
+
+  // Background & Shadow
+  backgroundColor: theme.palette.background.paper,
+  boxShadow: theme.shadows[3],
+
+  // Transition
+  transition: 'all 150ms ease-in-out',
+
+  // Hover states
+  '&:hover': {
+    color: theme.palette.primary.main,
+    backgroundColor: darken(theme.palette.background.paper, 0.05),
+    boxShadow: theme.shadows[2],
+  },
+
+  // Focus states
+  '&:focus': {
+    backgroundColor: darken(theme.palette.background.paper, 0.2),
+    boxShadow: theme.shadows[2],
+    outline: 'none',
+  },
+
+  // Active states
+  '&:active': {
+    backgroundColor: darken(theme.palette.background.paper, 0.2),
+    boxShadow: theme.shadows[1],
+  },
+
+  [`&.${ScrollToTopClasses.hidden}`]: {
+    display: 'none',
+  },
+  'svg': {
+    width: '1rem',
+    height: '1rem',
+  }
+}));

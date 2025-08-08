@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
+import { AdminRoute } from '@/types/EnumAdminRoute';
+import { permanentRedirect } from 'next/navigation';
 
 export default async function Page() {
-  redirect('/admin/profile')
+  return permanentRedirect(AdminRoute.DASHBOARD);
 }
