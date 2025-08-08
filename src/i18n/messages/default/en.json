@@ -33,5 +33,8 @@
       "tag_filterred": "Filtered {count, plural, =1 {(one tag)} other {(# tags)}}",
       "tag_heading": "Tags (contains)"
     }
+  },
+  "AboutSection": {
+    "heading": "About me"
   }
 }

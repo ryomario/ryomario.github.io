@@ -21,7 +21,13 @@ const themeLight: ColorSystemOptions = {
     background: {
       default: rgb2hex([255,255,255]),
       paper: rgb2hex([247, 248, 252]),
-    }
+    },
+    primary: {
+      main: rgb2hex([0, 100, 200]),
+    },
+    secondary: {
+      main: rgb2hex([75, 80, 220]),
+    },
   }
 };
 
@@ -30,4 +36,7 @@ export const defaultTmplTheme: IThemeOptions = {
     dark: themeDark,
     light: themeLight,
   },
+  typography: {
+    fontFamily: 'inherit',
+  }
 };

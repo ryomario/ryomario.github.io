@@ -5,7 +5,8 @@ import { LanguageSwitcher } from "./languageSwitcher";
 import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter";
 import { ThemeToggler } from "./themeToggler";
 import { useDataContext } from "@/contexts/dataContext";
-import { styled } from "@mui/material/styles";
+import { darken, styled } from "@mui/material/styles";
+import Collapse from "@mui/material/Collapse";
 
 export default function Navbar() {
   const { getLinkHref } = useTemplatePageRouter();
@@ -15,11 +16,7 @@ export default function Navbar() {
   const { hireable } = profile;
 
   function toggleMenu() {
-    if (!showMenu) {
-      setShowMenu(true);
-    } else {
-      setShowMenu(false);
-    }
+    setShowMenu(old => !old);
   }
 
   return (
@@ -78,23 +75,25 @@ export default function Navbar() {
           <ThemeToggler />
         </div>
       </div>
-      <div className={`nav-menu-wrapper ${showMenu ? '' : 'hidden'}`}>
-        <Link
-          href={getLinkHref('projects')}
-          aria-label={t('menus.projects')}
-        >
-          {t('menus.projects')}
-        </Link>
-        <Link
-          href={getLinkHref('about')}
-          aria-label={t('menus.aboutme')}
-        >
-          {t('menus.aboutme')}
-        </Link>
-        {hireable && <button className="unset-all-styles" aria-label={t('buttons.hireme')}>
-          {t('buttons.hireme')}
-        </button>}
-      </div>
+      <Collapse in={showMenu}>
+        <div className="nav-menu-wrapper">
+          <Link
+            href={getLinkHref('projects')}
+            aria-label={t('menus.projects')}
+          >
+            {t('menus.projects')}
+          </Link>
+          <Link
+            href={getLinkHref('about')}
+            aria-label={t('menus.aboutme')}
+          >
+            {t('menus.aboutme')}
+          </Link>
+          {hireable && <HereableButton className="unset-all-styles" aria-label={t('buttons.hireme')}>
+            {t('buttons.hireme')}
+          </HereableButton>}
+        </div>
+      </Collapse>
     </Nav>
   );
 }
@@ -103,7 +102,7 @@ export default function Navbar() {
 
 const Nav = styled('nav')(({ theme }) => ({
   boxShadow: theme.shadows[2],
-  
+
   [theme.breakpoints.up('sm')]: {
     boxShadow: 'none',
   },
@@ -188,7 +187,7 @@ const Nav = styled('nav')(({ theme }) => ({
       },
     },
   },
-  '& > .nav-menu-wrapper': {
+  '& .nav-menu-wrapper': {
     display: 'block',
     margin: 0,
     marginTop: theme.spacing(2),
@@ -204,9 +203,6 @@ const Nav = styled('nav')(({ theme }) => ({
     },
 
     [theme.breakpoints.up('md')]: {
-      display: "none !important",
-    },
-    '&.hidden': {
       display: "none !important",
     },
 
@@ -232,21 +228,12 @@ const Nav = styled('nav')(({ theme }) => ({
       },
     },
     'button': {
-      fontSize: '1rem',
-      backgroundColor: '#6366f1',
-      color: '#fff',
-      borderRadius: '0.375rem',
-      boxShadow: theme.shadows[1],
-      marginBlock: 0,
-      px: theme.spacing(4),
-      py: theme.spacing(2),
-      transitionProperty: 'background-color',
-      transitionDuration: '300ms',
-      '&:hover': {
-        backgroundColor: '#4f46e5',
-      },
+      fontSize: '0.9rem',
+      fontWeight: 700,
+      paddingBlock: theme.spacing(0.5),
+      paddingInline: theme.spacing(1.5),
       [theme.breakpoints.down('sm')]: {
-        marginTop: theme.spacing(5),
+        marginTop: theme.spacing(4),
       }
     },
   },
@@ -267,18 +254,17 @@ const LogoImg = styled('img')(({ theme }) => ({
 
 const HereableButton = styled('button')(({ theme }) => ({
   fontSize: '1rem',
-  fontFamily: 'sans-serif-medium',
-  backgroundColor: '#6366f1',
+  backgroundColor: theme.palette.secondary.main,
   cursor: 'pointer',
   '&:hover': {
-    backgroundColor: '#4f46e5',
+    backgroundColor: darken(theme.palette.secondary.main, theme.palette.action.hoverOpacity),
   },
-  color: '#fff',
-  borderRadius: '0.375rem',
+  color: theme.palette.secondary.contrastText,
+  borderRadius: theme.spacing(1),
   boxShadow: theme.shadows[1],
 
-  paddingInline: theme.spacing(5),
-  paddingBlock: theme.spacing(2.5),
+  paddingInline: theme.spacing(2),
+  paddingBlock: theme.spacing(1),
 
   transitionDuration: '300ms',
   transitionProperty: 'background-color',

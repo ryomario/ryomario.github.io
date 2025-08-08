@@ -12,6 +12,7 @@ import { styled } from "@mui/material/styles";
 import { DetailsProject } from "./sections/projects/detailsProject";
 import { NotFoundComponent } from "@/components/notFound";
 import { useLocale } from "next-intl";
+import { AboutSection } from "./sections/about";
 
 export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemplateProps) {
   const locale = useLocale();
@@ -60,14 +61,14 @@ export default function TemplateDefault({ defaultLocale = 'en', ...rest }: ITemp
         <div className="content">
           {currentPage == 'projects' ? (
             Number.isNaN(id)
-            ? <ProjectsSection />
-            : <DetailsProject projectId={id}/>
+              ? <ProjectsSection />
+              : <DetailsProject projectId={id} />
           ) : currentPage == 'about' ? (
-            <h1>About</h1>
+            <AboutSection />
           ) : !currentPage ? (
             <MainSection />
           ) : (
-            <NotFoundComponent homeUrl={`/${locale}`}/>
+            <NotFoundComponent homeUrl={`/${locale}`} />
           )}
         </div>
       </main>
