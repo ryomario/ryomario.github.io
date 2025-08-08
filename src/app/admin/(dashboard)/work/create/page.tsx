@@ -1,15 +1,14 @@
 import { ViewWorkCreate } from "@/sections/admin/work/ViewWorkCreate";
-import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
-import { dbWorkLocatoinsTransform, dbWorkSkillsTransform } from "@/db/utils/workTransforms";
+import RepoWorks from "@/db/repositories/RepoWorks";
 
 export default async function Page() {
-  const dataDbSkills = await RepoWorksServer.getAllSkills();
-  const dataDbLocations = await RepoWorksServer.getAllWorkLocations();
+  const dataSkills = await RepoWorks.getAllSkills();
+  const dataLocations = await RepoWorks.getAllWorkLocations();
 
   return (
     <ViewWorkCreate
-      refLocations={dbWorkLocatoinsTransform(dataDbLocations)}
-      refSkills={dbWorkSkillsTransform(dataDbSkills)}
+      refLocations={dataLocations}
+      refSkills={dataSkills}
     />
   );
 }

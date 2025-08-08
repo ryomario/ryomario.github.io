@@ -1,9 +1,9 @@
-import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
+import RepoWorks from "@/db/repositories/RepoWorks";
 import { ViewWorkDetails } from "@/sections/admin/work/ViewWorkDetails";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
-  const works = await RepoWorksServer.getAll()
+  const works = await RepoWorks.getAll()
   return works.map(({ id }) => ({
     workId: id.toString(),
   }));
@@ -18,7 +18,7 @@ export default async function Page({ params }: Readonly<{
     return notFound();
   }
 
-  const data = await RepoWorksServer.getOne(id);
+  const data = await RepoWorks.getOne(id);
 
   if (!data) {
     return notFound();

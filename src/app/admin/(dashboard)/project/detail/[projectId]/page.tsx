@@ -1,9 +1,9 @@
-import * as RepoProjectsServer from "@/db/repositories/RepoProjects.server";
+import RepoProjects from "@/db/repositories/RepoProjects";
 import { ViewProjectDetails } from "@/sections/admin/project/ViewProjectDetails";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
-  const projects = await RepoProjectsServer.getAll()
+  const projects = await RepoProjects.getAll()
   return projects.map(({ id }) => ({
     projectId: id.toString(),
   }));
@@ -18,7 +18,7 @@ export default async function Page({ params }: Readonly<{
     return notFound();
   }
 
-  const data = await RepoProjectsServer.getOne(id);
+  const data = await RepoProjects.getOne(id);
 
   if (!data) {
     return notFound();

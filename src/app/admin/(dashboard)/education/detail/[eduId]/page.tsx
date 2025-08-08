@@ -1,5 +1,4 @@
 import RepoEducations from "@/db/repositories/RepoEducations";
-import { dbEducationTransform } from "@/db/utils/educationTransforms";
 import { ViewEducationDetails } from "@/sections/admin/education/ViewEducationDetails";
 import { notFound } from "next/navigation";
 
@@ -25,7 +24,5 @@ export default async function Page({ params }: Readonly<{
     return notFound();
   }
 
-  const values = dbEducationTransform(data);
-
-  return <ViewEducationDetails data={values}/>;
+  return <ViewEducationDetails data={data}/>;
 }

@@ -6,7 +6,7 @@ import { UrlObject } from "url";
 type UseTemplatePageRouterReturn = {
   currentPage: string;
   handlePageChange: (page?: string | null) => MouseEventHandler<HTMLElement>;
-  getLinkHref: (page?: string | null, params?: Record<string, string|number>) => UrlObject;
+  getLinkHref: (page?: string | null, params?: Record<string, string|number>) => UrlObject|string;
   getParam: (key: string) => string | undefined;
 }
 
@@ -41,7 +41,7 @@ export function useTemplatePageRouter(defaultPage = ''): UseTemplatePageRouterRe
     return handler;
   }, [currentPage, defaultPage, searchParams, router, pathname]);
 
-  const getLinkHref = useCallback((page?: string | null, params: Record<string, string|number> = {}): UrlObject => {
+  const getLinkHref = useCallback((page?: string | null, params: Record<string, string|number> = {}): UrlObject|string => {
     const urlObj: UrlObject = {
       pathname,
     };

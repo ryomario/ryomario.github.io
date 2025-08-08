@@ -1,5 +1,4 @@
 import RepoEducations from "@/db/repositories/RepoEducations";
-import { dbEducationMajorsTransform, dbEducationTransform } from "@/db/utils/educationTransforms";
 import { ViewEducationUpdate } from "@/sections/admin/education/ViewEducationUpdate";
 import { notFound } from "next/navigation";
 
@@ -25,7 +24,7 @@ export default async function Page({ params }: Readonly<{
     return notFound();
   }
 
-  const dataDbMajors = await RepoEducations.getAllMajors();
+  const dataMajors = await RepoEducations.getAllMajors();
 
-  return <ViewEducationUpdate values={data} refMajors={dbEducationMajorsTransform(dataDbMajors)}/>;
+  return <ViewEducationUpdate values={data} refMajors={dataMajors}/>;
 }

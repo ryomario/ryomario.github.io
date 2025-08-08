@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
  
   // Optional: Prevent automatic `/me` -> `/me/`, instead preserve `href`
-  skipTrailingSlashRedirect: true,
+  skipTrailingSlashRedirect: false,
  
   // Optional: Change the output directory `out` -> `dist`
   distDir: 'dist',

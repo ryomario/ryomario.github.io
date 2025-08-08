@@ -3,15 +3,10 @@
 import { AdminEducationList } from "@/components/admin/education/adminEducationList";
 import { AdminEducationSearch } from "@/components/admin/education/adminEducationSearch";
 import { AdminRoute } from "@/types/EnumAdminRoute";
-import { IEducation } from "@/types/IEducation";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 
-type Props = {
-  data: IEducation[];
-}
-
-export function ViewEducationList({ data }: Props) {
+export function ViewEducationList() {
   const redirectPath = (id: string) => `${AdminRoute.EDUCATION_VIEW}/${id}`;
   const redirectPathEdit = (id: string) => `${AdminRoute.EDUCATION_EDIT}/${id}`;
 
@@ -25,7 +20,7 @@ export function ViewEducationList({ data }: Props) {
         alignItems: { xs: 'flex-end', sm: 'center' },
       }}
     >
-      <AdminEducationSearch redirectPath={redirectPath}/>
+      <AdminEducationSearch redirectPath={redirectPath} />
     </Box>
   );
 
@@ -35,7 +30,6 @@ export function ViewEducationList({ data }: Props) {
     </Stack>
 
     <AdminEducationList
-      data={data}
       getRedirectPathDetails={redirectPath}
       getRedirectPathEdit={redirectPathEdit}
     />

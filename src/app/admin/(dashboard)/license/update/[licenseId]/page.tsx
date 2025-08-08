@@ -1,11 +1,9 @@
-import * as RepoLicensesServer from "@/db/repositories/RepoLicenses.server";
-import { dbWorkLocatoinsTransform, dbWorkSkillsTransform, dbWorkTransform } from "@/db/utils/workTransforms";
+import RepoLicenses from "@/db/repositories/RepoLicenses";
 import { ViewLicenseUpdate } from "@/sections/admin/license/ViewLicenseUpdate";
-import { ViewWorkUpdate } from "@/sections/admin/work/ViewWorkUpdate";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
-  const licenses = await RepoLicensesServer.getAll()
+  const licenses = await RepoLicenses.getAll()
   return licenses.map(({ id }) => ({
     licenseId: id.toString(),
   }));
@@ -20,7 +18,7 @@ export default async function Page({ params }: Readonly<{
     return notFound();
   }
 
-  const data = await RepoLicensesServer.getOne(id);
+  const data = await RepoLicenses.getOne(id);
 
   if(!data) {
     return notFound();

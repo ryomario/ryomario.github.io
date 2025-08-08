@@ -76,12 +76,12 @@ async function getOne(id: number): Promise<IEducation> {
   }
 }
 
-async function getAllMajors() {
+async function getAllMajors(): Promise<IEducation['majors']> {
   try {
     const majors = await prisma.educationMajor.findMany();
     if (!majors) throw Error(`any majors not found`);
 
-    return majors;
+    return majors.map(({ name }) => name);
   } catch (error) {
     const message = getErrorMessage(error);
 

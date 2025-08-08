@@ -1,10 +1,9 @@
-import * as RepoWorksServer from "@/db/repositories/RepoWorks.server";
-import { dbWorkLocatoinsTransform, dbWorkSkillsTransform } from "@/db/utils/workTransforms";
+import RepoWorks from "@/db/repositories/RepoWorks";
 import { ViewWorkUpdate } from "@/sections/admin/work/ViewWorkUpdate";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
-  const works = await RepoWorksServer.getAll()
+  const works = await RepoWorks.getAll()
   return works.map(({ id }) => ({
     workId: id.toString(),
   }));
@@ -19,20 +18,20 @@ export default async function Page({ params }: Readonly<{
     return notFound();
   }
 
-  const data = await RepoWorksServer.getOne(id);
+  const data = await RepoWorks.getOne(id);
 
   if (!data) {
     return notFound();
   }
 
-  const dataDbSkills = await RepoWorksServer.getAllSkills();
-  const dataDbLocations = await RepoWorksServer.getAllWorkLocations();
+  const dataSkills = await RepoWorks.getAllSkills();
+  const dataLocations = await RepoWorks.getAllWorkLocations();
 
   return (
     <ViewWorkUpdate
       values={data}
-      refLocations={dbWorkLocatoinsTransform(dataDbLocations)}
-      refSkills={dbWorkSkillsTransform(dataDbSkills)}
+      refLocations={dataLocations}
+      refSkills={dataSkills}
     />
   );
 }

@@ -82,37 +82,33 @@ async function getOne(id: number): Promise<IWorkExperience> {
   }
 }
 
-async function getAllSkills() {
+async function getAllSkills(): Promise<IWorkExperience['skills']> {
   try {
-    const skills = await prisma.skill.findMany()
-    if (!skills) throw Error(`any skills not found`)
+    const skills = await prisma.skill.findMany();
+    if (!skills) throw Error(`any skills not found`);
 
-    return skills
-  } catch (error: any) {
-    let message = 'unknown'
-    if (typeof error == 'string') message = error
-    else if (error.message) message = error.message
+    return skills.map(({ skillName }) => skillName);
+  } catch (error) {
+    const message = getErrorMessage(error);
 
-    Logger.error(message, 'work getAllSkills error')
+    Logger.error(message, 'work getAllSkills error');
 
-    return []
+    throw new Error(message);
   }
 }
 
-async function getAllWorkLocations() {
+async function getAllWorkLocations(): Promise<IWorkExperience['location']> {
   try {
-    const locations = await prisma.workLocation.findMany()
-    if (!locations) throw Error(`any work locations not found`)
+    const locations = await prisma.workLocation.findMany();
+    if (!locations) throw Error(`any work locations not found`);
 
-    return locations
-  } catch (error: any) {
-    let message = 'unknown'
-    if (typeof error == 'string') message = error
-    else if (error.message) message = error.message
+    return locations.map(({ address }) => address);
+  } catch (error) {
+    const message = getErrorMessage(error);
 
-    Logger.error(message, 'work getAllWorkLocations error')
+    Logger.error(message, 'work getAllWorkLocations error');
 
-    return []
+    throw new Error(message);
   }
 }
 
