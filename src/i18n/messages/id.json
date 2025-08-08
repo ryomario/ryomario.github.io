@@ -1,17 +1,4 @@
 {
-  "HomePage": {
-    "btn_more_projects": "Proyek Lainnya"
-  },
-  "LanguageSelector": {
-    "languages": {
-      "en": "Bahasa Inggris",
-      "id": "Bahasa Indonesia"
-    },
-    "loading": "Memuat..."
-  },
-  "LanguageSwitcher": {
-    "label": "Ganti Bahasa. Bahasa saat ini: {current_lang}"
-  },
   "Navbar": {
     "srOnly": {
       "closeMenu": "Tutup Menu Utama",
@@ -23,25 +10,6 @@
     },
     "buttons": {
       "hireme": "Rekrut Saya"
-    }
-  },
-  "HeroSection": {
-    "heading_1": "Hai, Saya {name}",
-    "heading_2": "Seorang Web Developer, Front-End & Back-End Engineer",
-    "hero_img_alt": "Developer"
-  },
-  "ProjectsShowcase": {
-    "title": "Portofolio Proyek",
-    "search_by_helper": "Cari proyek berdasarkan judul atau filter menggunakan nama tag",
-    "search_projects": "Cari Proyek",
-    "empty_projects": "Tidak ada data",
-    "select_allProjects": "Semua Proyek",
-    "filters": {
-      "tags": "Tag",
-      "buttons": {
-        "no_filter": "Filter",
-        "tag_filtered": "Ter-filter ({count} tag)"
-      }
     }
   },
   "Footer": {

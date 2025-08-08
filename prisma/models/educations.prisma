@@ -1,0 +1,19 @@
+model Education {
+  id              Int            @id @default(autoincrement())
+  schoolName      String
+  logo            String?
+  degree          String
+  majors          EducationMajor[]
+  startYear       Int
+  endYear         Int
+  activities      String
+  description     String
+  gpa             Float?
+  gpa_scale       Float?
+  hidden          Boolean?
+}
+
+model EducationMajor {
+  name            String        @id
+  educations      Education[]
+}

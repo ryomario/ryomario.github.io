@@ -1,29 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Locale, routing } from "@/i18n/routing";
-import { Navbar } from "@/components/navigation/navbar";
 import "flag-icons";
-import { ThemeModeLoader } from "@/components/themeModeLoader";
 import NextTopLoader from "nextjs-toploader";
-import { Footer } from "@/components/navigation/footer";
 import { ScrollTop } from "@/components/scrollTop";
-import { ScrollToTop } from "@/components/scrollToTop";
-import { ProfileDataProvider } from "@/contexts/profileDataContext";
 import RepoProfileData from "@/db/repositories/RepoProfileData";
+import { DataProvider } from "@/contexts/dataContext";
+import RepoProjects from "@/db/repositories/RepoProjects";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import { ThemeProvider } from "@/theme/themeProvider";
+import { SettingsProvider } from "@/settings/settingsProvider";
+import { getActiveTemplate, getTemplateTheme } from "@/templates/registered";
 import { Suspense } from "react";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({
@@ -55,40 +45,45 @@ export default async function RootLayout({
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
-  
+
   // Enable static rendering
   setRequestLocale(locale)
+
+  // get active template
+  const templateName = await getActiveTemplate();
 
   const messages = await getMessages()
 
   const profileData = await RepoProfileData.getAll()
+  const projects = await RepoProjects.getAll()
+  const project_tags = await RepoProjects.getAllTags()
 
   return (
-    <html lang={locale}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeModeLoader/>
-        <NextIntlClientProvider messages={messages}>
-          <ScrollTop/>
-          <ProfileDataProvider data={profileData}>
-            <div className="bg-secondary-light dark:bg-primary-dark transition duration-300 min-h-screen">
-              <Navbar/>
-              <div className="sm:container sm:mx-auto">
-                <div className="mx-auto flex flex-col max-w-7xl items-center justify-between p-6 lg:px-8">
+    <html lang={locale} suppressHydrationWarning>
+      <body>
+        <SettingsProvider defaultSettings={{ templateName, colorScheme: 'light' }}>
+          <NextIntlClientProvider messages={messages}>
+            <ScrollTop />
+            <DataProvider value={{
+              data: {
+                profile: profileData,
+                projects,
+              },
+              refs: {
+                project_tags,
+              }
+            }}>
+              <AppRouterCacheProvider options={{ key: 'css' }}>
+                <ThemeProvider theme={getTemplateTheme(templateName)}>
+                  <NextTopLoader showSpinner={false} />
                   <Suspense>
                     {children}
                   </Suspense>
-                </div>
-              </div>
-              <Footer/>
-            </div>
-          </ProfileDataProvider>
-        </NextIntlClientProvider>
-        <ScrollToTop/>
-        <NextTopLoader
-          showSpinner={false}
-        />
+                </ThemeProvider>
+              </AppRouterCacheProvider>
+            </DataProvider>
+          </NextIntlClientProvider>
+        </SettingsProvider>
       </body>
     </html>
   );

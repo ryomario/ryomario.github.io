@@ -1,68 +1,154 @@
-import { useState } from 'react';
+import { styled, SxProps, Theme } from '@mui/material/styles';
+import { useRef, useState } from 'react';
 
 type Props = {
-  images: string[]
+  images: string[];
+  sx?: SxProps<Theme>;
 }
 
-export function GalleryHorizontalScroll({ images }: Props) {
-
+export function GalleryHorizontalScroll({ images, sx }: Props) {
+  const galleryRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const scrollToImage = (index: number) => {
+    if (!galleryRef.current) {
+      return;
+    }
+
     setActiveIndex(index);
-    const gallery = document.getElementById('gallery');
-    const image = document.getElementById(`image-${index}`);
-    if (gallery && image) {
+    const gallery = galleryRef.current;
+    const image = gallery.querySelector<HTMLDivElement>(`#image-${index}`);
+    if (image) {
       gallery.scrollTo({
-        left: image.offsetLeft - gallery.offsetWidth / 2 + image.offsetWidth / 2,
+        left: (image.offsetLeft - gallery.offsetLeft) - (gallery.offsetWidth / 2) + (image.offsetWidth / 2),
         behavior: 'smooth'
       });
     }
   };
 
   return (
-    <div className="max-w-full mx-auto p-4">
-      {/* <h2 className="text-2xl font-bold mb-4">Image Gallery</h2> */}
-      
+    <Container className={galleryHorizontalScrollClasses.root} sx={sx}>
       {/* Main gallery with horizontal scroll */}
-      <div 
-        id="gallery"
-        className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 p-2"
-        style={{ scrollbarWidth: 'none' }} // For Firefox
+      <Gallery
+        ref={galleryRef}
+        className={galleryHorizontalScrollClasses.gallery}
       >
         {images.map((img, index) => (
-          <div 
+          <div
             key={index}
             id={`image-${index}`}
-            className={`flex-shrink-0 w-64 h-64 rounded-lg overflow-hidden shadow-md snap-center transition-all duration-300 ${activeIndex === index ? 'ring-4 ring-blue-500' : ''}`}
+            className={`${galleryHorizontalScrollClasses.imgWrapper} ${activeIndex === index ? galleryHorizontalScrollClasses.imgWrapper_active : ''}`}
           >
             <img
               src={img}
               onError={(e) => e.currentTarget.src = '/images/placeholder-image.jpg'}
               alt={`Gallery item ${index + 1}`}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               onClick={() => scrollToImage(index)}
             />
           </div>
         ))}
-      </div>
-      
+      </Gallery>
+
       {/* Navigation dots */}
-      <div className="flex justify-center mt-4 gap-2">
+      <Navigation className={galleryHorizontalScrollClasses.navigation}>
         {images.map((_, index) => (
           <button
             key={index}
             onClick={() => scrollToImage(index)}
-            className={`w-3 h-3 rounded-full ${activeIndex === index ? 'bg-blue-500' : 'bg-gray-300'}`}
+            className={activeIndex === index ? galleryHorizontalScrollClasses.navigation_active : ''}
             aria-label={`Go to image ${index + 1}`}
           />
         ))}
-      </div>
-      
+      </Navigation>
+
       {/* Optional: Image counter */}
-      <div className="text-center text-gray-600 mt-2">
+      <div className={galleryHorizontalScrollClasses.counter}>
         {activeIndex + 1} / {images.length}
       </div>
-    </div>
+    </Container>
   );
 };
+
+// ================================================
+
+export const galleryHorizontalScrollClasses = {
+  root: 'GalleryHorizontalScroll',
+  gallery: 'GalleryHorizontalScroll-gallery',
+  counter: 'GalleryHorizontalScroll-counter',
+  imgWrapper: 'GalleryHorizontalScroll-img-wrapper',
+  imgWrapper_active: 'GalleryHorizontalScroll-img-wrapper_active',
+  navigation: 'GalleryHorizontalScroll-navigation',
+  navigation_active: 'GalleryHorizontalScroll-navigation_active',
+};
+
+const Container = styled('div')(({ theme }) => ({
+  maxWidth: '100%',
+  marginInline: 'auto',
+  padding: theme.spacing(4),
+  [`.${galleryHorizontalScrollClasses.counter}`]: {
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    marginTop: theme.spacing(1),
+  }
+}));
+
+const Gallery = styled('div')(({ theme }) => ({
+  display: 'flex',
+  overflowX: 'auto',
+  scrollSnapType: 'x mandatory',
+  gap: theme.spacing(2),
+  padding: theme.spacing(1),
+
+  msOverflowStyle: 'none',
+  scrollbarWidth: 'none',
+
+  ['&::-webkit-scrollbar']: {
+    display: 'none',
+  },
+  ['& > *']: {
+    scrollSnapAlign: 'start',
+  },
+  [`.${galleryHorizontalScrollClasses.imgWrapper}`]: {
+    flexShrink: 0,
+    width: '16rem',
+    height: '16rem',
+    borderRadius: theme.spacing(1),
+    overflow: 'hidden',
+    boxShadow: theme.shadows[2],
+    scrollSnapAlign: 'center',
+    transitionProperty: 'box-shadow',
+    transitionDuration: '300ms',
+    [`&.${galleryHorizontalScrollClasses.imgWrapper_active}`]: {
+      boxShadow: `0 0 0 4px ${theme.palette.primary.main}`,
+    },
+    ['img']: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      transitionProperty: 'transform',
+      transitionDuration: '300ms',
+      ['&:hover']: {
+        transform: 'scale(1.05)',
+      },
+    },
+  },
+}));
+
+const Navigation = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: theme.spacing(1),
+  gap: theme.spacing(1),
+
+  ['& > button']: {
+    all: 'unset',
+    cursor: 'pointer',
+    width: '0.75rem',
+    height: '0.75rem',
+    borderRadius: 99999,
+    backgroundColor: theme.palette.text.disabled,
+    [`&.${galleryHorizontalScrollClasses.navigation_active}`]: {
+      backgroundColor: theme.palette.primary.main,
+    },
+  },
+}));

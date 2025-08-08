@@ -1,0 +1,27 @@
+model Project {
+  id              Int            @id @default(autoincrement())
+  title           String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  published       Boolean        @default(false)
+  desc            String
+  previews        ProjectPreview[]
+  tags            ProjectTag[]
+  link_repo       String?
+  link_demo       String?
+}
+
+model ProjectPreview {
+  id              Int            @id @default(autoincrement())
+  url             String         @unique
+
+  order           Int            @default(0)
+
+  project         Project?       @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  project_id      Int?           // relation scalar field  (used in the `@relation` attribute above)
+}
+
+model ProjectTag {
+  tag_name           String    @id
+  projects           Project[]
+}

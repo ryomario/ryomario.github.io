@@ -35,3 +35,83 @@ export function date2localeString(date?: Date|number|string, showTime = false, l
     })
   })
 }
+
+export function getMonthName(monthIndex: number, shortName = false, locale: Locale = 'en'): string {
+  monthIndex = Number(monthIndex);
+  if(Number.isNaN(monthIndex)) return '';
+
+  const date = new Date();
+  date.setMonth(monthIndex);
+
+  const dateLocale = locale == 'en' ? 'en-US' : 'id-ID'
+
+  return date.toLocaleString(dateLocale, { month: shortName ? 'short' : 'long' });
+}
+
+export function getAllMonthsName(shortName = false, locale: Locale = 'en') {
+  return Array.from({ length: 12 }, (_, i) => getMonthName(i, shortName, locale));
+}
+
+export interface MonthYearElapsed {
+  years: number;
+  months: number;
+  totalMonths: number;
+}
+
+/**
+ * Calculates time elapsed between two month-year dates (January = 0)
+ * @param startMonth 0-11 (January = 0)
+ * @param startYear Full year (e.g., 2023)
+ * @param endMonth 0-11 (January = 0)
+ * @param endYear Full year (e.g., 2025)
+ * @returns Object with years, months, and total months elapsed
+ */
+export function monthYearElapsed(
+  startMonth: number,
+  startYear: number,
+  endMonth?: number|null,
+  endYear?: number|null
+): MonthYearElapsed {
+  if(typeof endMonth !== 'number') endMonth = new Date().getMonth();
+  if(typeof endYear !== 'number') endYear = new Date().getFullYear();
+  // Validate inputs
+  if (startMonth < 0 || startMonth > 11 || endMonth < 0 || endMonth > 11) {
+      throw new Error('Months must be between 0 and 11');
+  }
+  
+  if (startYear > endYear || (startYear === endYear && startMonth > endMonth)) {
+      throw new Error('Start date must be before end date');
+  }
+
+  // Calculate total months difference
+  const totalMonths = (endYear - startYear) * 12 + (endMonth - startMonth) +1; // round up
+  
+  // Convert to years and remaining months
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+
+  return {
+    years,
+    months,
+    totalMonths
+  };
+}
+
+export function monthYearElapsedHuman(
+  startMonth: number,
+  startYear: number,
+  endMonth?: number|null,
+  endYear?: number|null
+): string {
+  const elapsed = monthYearElapsed(startMonth, startYear, endMonth, endYear);
+  
+  const parts = [];
+  if (elapsed.years > 0) {
+    parts.push(`${elapsed.years} year${elapsed.years !== 1 ? 's' : ''}`);
+  }
+  if (elapsed.months > 0) {
+    parts.push(`${elapsed.months} month${elapsed.months !== 1 ? 's' : ''}`);
+  }
+  
+  return parts.join(' and ') || '0 months';
+}

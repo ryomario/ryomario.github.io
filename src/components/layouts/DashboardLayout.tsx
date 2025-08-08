@@ -1,0 +1,67 @@
+'use client';
+
+import { styled, SxProps, Theme, useTheme } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import React, { useEffect } from "react";
+
+import Box from "@mui/material/Box";
+import { IDashboardNavData } from "@/types/ILayout";
+import { SidebarLayout } from "./sidebar/SidebarLayout";
+import { TopbarLayout } from "./header/TopbarLayout";
+import { useSettingsContext } from "@/settings/settingsProvider";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
+
+export type DashboardLayoutProps = React.ComponentProps<'div'> & {
+  sx?: SxProps<Theme>;
+  children?: React.ReactNode;
+  slotProps?: {
+    nav?: {
+      data?: IDashboardNavData;
+    };
+  };
+}
+
+export function DashboardLayout({
+  sx,
+  children,
+  slotProps,
+  ...rest
+}: DashboardLayoutProps) {
+  const settings = useSettingsContext();
+  const theme = useTheme();
+  const smUp = useMediaQuery(theme.breakpoints.up('sm'));
+
+  useEffect(() => {
+    settings.setState({ miniSidebar: !smUp });
+  },[smUp]);
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LayoutRoot
+        id="root__layout"
+        sx={sx}
+        {...rest}
+      >
+        {/** @slot HEADER **/}
+        <TopbarLayout/>
+
+        <Box sx={{ display: 'flex', flexGrow: 1 }}>
+          {/** @slot Sidebar  */}
+          <SidebarLayout data={slotProps?.nav?.data}/>
+
+          {/** @slot Main */}
+          <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column', overflowX: 'hidden' }}>
+            <Toolbar />
+            {children}
+          </Box>
+        </Box>
+      </LayoutRoot>
+    </LocalizationProvider>
+  );
+}
+
+const LayoutRoot = styled('div')`
+display: flex;
+`;
