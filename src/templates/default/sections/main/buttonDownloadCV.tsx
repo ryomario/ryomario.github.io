@@ -11,7 +11,7 @@ export function ButtonDownloadCV() {
   return (
     <DownloadButton
       download={t('download_filename', { name, ext: 'pdf' })}
-      href="/cv/download"
+      href="/cv/download.pdf"
       target="_blank"
       aria-label={t('download_btn')}
     >
