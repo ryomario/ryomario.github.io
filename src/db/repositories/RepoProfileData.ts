@@ -18,7 +18,7 @@ async function getOne<T>(data_name: string, fallback_value?: T) {
   } catch (error) {
     const message = getErrorMessage(error);
 
-    Logger.error(error, `profile data getOne "${data_name}"`);
+    Logger.error(message, `profile data getOne "${data_name}"`);
     if (fallback_value === undefined) throw new Error(message);
 
     return fallback_value;
@@ -32,7 +32,7 @@ async function getJSONData<T>(data_name: string, fallback_value?: T) {
   } catch (error) {
     const message = getErrorMessage(error);
 
-    Logger.error(error, `profile data getJSONData "${data_name}"`);
+    Logger.error(message, `profile data getJSONData "${data_name}"`);
     if (fallback_value === undefined) throw new Error(message);
 
     return fallback_value;

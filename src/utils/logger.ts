@@ -24,11 +24,11 @@ export class Logger {
       sendLog(level, message);
     } else {
       switch (level) {
-        case LogLevel.DEBUG: console.debug(message);
-        case LogLevel.ERROR: console.error(message);
-        case LogLevel.INFO: console.info(message);
-        case LogLevel.WARN: console.warn(message);
-        default: console.info(message);
+        case LogLevel.DEBUG: console.debug(message); break;
+        case LogLevel.ERROR: console.error(message); break;
+        case LogLevel.INFO: console.info(message); break;
+        case LogLevel.WARN: console.warn(message); break;
+        default: console.info(message); break;
       }
     }
   }
