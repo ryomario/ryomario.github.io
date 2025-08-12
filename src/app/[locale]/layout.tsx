@@ -14,6 +14,7 @@ import { ThemeProvider } from "@/theme/themeProvider";
 import { SettingsProvider } from "@/settings/settingsProvider";
 import { getActiveTemplate, getTemplateTheme } from "@/templates/registered";
 import { Suspense } from "react";
+import { PostHogProvider } from "@/contexts/posthogProvider";
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({
@@ -61,29 +62,31 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
-        <SettingsProvider defaultSettings={{ templateName, colorScheme: 'light' }}>
-          <NextIntlClientProvider messages={messages}>
-            <ScrollTop />
-            <DataProvider value={{
-              data: {
-                profile: profileData,
-                projects,
-              },
-              refs: {
-                project_tags,
-              }
-            }}>
-              <AppRouterCacheProvider options={{ key: 'css' }}>
-                <ThemeProvider theme={getTemplateTheme(templateName)}>
-                  <NextTopLoader showSpinner={false} />
-                  <Suspense>
-                    {children}
-                  </Suspense>
-                </ThemeProvider>
-              </AppRouterCacheProvider>
-            </DataProvider>
-          </NextIntlClientProvider>
-        </SettingsProvider>
+        <PostHogProvider>
+          <SettingsProvider defaultSettings={{ templateName, colorScheme: 'light' }}>
+            <NextIntlClientProvider messages={messages}>
+              <ScrollTop />
+              <DataProvider value={{
+                data: {
+                  profile: profileData,
+                  projects,
+                },
+                refs: {
+                  project_tags,
+                }
+              }}>
+                <AppRouterCacheProvider options={{ key: 'css' }}>
+                  <ThemeProvider theme={getTemplateTheme(templateName)}>
+                    <NextTopLoader showSpinner={false} />
+                    <Suspense>
+                      {children}
+                    </Suspense>
+                  </ThemeProvider>
+                </AppRouterCacheProvider>
+              </DataProvider>
+            </NextIntlClientProvider>
+          </SettingsProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
