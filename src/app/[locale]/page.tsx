@@ -1,5 +1,5 @@
 import { Locale, routing } from "@/i18n/routing";
-import RenderTemplate from "@/templates";
+import TemplateProvider from "@/templates/provider";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
@@ -16,5 +16,5 @@ export default async function SPAPage({ params }: Readonly<{
   // Enable static rendering
   setRequestLocale(locale);
 
-  return <RenderTemplate defaultLocale={curentLocale} />;
+  return <TemplateProvider defaultLocale={curentLocale} />;
 }
