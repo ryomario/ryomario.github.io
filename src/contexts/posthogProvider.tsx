@@ -4,14 +4,10 @@ import { useEffect } from "react"
 
 import posthog from 'posthog-js'
 import { PostHogProvider as PHProvider } from 'posthog-js/react'
-import { useTemplatePageRouter } from "@/templates/hooks/templatePageRouter"
-import { useLocale } from "next-intl"
 import { useActiveTemplate } from "@/templates/hooks/useActiveTemplate"
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  const locale = useLocale();
   const { templateName } = useActiveTemplate();
-  const { currentPage } = useTemplatePageRouter();
 
   useEffect(() => {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
@@ -23,14 +19,6 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       },
     });
   }, []);
-
-  useEffect(() => {
-    posthog.capture('$pageview', {
-      page: currentPage,
-      locale,
-      templateName,
-    });
-  }, [currentPage]);
 
   return (
     <PHProvider client={posthog}>
