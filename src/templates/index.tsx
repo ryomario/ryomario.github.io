@@ -1,15 +1,13 @@
-'use client';
-
 import { ITemplateProps } from "@/types/templates/ITemplate";
-import { useSettingsContext } from "@/settings/settingsProvider";
 import TemplateDefault from "./default";
+import { TemplateName } from "./registered";
 
-type Props = ITemplateProps;
+type Props = ITemplateProps & {
+  templateName?: TemplateName;
+};
 
-export default function RenderTemplate(props: Props) {
-  const { state } = useSettingsContext();
-
-  switch(state.templateName) {
+export function RenderTemplate({ templateName, ...props }: Props) {
+  switch (templateName) {
     case 'default': return <TemplateDefault {...props} />;
     default: return <TemplateDefault {...props} />;
   }

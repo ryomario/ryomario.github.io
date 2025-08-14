@@ -1,5 +1,5 @@
-import Typography from "@mui/material/Typography";
+import { ViewPotofolioList } from "@/sections/admin/portofolio/ViewPortofolioList";
 
 export default async function Page() {
-  return <Typography>Portofolio</Typography>
+  return <ViewPotofolioList />
 }

@@ -1,4 +1,4 @@
-import React, { forwardRef, startTransition, useCallback, useRef, useState } from "react";
+import React, { forwardRef, startTransition, useCallback, useEffect, useRef, useState } from "react";
 import { ImageImg, ImageOverlay, ImagePlaceholder, ImageRoot } from "./styles";
 import { useInView, type UseInViewOptions } from "framer-motion";
 import { Breakpoint } from "@mui/material/styles";
@@ -39,9 +39,14 @@ export const Image = forwardRef<HTMLSpanElement, ImageProps>((props, ref) => {
     ...rest
   } = props;
 
-  const localRef = useRef<HTMLSpanElement|null>(null);
+  const localRef = useRef<HTMLSpanElement | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(false);
+    setIsError(false);
+  }, [src]);
 
   const isInView = useInView(localRef, {
     once: true,
@@ -57,30 +62,29 @@ export const Image = forwardRef<HTMLSpanElement, ImageProps>((props, ref) => {
     }, delayTime);
 
     return () => clearTimeout(timer);
-  },[delayTime, onLoad]);
+  }, [delayTime, onLoad]);
 
   const handleImageError = useCallback(() => {
     const timer = setTimeout(() => {
       startTransition(() => {
         setIsError(true);
-        console.log('error')
       });
     }, delayTime);
 
     return () => clearTimeout(timer);
-  },[delayTime]);
+  }, [delayTime]);
 
   const shouldRenderImage = visibleByDefault || isInView;
   const showPlaceholder = (!visibleByDefault && !isLoaded && !disablePlaceholder) || isError;
 
   const renderComponents = {
     overlay: () => slotProps?.overlay && (
-      <ImageOverlay {...slotProps.overlay}/>
+      <ImageOverlay {...slotProps.overlay} />
     ),
     placeholder: () => showPlaceholder && (
-      <ImagePlaceholder {...slotProps?.placeholder}/>
+      <ImagePlaceholder {...slotProps?.placeholder} />
     ),
-    image: () => !isError && (
+    image: () => !isError && !!src && (
       <ImageImg
         src={src}
         alt={alt}
@@ -94,9 +98,9 @@ export const Image = forwardRef<HTMLSpanElement, ImageProps>((props, ref) => {
   return (
     <ImageRoot
       ref={(node) => {
-        if(typeof ref === 'function') {
+        if (typeof ref === 'function') {
           ref(node);
-        } else if(ref) {
+        } else if (ref) {
           ref.current = node;
         }
         localRef.current = node;

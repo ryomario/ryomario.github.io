@@ -1,7 +1,7 @@
 'use client';
 
 import { ITemplateProps } from "@/types/templates/ITemplate";
-import RenderTemplate from ".";
+import { RenderTemplate } from ".";
 import { useTemplatePageRouter } from "./hooks/templatePageRouter";
 import { useEffect } from "react";
 import { usePostHog } from "posthog-js/react";
@@ -24,5 +24,5 @@ export default function TemplateProvider(props: Props) {
     });
   }, [currentPage]);
 
-  return <RenderTemplate {...props} />
+  return <RenderTemplate templateName={state.templateName} {...props} />;
 }

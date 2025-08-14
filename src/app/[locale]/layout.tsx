@@ -12,7 +12,7 @@ import RepoProjects from "@/db/repositories/RepoProjects";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider } from "@/theme/themeProvider";
 import { SettingsProvider } from "@/settings/settingsProvider";
-import { getActiveTemplate, getTemplateTheme } from "@/templates/registered";
+import { getActiveTemplate, getTemplateTheme, TemplateName } from "@/templates/registered";
 import { Suspense } from "react";
 import { PostHogProvider } from "@/contexts/posthogProvider";
 
@@ -37,11 +37,14 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
   params,
+  searchParams,
 }: Readonly<{
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
+  searchParams: { tmpl?: TemplateName };
 }>) {
   const { locale } = await params
+  const { tmpl } = searchParams
   // Ensure that the incoming `locale` is valid
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
@@ -51,7 +54,10 @@ export default async function RootLayout({
   setRequestLocale(locale)
 
   // get active template
-  const templateName = await getActiveTemplate();
+  let templateName = await getActiveTemplate()
+  if (process.env.NODE_ENV == 'development' && tmpl) {
+    templateName = tmpl
+  }
 
   const messages = await getMessages()
 
