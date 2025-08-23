@@ -5,6 +5,8 @@ import { useTableData } from "@/hooks/tableData";
 import Skeleton from "@mui/material/Skeleton";
 import { TemplateName, templates } from "@/templates/registered";
 import { AdminPortofolioItem } from "./adminPortofolioItem";
+import { useProfileData, useUpdateProfileData } from "@/contexts/profileDataContext";
+import * as RepoTemplates_server from "@/db/repositories/RepoTemplates.server";
 
 type Props = {
   itemPerPage?: number;
@@ -13,7 +15,10 @@ type Props = {
 export function AdminPortofolioList({
   itemPerPage = 6,
 }: Props) {
-  const alldata = useMemo<Array<TemplateName>>(() => templates.map(a => a), []);
+  const { activeTmplId } = useProfileData();
+  const updateProfileData = useUpdateProfileData();
+
+  const alldata = useMemo<Array<{ id: number, name: TemplateName }>>(() => templates.map((name, id) => ({ id, name })), []);
 
   const {
     handlePageChange,
@@ -24,13 +29,25 @@ export function AdminPortofolioList({
     isLoading,
     total,
     refresh,
-  } = useTableData<TemplateName, any>({
+  } = useTableData({
     data: alldata,
     pageSize: itemPerPage,
-    orderBy: null,
+    orderBy: '',
   });
 
   const totalPage = !total ? 1 : Math.ceil(total / pageSize);
+
+  const setActive = async (id: number) => {
+    try {
+      const result = await RepoTemplates_server.setActiveTemplateId(id);
+      if (!result) throw new Error('Unknown error');
+
+      await updateProfileData();
+      refresh(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return <>
     <Box
@@ -45,10 +62,14 @@ export function AdminPortofolioList({
           ? Array.from({ length: pageSize }).map((_, i) => (
             <Skeleton key={i} variant="rounded" height={320} />
           ))
-          : data.map((name) => (
+          : data.map(({ name, id }) => (
             <AdminPortofolioItem
               key={name}
               name={name}
+              setActive={async () => {
+                await setActive(id);
+              }}
+              isActive={id == activeTmplId}
             />
           ))
       }

@@ -1,9 +1,12 @@
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  MoreVert as MoreVertIcon,
+  Visibility as VisibilityIcon,
+  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
+  CheckBox as CheckBoxIcon
+} from '@mui/icons-material';
 
 import RouterLink from "next/link";
 import Typography from "@mui/material/Typography";
@@ -19,10 +22,14 @@ import { Image } from "@/components/image/image";
 
 type Props = {
   name: TemplateName;
+  setActive: () => Promise<void>;
+  isActive?: boolean;
 }
 
 export function AdminPortofolioItem({
   name,
+  setActive,
+  isActive = false,
 }: Props) {
   const viewHref = useMemo<string>(() => `${window.location.protocol}//${window.location.host}/en/?tmpl=${name}`, [name]);
 
@@ -69,12 +76,13 @@ export function AdminPortofolioItem({
 
         <MenuItem
           onClick={() => {
-            menuActions.onClose();
-            // onDelete();
+            setActive().then(() => {
+              menuActions.onClose();
+            })
           }}
-          sx={{ color: 'error.main' }}
+          disabled={isActive}
         >
-          <DeleteIcon />
+          {!isActive ? <CheckBoxOutlineBlankIcon /> : <CheckBoxIcon />}
           Set active
         </MenuItem>
       </MenuList>
@@ -83,7 +91,9 @@ export function AdminPortofolioItem({
 
   return <>
     <CardContainer
+      variant="outlined"
       className={menuActions.open ? '--options-open' : ''}
+      isActive={isActive}
     >
       <Image
         src={imageSrc}
@@ -125,11 +135,35 @@ const Overlay = styled('div')({
   padding: '16px',
 });
 
-const CardContainer = styled(Card)({
+const CardContainer = styled(Card, {
+  shouldForwardProp: (prop) => !['isActive'].includes(prop as string),
+})<{ isActive?: boolean }>(({ isActive = false, theme }) => ({
   position: 'relative',
+  overflow: 'visible',
+  ['& > *']: {
+    borderRadius: 'inherit',
+  },
   transition: 'transform 0.3s ease',
   '&:hover, &.--options-open': {
     transform: 'scale(1.02)',
     '--overlay-opacity': 1,
   },
-});
+  ['&::after']: {
+    content: '"Active"',
+    fontWeight: 'bold',
+    '--f': '0.5em',
+    position: 'absolute',
+    display: isActive ? 'block' : 'none',
+    top: 0,
+    left: 0,
+    lineHeight: 1.8,
+    paddingInline: '1lh',
+    paddingBottom: 'var(--f)',
+    borderImage: 'conic-gradient(#0008 0 0) 51%/var(--f)',
+    clipPath: 'polygon(100% calc(100% - var(--f)),100% 100%,calc(100% - var(--f)) calc(100% - var(--f)),var(--f) calc(100% - var(--f)), 0 100%,0 calc(100% - var(--f)),999px calc(100% - var(--f) - 999px),calc(100% - 999px) calc(100% - var(--f) - 999px))',
+    transform: 'translate(calc((cos(45deg) - 1)*100%), -100%) rotate(-45deg)',
+    transformOrigin: '100% 100%',
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+  },
+}));

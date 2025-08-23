@@ -1,5 +1,6 @@
 "use client";
 
+import * as RepoProfileData_server from "@/db/repositories/RepoProfileData.server";
 import { EMPTY_PROFILE_DATA } from "@/factories/profileDataFactory";
 import { IProfile } from "@/types/IProfile";
 import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from "react";
@@ -36,6 +37,11 @@ export const useProfileData = () => {
 }
 export const useUpdateProfileData = () => {
   const ctx = useContext(Context);
+  if (process.env.NODE_ENV !== 'development') throw new Error('useUpdateProfileData only available in development mode');
   if (!ctx) throw new Error('useUpdateProfileData only available inside ProfileDataProvider component');
-  return ctx.update;
+
+  return async () => {
+    const data = await RepoProfileData_server.getAll(true);
+    ctx.update(data);
+  };
 }

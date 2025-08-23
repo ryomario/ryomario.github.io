@@ -15,6 +15,8 @@ export interface IProfile {
   socialLinks: IProfileSocialLinks;
   professional: IProfileProfessional;
   lastUpdated: Date;
+  lastOGImgGenerated?: Date;
+  activeTmplId?: number;
 }
 
 export interface IProfileForm {

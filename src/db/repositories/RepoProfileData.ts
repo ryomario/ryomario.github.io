@@ -5,7 +5,7 @@ import { parseJSON, toJSON } from "@/lib/json"
 import { getErrorMessage } from "@/utils/errorMessage"
 import { Logger } from "@/utils/logger"
 
-async function getOne<T>(data_name: string, fallback_value?: T) {
+async function getOne<T, ATTR extends string = string>(data_name: ATTR, fallback_value?: T) {
   try {
     const value = await prisma.profile_data.findFirst({
       where: {
@@ -44,6 +44,8 @@ async function getAll(force_return = false) {
   try {
     const hireable = String(fallback_value.hireable); // optional, return default value
     const lastUpdated = force_return ? fallback_value.lastUpdated?.toISOString() : undefined;
+    const lastOGImgGenerated_fb = force_return ? fallback_value.lastOGImgGenerated?.toISOString() : null;
+    const lastOGImgGenerated_iso = await getOne('lastOGImgGenerated', lastOGImgGenerated_fb ?? null);
     const profileData: IProfile = {
       name: await getOne('name', force_return ? fallback_value.name : undefined),
       profile_picture: await getOne('profile_picture', force_return ? fallback_value.profile_picture : undefined),
@@ -61,6 +63,8 @@ async function getAll(force_return = false) {
       },
       professional: await getProfessionalData(force_return),
       lastUpdated: new Date(await getOne('lastUpdated', lastUpdated)),
+      lastOGImgGenerated: lastOGImgGenerated_iso ? new Date(lastOGImgGenerated_iso) : undefined,
+      activeTmplId: await getOne('activeTmplId', null) ?? undefined,
     };
 
     return profileData;

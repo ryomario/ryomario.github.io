@@ -80,7 +80,7 @@ export function ViewProfileProfessional() {
 
       await RepoProfileData_server.updateProfileProfessional(values);
 
-      updateProfileData(await RepoProfileData_server.getAll(true));
+      updateProfileData();
     } catch (error) {
       console.log('submit error', error);
     }

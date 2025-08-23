@@ -12,6 +12,35 @@ export const getAll = RepoProfileData.getAll
 export const getOne = RepoProfileData.getOne
 export const getJSONData = RepoProfileData.getJSONData
 
+export async function updateData<T, KEY extends string = string>(name: KEY, value: T): Promise<boolean> {
+  try {
+    const values = [
+      [name, value],
+      ['lastUpdated', new Date().toISOString()],
+    ];
+
+    const query = `
+      INSERT INTO profile_data(data_name, data_value)
+      VALUES ${values.map(([data_name, data_value]) => `('${data_name}', '${data_value}')`).join(', ')}
+      ON CONFLICT(data_name)
+      DO UPDATE SET
+        data_value = excluded.data_value
+      WHERE excluded.data_name = profile_data.data_name;
+    `;
+    const changes = await prisma.$executeRawUnsafe(query);
+
+    if (changes <= 0) throw Error(`No changes`);
+
+    return true;
+  } catch (error) {
+    const message = getErrorMessage(error);
+
+    Logger.error(message, 'updateData');
+
+    throw new Error(message);
+  }
+}
+
 export async function updateProfileData(data: IProfileForm) {
   let profile_picture: string = '';
   let profile_picture_uploaded = false;

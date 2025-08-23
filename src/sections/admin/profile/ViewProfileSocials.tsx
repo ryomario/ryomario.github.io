@@ -26,7 +26,7 @@ export function ViewProfileSocials() {
   const methods = useForm<IProfileSocialLinks>({
     defaultValues,
   });
-  
+
   const {
     watch,
     handleSubmit,
@@ -37,20 +37,20 @@ export function ViewProfileSocials() {
   const onSubmit = handleSubmit(async (values) => {
     try {
       await RepoProfileData_server.updateProfileSocialLinks(values);
-      
-      updateProfileData(await RepoProfileData_server.getAll(true));
+
+      updateProfileData();
     } catch (error) {
-      console.log('submit error',error);
+      console.log('submit error', error);
     }
   });
 
   useEffect(() => {
-    if(profileData.socialLinks) {
+    if (profileData.socialLinks) {
       reset({
         ...profileData.socialLinks,
       });
     }
-  },[profileData]);
+  }, [profileData]);
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
@@ -70,10 +70,10 @@ export function ViewProfileSocials() {
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    {social == 'codepen' && <CodepenIcon size={24}/> }
-                    {social == 'github' && <GithubIcon size={24}/> }
-                    {social == 'linkedin' && <LinkedinIcon size={24}/> }
-                    {social == 'website' && <SocialWebsiteIcon size={24}/> }
+                    {social == 'codepen' && <CodepenIcon size={24} />}
+                    {social == 'github' && <GithubIcon size={24} />}
+                    {social == 'linkedin' && <LinkedinIcon size={24} />}
+                    {social == 'website' && <SocialWebsiteIcon size={24} />}
                   </InputAdornment>
                 ),
               },

@@ -37,23 +37,23 @@ export function ViewProfile() {
   const onSubmit = handleSubmit(async (values) => {
     try {
       await RepoProfileData_server.updateProfileData(values);
-      
-      updateProfileData(await RepoProfileData_server.getAll(true));
+
+      updateProfileData();
     } catch (error) {
-      console.log('submit error',error);
+      console.log('submit error', error);
     }
   });
 
   useEffect(() => {
-    if(profileData) {
+    if (profileData) {
       reset({
         ...profileData,
       });
     }
-  },[profileData]);
+  }, [profileData]);
 
-  if(!isReady) {
-    return <LoadingScreen/>;
+  if (!isReady) {
+    return <LoadingScreen />;
   }
 
   return (
@@ -72,7 +72,7 @@ export function ViewProfile() {
             />
             <RHFField.UploadAvatar
               name="profile_picture"
-              rules={{ required: { value: true, message: 'Please select your profile picture!' },  }}
+              rules={{ required: { value: true, message: 'Please select your profile picture!' }, }}
               slotProps={{
                 wrapper: { mb: 5 },
               }}
@@ -112,7 +112,7 @@ export function ViewProfile() {
                 name="name"
                 type="text"
                 label="Full name"
-                rules={{ required: { value: true, message: 'Don\'t you have a name?' },  }}
+                rules={{ required: { value: true, message: 'Don\'t you have a name?' }, }}
               />
               <RHFField.TextField
                 name="email"
