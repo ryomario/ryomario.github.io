@@ -6,6 +6,8 @@ import puppeteer, { ImageFormat, PuppeteerLifeCycleEvent, ScreenshotClip } from 
 import fs from "fs";
 import { Logger } from "./logger";
 import { getErrorMessage } from "./errorMessage";
+import { sleep } from "@/lib/promises";
+import { date2string } from "@/lib/date";
 
 const tempDir = os.tmpdir();
 
@@ -128,6 +130,8 @@ export async function generatePagePreview(url: string, _options?: Options) {
       timeout: options.timeout, // 30 seconds timeout
     });
 
+    await sleep(3000); // just wait 3 seconds
+
     // Remove specific elements before screenshot
     if (options.removeElements) {
       const bodyHandle = await page.$('body');
@@ -159,7 +163,7 @@ export async function generatePagePreview(url: string, _options?: Options) {
 }
 
 export async function generatePreviewWithCache(url: string, options: Options = {}) {
-  const cachePath = path.join(CACHE_DIR, `${encodeURIComponent(url)}.${options.format || 'png'}`);
+  const cachePath = path.join(CACHE_DIR, `${date2string(Date.now(),false)}_${encodeURIComponent(url)}.${options.format || 'png'}`);
 
   // Check cache first
   if (fs.existsSync(cachePath)) {

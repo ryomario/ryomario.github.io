@@ -10,11 +10,11 @@ import RepoProfileData from "@/db/repositories/RepoProfileData";
 import { DataProvider } from "@/contexts/dataContext";
 import RepoProjects from "@/db/repositories/RepoProjects";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import { ThemeProvider } from "@/theme/themeProvider";
 import { SettingsProvider } from "@/settings/settingsProvider";
-import { getActiveTemplate, getTemplateTheme } from "@/templates/registered";
+import { getActiveTemplate } from "@/templates/registered";
 import { Suspense } from "react";
 import { PostHogProvider } from "@/contexts/posthogProvider";
+import TemplateThemeProvider from "@/templates/themeProvider";
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({
@@ -75,12 +75,12 @@ export default async function RootLayout({
                 }
               }}>
                 <AppRouterCacheProvider options={{ key: 'css' }}>
-                  <ThemeProvider theme={getTemplateTheme(templateName)}>
-                    <NextTopLoader showSpinner={false} />
-                    <Suspense>
+                  <Suspense>
+                    <TemplateThemeProvider>
+                      <NextTopLoader showSpinner={false} />
                       {children}
-                    </Suspense>
-                  </ThemeProvider>
+                    </TemplateThemeProvider>
+                  </Suspense>
                 </AppRouterCacheProvider>
               </DataProvider>
             </NextIntlClientProvider>
