@@ -20,6 +20,7 @@ import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 
 import * as RepoProfileData_server from "@/db/repositories/RepoProfileData.server";
+import { getAllLanguageLevels } from "@/lib/language";
 
 type AutocompleteOptionType = {
   value: string;
@@ -272,13 +273,7 @@ export function ViewProfileProfessional() {
                   <MenuItem value="" disabled>
                     <em>Proficiency</em>
                   </MenuItem>
-                  {[
-                    { value: '1', label: 'Beginner' },
-                    { value: '2', label: 'Intermediate' },
-                    { value: '3', label: 'Fluent' },
-                    { value: '4', label: 'Professional' },
-                    { value: '5', label: 'Native or Bilingual' },
-                  ].map(({ value, label }) => (
+                  {getAllLanguageLevels().map(({ value, label }) => (
                     <MenuItem key={value} value={value}>{label}</MenuItem>
                   ))}
                 </RHFField.Select>

@@ -13,6 +13,8 @@ async function getAll({ filter, offset, limit }: GetAllParams = { limit: 0, offs
       skip: offset,
       take: limit > 0 ? limit : undefined,
       where: filter ? {
+        ...(typeof filter.published === 'boolean' && { published: filter.published }),
+        ...(Array.isArray(filter.tags) && { tags: { every: { OR: filter.tags.map(tag_name => ({ tag_name })) } } }),
         OR: [
           {
             title: {

@@ -15,11 +15,11 @@ export async function generateStaticParams() {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ locale: string }> }
+  { params }: { params: Promise<{ locale: Locale }> }
 ): Promise<NextResponse> {
   let { locale } = await params
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as Locale)) {
+  if (!routing.locales.includes(locale)) {
     locale = routing.defaultLocale
   }
 

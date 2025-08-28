@@ -26,6 +26,8 @@
     "work_experience": "Work Experiences",
     "education": "Education",
     "skills": "Skills",
-    "languages": "Languages"
+    "languages": "Languages",
+    "present": "Present",
+    "gpa": "GPA"
   }
 }

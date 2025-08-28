@@ -34,6 +34,13 @@ export function date2localeString(date?: Date | number | string, showTime = fals
   })
 }
 
+/**
+ * 
+ * @param monthIndex index of month, 0 - 11
+ * @param shortName true to return name in short word, defaults to false
+ * @param locale defaults to 'en'
+ * @returns 
+ */
 export function getMonthName(monthIndex: number, shortName = false, locale: Locale = 'en'): string {
   monthIndex = Number(monthIndex);
   if (Number.isNaN(monthIndex)) return '';
